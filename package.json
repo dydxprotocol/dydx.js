@@ -1,0 +1,31 @@
+{
+  "name": "@dydxprotocol/dydx.js",
+  "version": "0.0.1",
+  "description": "Javascript library for interacting with the dYdX Protocol",
+  "main": "dist/es/index.ts",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dydxexchange/dydx.js.git"
+  },
+  "author": "dYdX Trading Inc.",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/dydxexchange/dydx.js/issues"
+  },
+  "homepage": "https://github.com/dydxexchange/dydx.js#readme",
+  "dependencies": {
+    "@dydxprotocol/protocol": "0.0.10",
+    "bignumber.js": "^7.0.1",
+    "bluebird": "^3.5.1",
+    "ethereumjs-util": "^5.2.0",
+    "web3": "^1.0.0-beta.34"
+  },
+  "devDependencies": {
+    "typescript": "^2.8.3"
+  }
+}
