@@ -1,0 +1,6 @@
+version: '3'
+services:
+  protocol:
+    image: dydxprotocol/protocol:latest
+    ports:
+      - 8545:8545
