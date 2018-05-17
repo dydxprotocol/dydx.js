@@ -1,25 +1,31 @@
 import { LoanOffering, SignedLoanOffering, Signature } from '../types';
 import ethUtil from 'ethereumjs-util';
 import { Contracts } from '../lib/Contracts';
+import Eth from 'ethjs';
+import Web3Utils from 'web3-utils';
+import bluebird from 'bluebird';
 
 export class LoanHelper {
-    private web3;
+    private currentProvider;
 
     private contracts: Contracts;
 
     constructor(
-        web3,
+        currentProvider,
         contracts: Contracts
     ) {
-        this.web3 = web3;
+        this.currentProvider = currentProvider;
         this.contracts = contracts;
     }
 
     public async signLoanOffering(loanOffering: LoanOffering): Promise<SignedLoanOffering> {
         const hash: string = this.getLoanOfferingHash(loanOffering);
 
-        const signatureString: string = await this.web3.eth.signAsync(
-          hash, loanOffering.signer
+        const eth = new Eth(this.currentProvider);
+        bluebird.promisifyAll(eth);
+
+        const signatureString: string = await eth.personal_signAsync(
+            loanOffering.signer, hash
         );
 
         const signature: Signature = ethUtil.fromRpcSig(signatureString);
@@ -33,7 +39,7 @@ export class LoanHelper {
     }
 
     public getLoanOfferingHash(loanOffering: LoanOffering): string {
-        const valuesHash = this.web3.utils.soliditySha3(
+        const valuesHash = Web3Utils.soliditySha3(
             loanOffering.maxAmount,
             loanOffering.minAmount,
             loanOffering.minHeldToken,
@@ -46,7 +52,7 @@ export class LoanHelper {
             { type: 'uint32', value: loanOffering.interestRate },
             { type: 'uint32', value: loanOffering.interestPeriod }
         );
-        return this.web3.utils.soliditySha3(
+        return Web3Utils.soliditySha3(
             this.contracts.margin.address,
             loanOffering.owedToken,
             loanOffering.heldToken,
@@ -59,5 +65,9 @@ export class LoanHelper {
             loanOffering.takerFeeTokenAddress,
             valuesHash
         );
+    }
+
+    public setProvider(currentProvider) {
+        this.currentProvider = currentProvider;
     }
 }

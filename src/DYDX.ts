@@ -1,4 +1,3 @@
-import Web3 from 'web3';
 import { LoanHelper } from './modules/LoanHelper';
 import { ZeroExHelper } from './modules/ZeroExHelper';
 import { Margin } from './modules/Margin';
@@ -20,12 +19,11 @@ export class DYDX {
     ) {
         this.currentProvider = provider;
 
-        const web3 = new Web3(provider);
         this.contracts = new Contracts(provider);
 
-        this.loanOffering = new LoanHelper(web3, this.contracts);
+        this.loanOffering = new LoanHelper(provider, this.contracts);
         this.margin = new Margin(this.contracts);
-        this.zeroEx = new ZeroExHelper(web3);
+        this.zeroEx = new ZeroExHelper();
         this.token = new TokenHelper(provider, this.contracts);
     }
 
@@ -33,5 +31,6 @@ export class DYDX {
         this.currentProvider = provider;
         this.contracts.setProvider(provider);
         this.token.setProvider(provider);
+        this.loanOffering.setProvider(provider);
     }
 }

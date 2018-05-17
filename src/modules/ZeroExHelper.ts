@@ -1,17 +1,11 @@
+import Web3Utils from 'web3-utils';
+
 export class ZeroExHelper {
-    private web3;
-
-    private marginAddress: string;
-
-    constructor(
-        web3
-    ) {
-        this.web3 = web3;
-    }
+    constructor() {}
 
     private toBytes(val) {
-      return this.web3.utils.hexToBytes(
-        this.web3.utils.padLeft(this.web3.utils.toHex(val), 64)
+      return Web3Utils.hexToBytes(
+        Web3Utils.padLeft(Web3Utils.toHex(val), 64)
       );
     }
 
@@ -28,6 +22,6 @@ export class ZeroExHelper {
         .concat(this.toBytes(order.ecSignature.v))
         .concat(this.toBytes(order.ecSignature.r))
         .concat(this.toBytes(order.ecSignature.s));
-      return this.web3.utils.bytesToHex(v);
+      return Web3Utils.bytesToHex(v);
     }
 }

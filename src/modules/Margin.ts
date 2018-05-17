@@ -1,6 +1,5 @@
 import { LoanOffering, SignedLoanOffering, Position } from '../types';
 import { ExchangeWrapper } from './ExchangeWrapper';
-import Web3 from 'web3';
 import bluebird from 'bluebird';
 import ethUtil from 'ethereumjs-util';
 import { BigNumber } from 'bignumber.js';
@@ -79,6 +78,52 @@ export class Margin {
             depositInHeldToken,
             orderData,
             {...options, from: trader }
+        );
+    }
+
+    public async createShortToken(
+        loanOffering: SignedLoanOffering,
+        trader: string,
+        principal: BigNumber,
+        depositAmount: BigNumber,
+        depositInHeldToken: boolean,
+        exchangeWrapper: ExchangeWrapper,
+        orderData: string,
+        options: object = {}
+    ): Promise<object> {
+        return this.openPosition(
+            loanOffering,
+            trader,
+            this.contracts.erc20ShortCreator.address,
+            principal,
+            depositAmount,
+            depositInHeldToken,
+            exchangeWrapper,
+            orderData,
+            options
+        );
+    }
+
+    public async createLeveragedLongToken(
+        loanOffering: SignedLoanOffering,
+        trader: string,
+        principal: BigNumber,
+        depositAmount: BigNumber,
+        depositInHeldToken: boolean,
+        exchangeWrapper: ExchangeWrapper,
+        orderData: string,
+        options: object = {}
+    ): Promise<object> {
+        return this.openPosition(
+            loanOffering,
+            trader,
+            this.contracts.erc20LongCreator.address,
+            principal,
+            depositAmount,
+            depositInHeldToken,
+            exchangeWrapper,
+            orderData,
+            options
         );
     }
 
