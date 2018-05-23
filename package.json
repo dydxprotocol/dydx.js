@@ -1,12 +1,12 @@
 {
   "name": "@dydxprotocol/dydx.js",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Javascript library for interacting with the dYdX Protocol",
   "main": "dist/js/index.js",
   "types": "dist/types/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && babel dist/es --out-dir dist/js",
+    "build": "tsc && babel dist/es --out-dir dist/js --source-maps inline",
     "start": "node dist/js/index.js"
   },
   "repository": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/dydxexchange/dydx.js#readme",
   "dependencies": {
-    "@dydxprotocol/protocol": "0.0.13",
+    "@dydxprotocol/protocol": "0.1.0",
     "bignumber.js": "^4.1.0",
     "bluebird": "^3.5.1",
     "ethereumjs-util": "^5.2.0",

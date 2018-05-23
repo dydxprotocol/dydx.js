@@ -6,6 +6,7 @@ import { BigNumber } from 'bignumber.js';
 import { Margin as MarginContract } from '@dydxprotocol/protocol';
 import contract from 'truffle-contract';
 import { Contracts } from '../lib/Contracts';
+import Web3Utils from 'web3-utils';
 
 export class Margin {
     private contracts: Contracts;
@@ -24,11 +25,17 @@ export class Margin {
         owner: string,
         principal: BigNumber,
         depositAmount: BigNumber,
+        nonce: BigNumber,
         depositInHeldToken: boolean,
         exchangeWrapper: ExchangeWrapper,
         orderData: string,
         options: object = {}
     ): Promise<object> {
+        const positionId = Web3Utils.soliditySha3(
+            trader,
+            nonce
+        );
+
         const addresses = [
             owner,
             loanOffering.owedToken,
@@ -52,7 +59,8 @@ export class Margin {
             loanOffering.expirationTimestamp,
             loanOffering.salt,
             principal,
-            depositAmount
+            depositAmount,
+            nonce
         ];
 
         const values32 = [
@@ -69,7 +77,7 @@ export class Margin {
             loanOffering.signature.s,
         ];
 
-        return this.contracts.margin.openPosition(
+        const response = this.contracts.margin.openPosition(
             addresses,
             values256,
             values32,
@@ -79,6 +87,56 @@ export class Margin {
             orderData,
             {...options, from: trader }
         );
+
+        response.id = positionId;
+
+        return response;
+    }
+
+    public async callOpenWithoutCounterparty(
+        trader: string,
+        positionOwner: string,
+        loanOwner: string,
+        owedToken: string,
+        heldToken: string,
+        nonce: BigNumber,
+        deposit: BigNumber,
+        principal: BigNumber,
+        callTimeLimit: BigNumber,
+        maxDuration: BigNumber,
+        interestRate: BigNumber,
+        interestPeriod: BigNumber,
+        options: object = {}
+    ): Promise<object> {
+        const positionId = Web3Utils.soliditySha3(
+            trader,
+            nonce
+        );
+
+        const response = await this.contracts.margin.openWithoutCounterparty(
+            [
+                positionOwner,
+                owedToken,
+                heldToken,
+                loanOwner
+            ],
+            [
+                principal,
+                deposit,
+                nonce
+            ],
+            [
+                callTimeLimit,
+                maxDuration,
+                interestRate,
+                interestPeriod
+            ],
+            { from: trader }
+        );
+
+        response.id = positionId;
+
+        return response;
     }
 
     public async createShortToken(
@@ -86,6 +144,7 @@ export class Margin {
         trader: string,
         principal: BigNumber,
         depositAmount: BigNumber,
+        nonce: BigNumber,
         depositInHeldToken: boolean,
         exchangeWrapper: ExchangeWrapper,
         orderData: string,
@@ -97,6 +156,7 @@ export class Margin {
             this.contracts.erc20ShortCreator.address,
             principal,
             depositAmount,
+            nonce,
             depositInHeldToken,
             exchangeWrapper,
             orderData,
@@ -109,6 +169,7 @@ export class Margin {
         trader: string,
         principal: BigNumber,
         depositAmount: BigNumber,
+        nonce: BigNumber,
         depositInHeldToken: boolean,
         exchangeWrapper: ExchangeWrapper,
         orderData: string,
@@ -120,6 +181,7 @@ export class Margin {
             this.contracts.erc20LongCreator.address,
             principal,
             depositAmount,
+            nonce,
             depositInHeldToken,
             exchangeWrapper,
             orderData,
