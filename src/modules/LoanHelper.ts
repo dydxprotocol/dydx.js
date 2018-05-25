@@ -6,7 +6,7 @@ import Web3Utils from 'web3-utils';
 import bluebird from 'bluebird';
 
 export class LoanHelper {
-    private currentProvider;
+    private eth;
 
     private contracts: Contracts;
 
@@ -14,17 +14,15 @@ export class LoanHelper {
         currentProvider,
         contracts: Contracts
     ) {
-        this.currentProvider = currentProvider;
+        this.eth = new Eth(currentProvider);
+        bluebird.promisifyAll(this.eth);
         this.contracts = contracts;
     }
 
     public async signLoanOffering(loanOffering: LoanOffering): Promise<SignedLoanOffering> {
         const hash: string = this.getLoanOfferingHash(loanOffering);
 
-        const eth = new Eth(this.currentProvider);
-        bluebird.promisifyAll(eth);
-
-        const signatureString: string = await eth.personal_signAsync(
+        const signatureString: string = await this.eth.personal_signAsync(
             loanOffering.signer, hash
         );
 
@@ -68,6 +66,7 @@ export class LoanHelper {
     }
 
     public setProvider(currentProvider) {
-        this.currentProvider = currentProvider;
+        this.eth = new Eth(currentProvider);
+        bluebird.promisifyAll(this.eth);
     }
 }

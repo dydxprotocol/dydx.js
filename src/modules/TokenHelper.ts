@@ -3,39 +3,43 @@ import BigNumber from 'bignumber.js';
 import { ERC20 } from '@dydxprotocol/protocol';
 import contract from 'truffle-contract';
 import { BIGNUMBERS } from '../lib/Constants';
+import { setupContract } from '../lib/Helpers';
+
+const Token = contract(ERC20);
 
 export class TokenHelper {
     private contracts: Contracts;
-    private provider;
 
     constructor(
         provider,
+        networkId: number,
         contracts: Contracts
     ) {
-        this.provider = provider;
+        setupContract(Token, provider, networkId);
+
         this.contracts = contracts;
     }
 
-    public getAllowance(
+    public async getAllowance(
         tokenAddress: string,
         ownerAddress: string,
         spenderAddress: string
     ): Promise<BigNumber> {
-        const token = this.getToken(tokenAddress);
+        const token = await this.getToken(tokenAddress);
 
         return token.allowance.call(ownerAddress, spenderAddress);
     }
 
-    public getBalance(
+    public async getBalance(
         tokenAddress: string,
         ownerAddress: string
     ): Promise<BigNumber> {
-        const token = this.getToken(tokenAddress);
+        const token = await this.getToken(tokenAddress);
 
         return token.balanceOf.call(ownerAddress);
     }
 
-    public getProxyAllowance(
+    public async getProxyAllowance(
         tokenAddress: string,
         ownerAddress: string
     ): Promise<BigNumber> {
@@ -46,22 +50,21 @@ export class TokenHelper {
         );
     }
 
-    public setAllowance(
+    public async setAllowance(
         tokenAddress: string,
         ownerAddress: string,
         spenderAddress: string,
         amount: BigNumber,
         options: object = {}
     ): Promise<object> {
-        const token = this.getToken(tokenAddress);
+        const token = await this.getToken(tokenAddress);
 
         return token.approve(spenderAddress, amount, {...options, from: ownerAddress });
     }
 
-    public setProxyAllowance(
+    public async setProxyAllowance(
         tokenAddress: string,
         ownerAddress: string,
-        spenderAddress: string,
         amount: BigNumber,
         options: object = {}
     ): Promise<object> {
@@ -74,7 +77,7 @@ export class TokenHelper {
         );
     }
 
-    public setMaximumAllowance(
+    public async setMaximumAllowance(
         tokenAddress: string,
         ownerAddress: string,
         spenderAddress: string,
@@ -89,7 +92,7 @@ export class TokenHelper {
         );
     }
 
-    public setMaximumProxyAllowance(
+    public async setMaximumProxyAllowance(
         tokenAddress: string,
         ownerAddress: string,
         options: object = {}
@@ -103,19 +106,19 @@ export class TokenHelper {
         );
     }
 
-    public transfer(
+    public async transfer(
         tokenAddress: string,
         fromAddress: string,
         toAddress: string,
         amount: BigNumber,
         options: object = {}
     ): Promise<object> {
-        const token = this.getToken(tokenAddress);
+        const token = await this.getToken(tokenAddress);
 
         return token.transfer(toAddress, amount, {...options, from: fromAddress });
     }
 
-    public transferFrom(
+    public async transferFrom(
         tokenAddress: string,
         fromAddress: string,
         toAddress: string,
@@ -123,7 +126,7 @@ export class TokenHelper {
         amount: BigNumber,
         options: object = {}
     ): Promise<object> {
-        const token = this.getToken(tokenAddress);
+        const token = await this.getToken(tokenAddress);
 
         return token.transferFrom(
             fromAddress,
@@ -133,16 +136,14 @@ export class TokenHelper {
         );
     }
 
-    public setProvider(provider) {
-        this.provider = provider;
+    public setProvider(provider, networkId: number) {
+        setupContract(Token, provider, networkId);
     }
 
     private getToken(
         tokenAddress: string
-    ) {
-        const token = contract(ERC20);
-        token.setProvider(this.provider);
+    ): Promise<any> {
 
-        return token;
+        return Token.at(tokenAddress);
     }
 }
