@@ -106,6 +106,20 @@ export class TokenHelper {
         );
     }
 
+    public async unsetProxyAllowance(
+        tokenAddress: string,
+        ownerAddress: string,
+        options: object = {}
+    ): Promise<object> {
+        return this.setAllowance(
+            tokenAddress,
+            ownerAddress,
+            this.contracts.proxy.address,
+            BIGNUMBERS.ZERO,
+            options
+        );
+    }
+
     public async transfer(
         tokenAddress: string,
         fromAddress: string,
