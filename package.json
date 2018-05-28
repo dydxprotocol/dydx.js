@@ -1,13 +1,14 @@
 {
   "name": "@dydxprotocol/dydx.js",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Javascript library for interacting with the dYdX Protocol",
   "main": "dist/js/index.js",
   "types": "dist/types/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && babel dist/es --out-dir dist/js --source-maps inline",
-    "start": "node dist/js/index.js"
+    "start": "node dist/js/index.js",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
