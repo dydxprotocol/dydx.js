@@ -97,6 +97,7 @@ export class TokenHelper {
         ownerAddress: string,
         options: object = {}
     ): Promise<object> {
+        console.log('HAI')
         return this.setAllowance(
             tokenAddress,
             ownerAddress,
@@ -111,6 +112,7 @@ export class TokenHelper {
         ownerAddress: string,
         options: object = {}
     ): Promise<object> {
+        console.log('HAI')
         return this.setAllowance(
             tokenAddress,
             ownerAddress,
