@@ -66,7 +66,7 @@ export class Margin {
         const values32 = [
             loanOffering.callTimeLimit,
             loanOffering.maxDuration,
-            loanOffering.interestRate,
+            loanOffering.interestRate.times(new BigNumber(10).pow(6)).floor(),
             loanOffering.interestPeriod
         ];
 
@@ -77,7 +77,7 @@ export class Margin {
             loanOffering.signature.s,
         ];
 
-        const response = this.contracts.margin.openPosition(
+        const response = await this.contracts.margin.openPosition(
             addresses,
             values256,
             values32,
@@ -93,7 +93,7 @@ export class Margin {
         return response;
     }
 
-    public async callOpenWithoutCounterparty(
+    public async openWithoutCounterparty(
         trader: string,
         positionOwner: string,
         loanOwner: string,
@@ -128,7 +128,7 @@ export class Margin {
             [
                 callTimeLimit,
                 maxDuration,
-                interestRate,
+                interestRate.times(new BigNumber(10).pow(6)).floor(),
                 interestPeriod
             ],
             { from: trader }
@@ -164,6 +164,36 @@ export class Margin {
         );
     }
 
+    public async createShortTokenWithoutCounterparty(
+        trader: string,
+        owedToken: string,
+        heldToken: string,
+        nonce: BigNumber,
+        deposit: BigNumber,
+        principal: BigNumber,
+        callTimeLimit: BigNumber,
+        maxDuration: BigNumber,
+        interestRate: BigNumber,
+        interestPeriod: BigNumber,
+        options: object = {}
+    ): Promise<object> {
+        return this.openWithoutCounterparty(
+            trader,
+            this.contracts.erc20ShortCreator.address,
+            this.contracts.sharedLoan.address,
+            owedToken,
+            heldToken,
+            nonce,
+            deposit,
+            principal,
+            callTimeLimit,
+            maxDuration,
+            interestRate,
+            interestPeriod,
+            options
+        );
+    }
+
     public async createLeveragedLongToken(
         loanOffering: SignedLoanOffering,
         trader: string,
@@ -185,6 +215,36 @@ export class Margin {
             depositInHeldToken,
             exchangeWrapper,
             orderData,
+            options
+        );
+    }
+
+    public async createLeveragedLongTokenWithoutCounterparty(
+        trader: string,
+        owedToken: string,
+        heldToken: string,
+        nonce: BigNumber,
+        deposit: BigNumber,
+        principal: BigNumber,
+        callTimeLimit: BigNumber,
+        maxDuration: BigNumber,
+        interestRate: BigNumber,
+        interestPeriod: BigNumber,
+        options: object = {}
+    ): Promise<object> {
+        return this.openWithoutCounterparty(
+            trader,
+            this.contracts.erc20LongCreator.address,
+            this.contracts.sharedLoan.address,
+            owedToken,
+            heldToken,
+            nonce,
+            deposit,
+            principal,
+            callTimeLimit,
+            maxDuration,
+            interestRate,
+            interestPeriod,
             options
         );
     }
@@ -432,6 +492,8 @@ export class Margin {
             positionId
         );
 
+        const adjustedInterestRate = interestRate.div(new BigNumber(10).pow(6));
+
         return {
             owedToken,
             heldToken,
@@ -443,7 +505,7 @@ export class Margin {
             startTimestamp,
             callTimestamp,
             maxDuration,
-            interestRate,
+            interestRate: adjustedInterestRate,
             interestPeriod
         };
     }
