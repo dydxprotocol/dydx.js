@@ -1,6 +1,6 @@
 {
   "name": "@dydxprotocol/dydx.js",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Javascript library for interacting with the dYdX Protocol",
   "main": "dist/js/index.js",
   "types": "dist/types/index.d.ts",

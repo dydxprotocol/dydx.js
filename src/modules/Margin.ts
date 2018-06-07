@@ -180,7 +180,7 @@ export class Margin {
         return this.openWithoutCounterparty(
             trader,
             this.contracts.erc20ShortCreator.address,
-            this.contracts.sharedLoan.address,
+            this.contracts.sharedLoanCreator.address,
             owedToken,
             heldToken,
             nonce,
@@ -235,7 +235,7 @@ export class Margin {
         return this.openWithoutCounterparty(
             trader,
             this.contracts.erc20LongCreator.address,
-            this.contracts.sharedLoan.address,
+            this.contracts.sharedLoanCreator.address,
             owedToken,
             heldToken,
             nonce,
