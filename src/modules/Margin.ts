@@ -10,11 +10,15 @@ import Web3Utils from 'web3-utils';
 
 export class Margin {
     private contracts: Contracts;
+    public tokenA;
+    public tokenB;
 
     constructor(
         contracts: Contracts
     ) {
         this.contracts = contracts;
+        this.tokenA = contracts.tokenA;
+        this.tokenB = contracts.tokenB;
     }
 
     // ============ Public State Changing Contract Functions ============
