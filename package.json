@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/dydxexchange/dydx.js#readme",
   "dependencies": {
-    "@dydxprotocol/protocol": "0.1.2",
+    "@dydxprotocol/protocol": "0.1.3",
     "bignumber.js": "^4.1.0",
     "bluebird": "^3.5.1",
     "ethereumjs-util": "^5.2.0",
