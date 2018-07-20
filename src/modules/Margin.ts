@@ -108,6 +108,7 @@ export class Margin {
         interestPeriod: BigNumber,
         options: object = {}
     ): Promise<object> {
+
         const positionId = Web3Utils.soliditySha3(
             trader,
             nonce
@@ -135,8 +136,8 @@ export class Margin {
         );
 
         response.id = positionId;
-
         return response;
+
     }
 
     public async createShortToken(
