@@ -1,17 +1,27 @@
+declare var require: any
+declare var process: any
 import { DYDX } from './DYDX';
 import { TestToken as TestToken2 } from '@dydxprotocol/protocol';
 import { Margin as MarginContract } from '@dydxprotocol/protocol';
 import Web3Utils from 'web3-utils';
-const fs = require('fs');
+const fs =require('fs');
 const solc = require('solc');
 const Web3 = require('web3');
 const BigNumber = require('bignumber.js');
-// console.log(process.cwd())
+ console.log(process.cwd())
 // Connect to local Ethereum node
-const web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"));
+const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 web3.eth.defaultAccount = web3.eth.accounts[0];
-const { BIGNUMBERS } = require('./Constants');
 // Compile the source code
+const BIGNUMBERS = {
+    ZERO: new BigNumber(0),
+    ONE_DAY_IN_SECONDS: new BigNumber(60 * 60 * 24),
+    ONE_YEAR_IN_SECONDS: new BigNumber(60 * 60 * 24 * 365),
+    ONES_127: new BigNumber("340282366920938463463374607431768211455"), // 2**128-1
+    ONES_255: new BigNumber(
+        "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+    ), // 2**256-1
+};
 
 const input = fs.readFileSync('src/Token.sol');
 const output = solc.compile(input.toString(), 1);
@@ -62,8 +72,8 @@ function getAccounts() {
 }
 
 async function openPositionWithoutCounterparty() {
-
   setDYDXProvider(web3.currentProvider);
+  console.log(dydx);
   let HeldToken = await deployERC20();
   let OwedToken = await deployERC20();
   const accounts = await getAccounts();
@@ -100,8 +110,8 @@ async function openPositionWithoutCounterparty() {
 
   openedPosition = await dydx.margin.openWithoutCounterparty(
       trader,
-      trader,
-      trader,
+      loanOwner,
+      positionOwner,
       OwedToken,
       HeldToken,
       nonce,
@@ -111,7 +121,7 @@ async function openPositionWithoutCounterparty() {
       maxDuration,
       interestRate,
       interestPeriod);
- //      console.log(openedPosition);
+      console.log(openedPosition);
  //
  //    console.log(openedPosition);
  // const isThere = await dydx.margin.containsPosition(openedPosition.id);
