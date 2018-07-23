@@ -1,5 +1,6 @@
 import { DYDX } from './DYDX';
 import { TestToken as TestToken2 } from '@dydxprotocol/protocol';
+import { Margin as MarginContract } from '@dydxprotocol/protocol';
 import Web3Utils from 'web3-utils';
 const fs = require('fs');
 const solc = require('solc');
@@ -93,13 +94,14 @@ async function openPositionWithoutCounterparty() {
 //get the starting balances
   const startingBalances = await getBalances(HeldToken, trader);
 
+
   let openedPosition;
   let myPos;
 
   openedPosition = await dydx.margin.openWithoutCounterparty(
       trader,
-      positionOwner,
-      loanOwner,
+      trader,
+      trader,
       OwedToken,
       HeldToken,
       nonce,
@@ -109,11 +111,11 @@ async function openPositionWithoutCounterparty() {
       maxDuration,
       interestRate,
       interestPeriod);
-      console.log(openedPosition);
-
-//     console.log(openedPosition);
- const isThere = await dydx.margin.containsPosition(openedPosition.id);
- console.log('Position has been stored', isThere);
+ //      console.log(openedPosition);
+ //
+ //    console.log(openedPosition);
+ // const isThere = await dydx.margin.containsPosition(openedPosition.id);
+ // console.log('Position has been stored', isThere);
 }
 // unclear if i need this just yet
 async function issueAndSetAllowance(

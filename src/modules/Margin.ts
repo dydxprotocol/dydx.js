@@ -134,7 +134,7 @@ export class Margin {
             ],
             { from: trader }
         );
-
+        console.log(response);
         response.id = positionId;
         return response;
 
