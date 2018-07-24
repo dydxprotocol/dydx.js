@@ -132,7 +132,7 @@ export class Margin {
                 interestRate.times(new BigNumber(10).pow(6)).floor(),
                 interestPeriod
             ],
-            { from: trader }
+            { ...options, from: trader }
         );
         console.log(response);
         response.id = positionId;

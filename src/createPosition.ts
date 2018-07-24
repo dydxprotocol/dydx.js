@@ -44,20 +44,11 @@ function setDYDXProvider(provider) {
 
 
 //Deploy ERC20
-function deployERC20() {
-  return new Promise((resolve, reject) => {
-    const HeldTokenInstance = contract.new({
-      data: '0x' + bytecode,
-      from: web3.eth.coinbase,
-      gas: 1000000
-    },(err,res) => {
-      if(err) reject(err);
-
-      if(res.address) {
-        resolve(res.address);
-      }
-    })
-  })
+async function deployERC20(accounts) {
+console.log('Deploying..')
+    const token = await dydx.contracts.TestToken.new({ from: accounts[0], gas: 4712388});
+    console.log('Done')
+    return token.address;
 }
 
 function getAccounts() {
@@ -73,24 +64,22 @@ function getAccounts() {
 
 async function openPositionWithoutCounterparty() {
   setDYDXProvider(web3.currentProvider);
-  console.log(dydx);
-  let HeldToken = await deployERC20();
-  let OwedToken = await deployERC20();
   const accounts = await getAccounts();
-  console.log(HeldToken, OwedToken);
+  let HeldToken = await deployERC20(accounts);
+  let OwedToken = await deployERC20(accounts);
 
   //console.log(dydx.contracts.proxy.address);
   //console.log(accounts);
   //
-  const trader = accounts[1];
-  const positionOwner = accounts[2];
-  const loanOwner =  accounts[3];
+  const trader = accounts[6];
+  const positionOwner = accounts[7];
+  const loanOwner =  accounts[8];
   const deposit =  new BigNumber('1098765932109876543');
   const principal = new BigNumber('2387492837498237491');
-  const nonce = new BigNumber('19238');
+  const nonce = new BigNumber('19239');
   const callTimeLimit = BIGNUMBERS.ONE_DAY_IN_SECONDS;
   const maxDuration = BIGNUMBERS.ONE_YEAR_IN_SECONDS;
-  const interestRate = new BigNumber('600000');
+  const interestRate = new BigNumber('1');
   const interestPeriod = BIGNUMBERS.ONE_DAY_IN_SECONDS;
 
 
@@ -104,14 +93,21 @@ async function openPositionWithoutCounterparty() {
 //get the starting balances
   const startingBalances = await getBalances(HeldToken, trader);
 
-
   let openedPosition;
   let myPos;
 
+  console.log(dydx.contracts.proxy.address)
+  console.log(trader)
+  console.log(HeldToken)
+  console.log(OwedToken)
+  console.log(deposit.toString())
+  console.log(dydx.contracts.proxy.address)
+  console.log(nonce)
+
   openedPosition = await dydx.margin.openWithoutCounterparty(
       trader,
-      loanOwner,
       positionOwner,
+      loanOwner,
       OwedToken,
       HeldToken,
       nonce,
@@ -120,8 +116,11 @@ async function openPositionWithoutCounterparty() {
       callTimeLimit,
       maxDuration,
       interestRate,
-      interestPeriod);
+      interestPeriod,
+      { gas: 1000000 }
+  );
       console.log(openedPosition);
+      console.log(openedPosition.receipt.logs);
  //
  //    console.log(openedPosition);
  // const isThere = await dydx.margin.containsPosition(openedPosition.id);
@@ -135,13 +134,10 @@ async function issueAndSetAllowance(
   allowed
 ) {
   const tokenInstance = contract.at(token);
-  try{
   await Promise.all([
     tokenInstance.issueTo(account, amount),
     tokenInstance.approve(allowed, amount, { from: account })
-  ]); } catch(err) {
-    console.log(err);
-  }
+  ]);
 }
 
 async function getBalances(tokenAddress,trader ) {

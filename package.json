@@ -12,6 +12,7 @@
     "test": "ts-node src/createPosition.ts",
     "build": "tsc",
     "start": "node dist/js/index.js",
+    "debug": "truffle debug",
     "prepublishOnly": "npm run build"
   },
   "repository": {
