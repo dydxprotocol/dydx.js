@@ -113,7 +113,7 @@ export class Margin {
             trader,
             nonce
         );
-
+        
         const response = await this.contracts.margin.openWithoutCounterparty(
             [
                 positionOwner,
@@ -134,7 +134,7 @@ export class Margin {
             ],
             { from: trader }
         );
-        console.log(response);
+
         response.id = positionId;
         return response;
 

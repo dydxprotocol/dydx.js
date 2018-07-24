@@ -1,17 +1,19 @@
 declare var require: any
 declare var process: any
 import { DYDX } from './DYDX';
-import { TestToken as TestToken2 } from '@dydxprotocol/protocol';
+import { TestToken as TestTokenContract } from '@dydxprotocol/protocol';
 import { Margin as MarginContract } from '@dydxprotocol/protocol';
 import Web3Utils from 'web3-utils';
+const contract  = require('truffle-contract');
 const fs =require('fs');
 const solc = require('solc');
 const Web3 = require('web3');
 const BigNumber = require('bignumber.js');
- console.log(process.cwd())
+
 // Connect to local Ethereum node
 const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 web3.eth.defaultAccount = web3.eth.accounts[0];
+
 // Compile the source code
 const BIGNUMBERS = {
     ZERO: new BigNumber(0),
@@ -23,16 +25,21 @@ const BIGNUMBERS = {
     ), // 2**256-1
 };
 
-const input = fs.readFileSync('src/Token.sol');
-const output = solc.compile(input.toString(), 1);
-// const bytecode = TestToken2.bytecode;
-// const abi = TestToken2.abi;
-const bytecode = output.contracts[':TestToken'].bytecode;
-const abi = JSON.parse(output.contracts[':TestToken'].interface);
+const TestToken = contract({
+  abi: TestTokenContract.abi,
+  bytecode: TestTokenContract.bytecode
+});
+TestToken.setProvider(web3.currentProvider);
+TestToken.defaults({
+  from: web3.eth.coinbase,
+  gas: 1000000
+});
 
 
+const abi = TestTokenContract.abi;
+const bytecode = TestTokenContract.bytecode;
 // Contract object
-const contract = web3.eth.contract(abi);
+const tcontract = web3.eth.contract(abi);
 let dydx = null;
 function setDYDXProvider(provider) {
   if (dydx == null) {
@@ -46,11 +53,12 @@ function setDYDXProvider(provider) {
 //Deploy ERC20
 function deployERC20() {
   return new Promise((resolve, reject) => {
-    const HeldTokenInstance = contract.new({
+    const HeldTokenInstance = tcontract.new({
       data: '0x' + bytecode,
       from: web3.eth.coinbase,
       gas: 1000000
     },(err,res) => {
+      console.log("hi");
       if(err) reject(err);
 
       if(res.address) {
@@ -73,9 +81,8 @@ function getAccounts() {
 
 async function openPositionWithoutCounterparty() {
   setDYDXProvider(web3.currentProvider);
-  console.log(dydx);
-  let HeldToken = await deployERC20();
-  let OwedToken = await deployERC20();
+  const HeldToken = await TestToken.new();
+  const OwedToken = await TestToken.new();
   const accounts = await getAccounts();
   console.log(HeldToken, OwedToken);
 
@@ -85,56 +92,60 @@ async function openPositionWithoutCounterparty() {
   const trader = accounts[1];
   const positionOwner = accounts[2];
   const loanOwner =  accounts[3];
-  const deposit =  new BigNumber('1098765932109876543');
-  const principal = new BigNumber('2387492837498237491');
+  const deposit =  new BigNumber('10000');
+  const principal = new BigNumber('5000');
   const nonce = new BigNumber('19238');
-  const callTimeLimit = BIGNUMBERS.ONE_DAY_IN_SECONDS;
-  const maxDuration = BIGNUMBERS.ONE_YEAR_IN_SECONDS;
-  const interestRate = new BigNumber('600000');
-  const interestPeriod = BIGNUMBERS.ONE_DAY_IN_SECONDS;
+  const callTimeLimit = new BigNumber('1000');
+  const maxDuration = new BigNumber('10000');
+  const interestRate = new BigNumber('6');
+  const interestPeriod = new BigNumber('1000');
 
 
-  //issue and set allowances of the tokens
+  // issue and set allowances of the tokens
   await issueAndSetAllowance(
-      HeldToken,
+      HeldToken.address,
       trader,
       deposit,
       dydx.contracts.proxy.address);
-
-//get the starting balances
-  const startingBalances = await getBalances(HeldToken, trader);
-
-
+//
+// //get the starting balances
+  const startingBalances = await getBalances(HeldToken.address, trader);
+  console.log(startingBalances);
+//
   let openedPosition;
   let myPos;
-
+//
+//
+//
   openedPosition = await dydx.margin.openWithoutCounterparty(
       trader,
-      loanOwner,
       positionOwner,
-      OwedToken,
-      HeldToken,
+      loanOwner,
+      OwedToken.address,
+      HeldToken.address,
       nonce,
       deposit,
       principal,
       callTimeLimit,
       maxDuration,
       interestRate,
-      interestPeriod);
-      console.log(openedPosition);
- //
- //    console.log(openedPosition);
- // const isThere = await dydx.margin.containsPosition(openedPosition.id);
- // console.log('Position has been stored', isThere);
+      interestPeriod );
+      // console.log(openedPosition);
+      // const isThere = await dydx.margin.containsPosition(openedPosition.id);
+      // console.log('Position has been stored', isThere);
+  console.log(openedPosition);
+
+
 }
 // unclear if i need this just yet
 async function issueAndSetAllowance(
-  token,
+  tokenAddress,
   account,
   amount,
   allowed
 ) {
-  const tokenInstance = contract.at(token);
+  console.log(allowed);
+  const tokenInstance = TestToken.at(tokenAddress);
   try{
   await Promise.all([
     tokenInstance.issueTo(account, amount),
@@ -145,7 +156,7 @@ async function issueAndSetAllowance(
 }
 
 async function getBalances(tokenAddress,trader ) {
-  const heldToken = contract.at(tokenAddress);
+  const heldToken = TestToken.at(tokenAddress);
   const [
     traderHeldToken,
     vaultHeldToken
