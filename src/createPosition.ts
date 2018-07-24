@@ -72,13 +72,13 @@ async function openPositionWithoutCounterparty() {
   const trader = accounts[1];
   const positionOwner = accounts[2];
   const loanOwner =  accounts[3];
-  const deposit =  new BigNumber('10000');
-  const principal = new BigNumber('5000');
-  const nonce = new BigNumber('19238');
-  const callTimeLimit = new BigNumber('1000');
-  const maxDuration = new BigNumber('10000');
-  const interestRate = new BigNumber('6');
-  const interestPeriod = new BigNumber('1000');
+  const deposit =  new BigNumber('1098765932109876543');
+  const principal = new BigNumber('2387492837498237491');
+  const nonce = new BigNumber('19239');
+  const callTimeLimit = BIGNUMBERS.ONE_DAY_IN_SECONDS;
+  const maxDuration = BIGNUMBERS.ONE_YEAR_IN_SECONDS;
+  const interestRate = new BigNumber('1');
+  const interestPeriod = BIGNUMBERS.ONE_DAY_IN_SECONDS;
 
 
 
@@ -88,12 +88,11 @@ async function openPositionWithoutCounterparty() {
       trader,
       deposit,
       dydx.contracts.proxy.address);
+
   const startBalances = await getBalances(HeldToken.address,trader);
   console.log(startBalances);
 //
 // //get the starting balances
-
-//
   let openedPosition;
   let myPos;
 
@@ -102,22 +101,23 @@ async function openPositionWithoutCounterparty() {
       trader,
       positionOwner,
       loanOwner,
-      OwedToken.address,
-      HeldToken.address,
+      OwedToken,
+      HeldToken,
       nonce,
       deposit,
       principal,
       callTimeLimit,
       maxDuration,
       interestRate,
-      interestPeriod);
+      interestPeriod,
+      { gas: 1000000 }
+  );
       console.log(openedPosition);
-  const isThere = await dydx.margin.containsPosition(openedPosition.id);
-  console.log('Position has been stored', isThere);
-   const endingBalances = await getBalances(HeldToken.address, trader);
-    console.log(endingBalances);
-
-
+      console.log(openedPosition.receipt.logs);
+ //
+ //    console.log(openedPosition);
+ // const isThere = await dydx.margin.containsPosition(openedPosition.id);
+ // console.log('Position has been stored', isThere);
 }
 // unclear if i need this just yet
 async function issueAndSetAllowance(

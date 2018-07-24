@@ -1,17 +1,24 @@
 import {
+    Margin as MarginContract,
+    Proxy as ProxyContract,
+    ERC20ShortCreator as ERC20ShortCreatorContract,
+    ERC20LongCreator as ERC20LongCreatorContract,
+    SharedLoanCreator as SharedLoanCreatorContract,
+    TestToken as TestTokenContract,
+} from '@dydxprotocol/protocol';
 import contract from 'truffle-contract';
 import { setupContract } from './Helpers';
-
 import { Vault as VaultContract } from '@dydxprotocol/protocol';
 
-const Margin = contract(MarginContract);
-const Proxy = contract(ProxyContract);
-const ERC20ShortCreator = contract(ERC20ShortCreatorContract);
-const ERC20LongCreator = contract(ERC20LongCreatorContract);
-const SharedLoanCreator = contract(SharedLoanCreatorContract);
-const Vault = contract(VaultContract);
-
 export class Contracts {
+    public Margin = contract(MarginContract);
+    public Proxy = contract(ProxyContract);
+    public ERC20ShortCreator = contract(ERC20ShortCreatorContract);
+    public ERC20LongCreator = contract(ERC20LongCreatorContract);
+    public SharedLoanCreator = contract(SharedLoanCreatorContract);
+    public Vault = contract(VaultContract);
+    public TestToken = contract(TestTokenContract);
+
     public margin;
     public proxy;
     public erc20ShortCreator;
@@ -37,12 +44,13 @@ export class Contracts {
         provider: any,
         networkId: number
     ) {
-        setupContract(Margin, provider, networkId);
-        setupContract(Proxy, provider, networkId);
-        setupContract(ERC20ShortCreator, provider, networkId);
-        setupContract(ERC20LongCreator, provider, networkId);
-        setupContract(SharedLoanCreator, provider, networkId);
-        setupContract(Vault,provider,networkId);
+        setupContract(this.Margin, provider, networkId);
+        setupContract(this.Proxy, provider, networkId);
+        setupContract(this.ERC20ShortCreator, provider, networkId);
+        setupContract(this.ERC20LongCreator, provider, networkId);
+        setupContract(this.SharedLoanCreator, provider, networkId);
+        setupContract(this.Vault, provider, networkId);
+        setupContract(this.TestToken, provider, networkId);
 
         const [
             margin,
@@ -52,12 +60,12 @@ export class Contracts {
             sharedLoanCreator,
             vault
         ] = await Promise.all([
-            Margin.deployed(),
-            Proxy.deployed(),
-            ERC20ShortCreator.deployed(),
-            ERC20LongCreator.deployed(),
-            SharedLoanCreator.deployed(),
-            Vault.deployed()
+            this.Margin.deployed(),
+            this.Proxy.deployed(),
+            this.ERC20ShortCreator.deployed(),
+            this.ERC20LongCreator.deployed(),
+            this.SharedLoanCreator.deployed(),
+            this.Vault.deployed()
         ]);
 
         this.margin = margin;
