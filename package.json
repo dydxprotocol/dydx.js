@@ -9,7 +9,8 @@
     "src/"
   ],
   "scripts": {
-    "test": "ts-node src/createPosition.ts",
+    "fakeTest": "ts-node src/createPosition",
+    "test": "jest",
     "build": "tsc",
     "start": "node dist/js/index.js",
     "debug": "truffle debug",
@@ -44,6 +45,7 @@
     "chai": "^4.1.2",
     "ethjs-util": "^0.1.6",
     "jest": "^23.4.1",
+    "ts-jest": "^23.0.1",
     "ts-node": "^7.0.0",
     "typescript": "^2.8.3",
     "web3": "^0.20.6",

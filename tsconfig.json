@@ -15,7 +15,8 @@
     "types": ["node"],
   },
   "include": [
-    "src"
+    "src",
+    "__tests__"
   ],
   "compileOnSave": true
 }
