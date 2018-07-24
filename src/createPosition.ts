@@ -36,10 +36,7 @@ TestToken.defaults({
 });
 
 
-const abi = TestTokenContract.abi;
-const bytecode = TestTokenContract.bytecode;
-// Contract object
-const tcontract = web3.eth.contract(abi);
+
 let dydx = null;
 function setDYDXProvider(provider) {
   if (dydx == null) {
@@ -50,23 +47,6 @@ function setDYDXProvider(provider) {
 }
 
 
-//Deploy ERC20
-function deployERC20() {
-  return new Promise((resolve, reject) => {
-    const HeldTokenInstance = tcontract.new({
-      data: '0x' + bytecode,
-      from: web3.eth.coinbase,
-      gas: 1000000
-    },(err,res) => {
-      console.log("hi");
-      if(err) reject(err);
-
-      if(res.address) {
-        resolve(res.address);
-      }
-    })
-  })
-}
 
 function getAccounts() {
   return new Promise((resolve,reject)=>{
@@ -84,7 +64,7 @@ async function openPositionWithoutCounterparty() {
   const HeldToken = await TestToken.new();
   const OwedToken = await TestToken.new();
   const accounts = await getAccounts();
-  console.log(HeldToken, OwedToken);
+  console.log(HeldToken.address, OwedToken.address);
 
   //console.log(dydx.contracts.proxy.address);
   //console.log(accounts);
@@ -101,22 +81,23 @@ async function openPositionWithoutCounterparty() {
   const interestPeriod = new BigNumber('1000');
 
 
+
   // issue and set allowances of the tokens
   await issueAndSetAllowance(
       HeldToken.address,
       trader,
       deposit,
       dydx.contracts.proxy.address);
+  const startBalances = await getBalances(HeldToken.address,trader);
+  console.log(startBalances);
 //
 // //get the starting balances
-  const startingBalances = await getBalances(HeldToken.address, trader);
-  console.log(startingBalances);
+
 //
   let openedPosition;
   let myPos;
-//
-//
-//
+
+
   openedPosition = await dydx.margin.openWithoutCounterparty(
       trader,
       positionOwner,
@@ -129,11 +110,12 @@ async function openPositionWithoutCounterparty() {
       callTimeLimit,
       maxDuration,
       interestRate,
-      interestPeriod );
-      // console.log(openedPosition);
-      // const isThere = await dydx.margin.containsPosition(openedPosition.id);
-      // console.log('Position has been stored', isThere);
-  console.log(openedPosition);
+      interestPeriod);
+      console.log(openedPosition);
+  const isThere = await dydx.margin.containsPosition(openedPosition.id);
+  console.log('Position has been stored', isThere);
+   const endingBalances = await getBalances(HeldToken.address, trader);
+    console.log(endingBalances);
 
 
 }
@@ -144,7 +126,6 @@ async function issueAndSetAllowance(
   amount,
   allowed
 ) {
-  console.log(allowed);
   const tokenInstance = TestToken.at(tokenAddress);
   try{
   await Promise.all([
