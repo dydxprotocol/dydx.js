@@ -1,8 +1,4 @@
-import { Margin as MarginContract } from '@dydxprotocol/protocol';
-import { Proxy as ProxyContract } from '@dydxprotocol/protocol';
-import { ERC20ShortCreator as ERC20ShortCreatorContract } from '@dydxprotocol/protocol';
-import { ERC20LongCreator as ERC20LongCreatorContract } from '@dydxprotocol/protocol';
-import { SharedLoanCreator as SharedLoanCreatorContract } from '@dydxprotocol/protocol';
+import {
 import contract from 'truffle-contract';
 import { setupContract } from './Helpers';
 
