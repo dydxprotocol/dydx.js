@@ -6,9 +6,10 @@ declare var beforeAll: any;
 const chai = require('chai');
 const expect = chai.expect;
 const WEB3 = require('web3');
-import bignumberJs from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 chai.use(require('chai-bignumber')());
 import { dydx, setDYDXProvider } from './helpers/DYDX';
+import { deployERC20 } from './helpers/TokenHelper';
 import { BIGNUMBERS, ADDRESSES } from './helpers/Constants';
 import bluebird from 'bluebird';
 const web3utils = require('web3-utils');
@@ -84,7 +85,7 @@ describe('#openWithoutCounterparty', () => {
         openTx.owedToken,
         openTx.positionOwner,
         openTx.principal.times(2),
-        dydx.contracts.proxy.address,
+        dydx.contracts.PROXY.address,
       );
 
     await dydx.margin.closePositionDirectly(
@@ -221,17 +222,17 @@ async function getBalances(openTx) {
      vaultHeldToken,
    ] = await Promise.all([
      heldToken.balanceOf.call(openTx.trader),
-     heldToken.balanceOf.call(dydx.contracts.vault.address),
+     heldToken.balanceOf.call(dydx.contracts.VAULT.address),
    ]);
 
   return { traderHeldToken, vaultHeldToken };
 }
 
  // Deploy ERC20
-async function deployERC20(accounts) {
-  const token = await dydx.contracts.TestToken.new({ from: accounts[0], gas: 4712388 });
-  return token.address;
-}
+// async function deployERC20(accounts) {
+//   const token = await dydx.contracts.TestToken.new({ from: accounts[0], gas: 4712388 });
+//   return token.address;
+// }
 
 async function setup(accounts) {
   const trader = accounts[1];
@@ -255,7 +256,7 @@ async function setup(accounts) {
       heldToken,
       trader,
       deposit,
-      dydx.contracts.proxy.address);
+      dydx.contracts.PROXY.address);
 
   return {
     trader,
@@ -304,5 +305,5 @@ async function validate(openTx, tx, startingBalances) {
 
 function setupDYDX(provider) {
   setDYDXProvider(web3.currentProvider);
-  testTokenContract = web3.eth.contract(dydx.contracts.TestToken.abi);
+  testTokenContract = web3.eth.contract(dydx.contracts.TESTTOKEN.abi);
 }

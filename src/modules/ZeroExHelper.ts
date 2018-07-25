@@ -4,8 +4,8 @@ export class ZeroExHelper {
   constructor() {}
 
   private toBytes(val) {
-    return Web3Utils.hexToBytes(
-        Web3Utils.padLeft(Web3Utils.toHex(val), 64),
+    return web3Utils.hexToBytes(
+        web3Utils.padLeft(web3Utils.toHex(val), 64),
       );
   }
 
@@ -22,6 +22,6 @@ export class ZeroExHelper {
         .concat(this.toBytes(order.ecSignature.v))
         .concat(this.toBytes(order.ecSignature.r))
         .concat(this.toBytes(order.ecSignature.s));
-    return Web3Utils.bytesToHex(v);
+    return web3Utils.bytesToHex(v);
   }
 }

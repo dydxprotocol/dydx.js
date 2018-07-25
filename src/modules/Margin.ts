@@ -31,7 +31,7 @@ export class Margin {
         orderData: string,
         options: object = {},
     ): Promise<object> {
-    const positionId = Web3Utils.soliditySha3(
+    const positionId = web3Utils.soliditySha3(
             trader,
             nonce,
         );
@@ -109,7 +109,7 @@ export class Margin {
         options: object = {},
     ): Promise<object> {
 
-    const positionId = Web3Utils.soliditySha3(
+    const positionId = web3Utils.soliditySha3(
             trader,
             nonce,
         );
@@ -507,7 +507,7 @@ export class Margin {
       callTimestamp,
       maxDuration,
       interestRate: adjustedInterestRate,
-      interestPeriod: interstPeriod,
+      interestPeriod: interestPeriod,
     };
   }
 

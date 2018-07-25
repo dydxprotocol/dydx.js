@@ -11,5 +11,4 @@ export function setDYDXProvider(provider) {
   } else {
     dydx.setProvider(provider);
   }
-  // TestTokenContract = web3.eth.contract(dydx.contracts.TestToken.abi);
 }

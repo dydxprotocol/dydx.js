@@ -11,13 +11,13 @@ import truffleContract from 'truffle-contract';
 import { setupContract } from './Helpers';
 
 export class Contracts {
-  public MARGIN = contract(MarginContract);
-  public PROXY = contract(ProxyContract);
-  public ERC20SHORTCREATOR = contract(ERC20ShortCreatorContract);
-  public ERC20LONGCREATOR = contract(ERC20LongCreatorContract);
-  public SHAREDLONGCREATOR = contract(SharedLoanCreatorContract);
-  public VAULT = contract(VaultContract);
-  public TESTTOKEN = contract(TestTokenContract);
+  public MARGIN = truffleContract(MarginContract);
+  public PROXY = truffleContract(ProxyContract);
+  public ERC20SHORTCREATOR = truffleContract(ERC20ShortCreatorContract);
+  public ERC20LONGCREATOR = truffleContract(ERC20LongCreatorContract);
+  public SHAREDLOANCREATOR = truffleContract(SharedLoanCreatorContract);
+  public VAULT = truffleContract(VaultContract);
+  public TESTTOKEN = truffleContract(TestTokenContract);
 
   public margin;
   public proxy;
@@ -46,8 +46,8 @@ export class Contracts {
     ) {
     setupContract(this.MARGIN, provider, networkId);
     setupContract(this.PROXY, provider, networkId);
-    setupContract(this.ERC20ERC20SHORTCREATOR, provider, networkId);
-    setupContract(this.ERC20ERC20LONGCREATOR, provider, networkId);
+    setupContract(this.ERC20SHORTCREATOR, provider, networkId);
+    setupContract(this.ERC20LONGCREATOR, provider, networkId);
     setupContract(this.SHAREDLOANCREATOR, provider, networkId);
     setupContract(this.VAULT, provider, networkId);
     setupContract(this.TESTTOKEN, provider, networkId);

@@ -16,6 +16,6 @@ setDYDXProvider(web3Instance.currentProvider);
 
 // Deploy ERC20
 export async function deployERC20(accounts) {
-  const token = await dydx.contracts.TestToken.new({ from: accounts[0], gas: 4712388 });
+  const token = await dydx.contracts.TESTTOKEN.new({ from: accounts[0], gas: 4712388 });
   return token.address;
 }

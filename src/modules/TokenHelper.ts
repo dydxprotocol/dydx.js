@@ -1,11 +1,11 @@
 import { Contracts } from '../lib/Contracts';
-import bignumberJs from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import { ERC20 } from '@dydxprotocol/protocol';
 import truffleContract from 'truffle-contract';
 import { BIGNUMBERS } from '../lib/Constants';
 import { setupContract } from '../lib/Helpers';
 
-const TOKEN = contract(ERC20);
+const TOKEN = truffleContract(ERC20);
 
 export class TokenHelper {
   private contracts: Contracts;
@@ -15,7 +15,7 @@ export class TokenHelper {
         networkId: number,
         contracts: Contracts,
     ) {
-    setupContract(Token, provider, networkId);
+    setupContract(TOKEN, provider, networkId);
 
     this.contracts = contracts;
   }
@@ -151,13 +151,13 @@ export class TokenHelper {
   }
 
   public setProvider(provider, networkId: number) {
-    setupContract(Token, provider, networkId);
+    setupContract(TOKEN, provider, networkId);
   }
 
   private getToken(
         tokenAddress: string,
     ): Promise<any> {
 
-    return Token.at(tokenAddress);
+    return TOKEN.at(tokenAddress);
   }
 }

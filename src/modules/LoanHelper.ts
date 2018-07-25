@@ -1,7 +1,7 @@
 import { LoanOffering, SignedLoanOffering, Signature } from '../types';
-import ethereumjsUtil from 'ethereumjs-util';
+import ethUtil from 'ethereumjs-util';
 import { Contracts } from '../lib/Contracts';
-import ethjs from 'ethjs';
+import ethJs from 'ethjs';
 import web3Utils from 'web3-utils';
 import bluebird from 'bluebird';
 
@@ -14,7 +14,7 @@ export class LoanHelper {
         currentProvider,
         contracts: Contracts,
     ) {
-    this.eth = new Eth(currentProvider);
+    this.eth = new ethJs(currentProvider);
     bluebird.promisifyAll(this.eth);
     this.contracts = contracts;
   }
@@ -37,7 +37,7 @@ export class LoanHelper {
   }
 
   public getLoanOfferingHash(loanOffering: LoanOffering): string {
-    const valuesHash = Web3Utils.soliditySha3(
+    const valuesHash = web3Utils.soliditySha3(
             loanOffering.maxAmount,
             loanOffering.minAmount,
             loanOffering.minHeldToken,
@@ -50,7 +50,7 @@ export class LoanHelper {
             { type: 'uint32', value: loanOffering.interestRate },
             { type: 'uint32', value: loanOffering.interestPeriod },
         );
-    return Web3Utils.soliditySha3(
+    return web3Utils.soliditySha3(
             this.contracts.margin.address,
             loanOffering.owedToken,
             loanOffering.heldToken,
@@ -66,7 +66,7 @@ export class LoanHelper {
   }
 
   public setProvider(currentProvider) {
-    this.eth = new Eth(currentProvider);
+    this.eth = new ethJs(currentProvider);
     bluebird.promisifyAll(this.eth);
   }
 }

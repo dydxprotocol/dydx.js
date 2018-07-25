@@ -1,4 +1,4 @@
-import bignumberJs from 'bignumber.js';
+import  BigNumber  from 'bignumber.js';
 
 export const ADDRESSES = {
   ZERO: '0x0000000000000000000000000000000000000000',
