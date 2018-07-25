@@ -1,163 +1,163 @@
 import { Contracts } from '../lib/Contracts';
-import BigNumber from 'bignumber.js';
+import bignumberJs from 'bignumber.js';
 import { ERC20 } from '@dydxprotocol/protocol';
-import contract from 'truffle-contract';
+import truffleContract from 'truffle-contract';
 import { BIGNUMBERS } from '../lib/Constants';
 import { setupContract } from '../lib/Helpers';
 
-const Token = contract(ERC20);
+const TOKEN = contract(ERC20);
 
 export class TokenHelper {
-    private contracts: Contracts;
+  private contracts: Contracts;
 
-    constructor(
+  constructor(
         provider,
         networkId: number,
-        contracts: Contracts
+        contracts: Contracts,
     ) {
-        setupContract(Token, provider, networkId);
+    setupContract(Token, provider, networkId);
 
-        this.contracts = contracts;
-    }
+    this.contracts = contracts;
+  }
 
-    public async getAllowance(
+  public async getAllowance(
         tokenAddress: string,
         ownerAddress: string,
-        spenderAddress: string
+        spenderAddress: string,
     ): Promise<BigNumber> {
-        const token = await this.getToken(tokenAddress);
+    const token = await this.getToken(tokenAddress);
 
-        return token.allowance.call(ownerAddress, spenderAddress);
-    }
+    return token.allowance.call(ownerAddress, spenderAddress);
+  }
 
-    public async getBalance(
+  public async getBalance(
         tokenAddress: string,
-        ownerAddress: string
+        ownerAddress: string,
     ): Promise<BigNumber> {
-        const token = await this.getToken(tokenAddress);
+    const token = await this.getToken(tokenAddress);
 
-        return token.balanceOf.call(ownerAddress);
-    }
+    return token.balanceOf.call(ownerAddress);
+  }
 
-    public async getProxyAllowance(
+  public async getProxyAllowance(
         tokenAddress: string,
-        ownerAddress: string
+        ownerAddress: string,
     ): Promise<BigNumber> {
-        return this.getAllowance(
+    return this.getAllowance(
             tokenAddress,
             ownerAddress,
-            this.contracts.proxy.address
+            this.contracts.proxy.address,
         );
-    }
+  }
 
-    public async setAllowance(
+  public async setAllowance(
         tokenAddress: string,
         ownerAddress: string,
         spenderAddress: string,
         amount: BigNumber,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        const token = await this.getToken(tokenAddress);
+    const token = await this.getToken(tokenAddress);
 
-        return token.approve(spenderAddress, amount, {...options, from: ownerAddress });
-    }
+    return token.approve(spenderAddress, amount, { ...options, from: ownerAddress });
+  }
 
-    public async setProxyAllowance(
+  public async setProxyAllowance(
         tokenAddress: string,
         ownerAddress: string,
         amount: BigNumber,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.setAllowance(
+    return this.setAllowance(
             tokenAddress,
             ownerAddress,
             this.contracts.proxy.address,
             amount,
-            options
+            options,
         );
-    }
+  }
 
-    public async setMaximumAllowance(
+  public async setMaximumAllowance(
         tokenAddress: string,
         ownerAddress: string,
         spenderAddress: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.setAllowance(
+    return this.setAllowance(
             tokenAddress,
             ownerAddress,
             spenderAddress,
             BIGNUMBERS.ONES_255,
-            options
+            options,
         );
-    }
+  }
 
-    public async setMaximumProxyAllowance(
+  public async setMaximumProxyAllowance(
         tokenAddress: string,
         ownerAddress: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.setAllowance(
+    return this.setAllowance(
             tokenAddress,
             ownerAddress,
             this.contracts.proxy.address,
             BIGNUMBERS.ONES_255,
-            options
+            options,
         );
-    }
+  }
 
-    public async unsetProxyAllowance(
+  public async unsetProxyAllowance(
         tokenAddress: string,
         ownerAddress: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.setAllowance(
+    return this.setAllowance(
             tokenAddress,
             ownerAddress,
             this.contracts.proxy.address,
             BIGNUMBERS.ZERO,
-            options
+            options,
         );
-    }
+  }
 
-    public async transfer(
+  public async transfer(
         tokenAddress: string,
         fromAddress: string,
         toAddress: string,
         amount: BigNumber,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        const token = await this.getToken(tokenAddress);
+    const token = await this.getToken(tokenAddress);
 
-        return token.transfer(toAddress, amount, {...options, from: fromAddress });
-    }
+    return token.transfer(toAddress, amount, { ...options, from: fromAddress });
+  }
 
-    public async transferFrom(
+  public async transferFrom(
         tokenAddress: string,
         fromAddress: string,
         toAddress: string,
         senderAddress: string,
         amount: BigNumber,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        const token = await this.getToken(tokenAddress);
+    const token = await this.getToken(tokenAddress);
 
-        return token.transferFrom(
+    return token.transferFrom(
             fromAddress,
             toAddress,
             amount,
-            {...options, from: senderAddress }
+            { ...options, from: senderAddress },
         );
-    }
+  }
 
-    public setProvider(provider, networkId: number) {
-        setupContract(Token, provider, networkId);
-    }
+  public setProvider(provider, networkId: number) {
+    setupContract(Token, provider, networkId);
+  }
 
-    private getToken(
-        tokenAddress: string
+  private getToken(
+        tokenAddress: string,
     ): Promise<any> {
 
-        return Token.at(tokenAddress);
-    }
+    return Token.at(tokenAddress);
+  }
 }

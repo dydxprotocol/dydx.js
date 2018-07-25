@@ -1,16 +1,16 @@
-import Web3Utils from 'web3-utils';
+import web3Utils from 'web3-utils';
 
 export class ZeroExHelper {
-    constructor() {}
+  constructor() {}
 
-    private toBytes(val) {
-      return Web3Utils.hexToBytes(
-        Web3Utils.padLeft(Web3Utils.toHex(val), 64)
+  private toBytes(val) {
+    return Web3Utils.hexToBytes(
+        Web3Utils.padLeft(Web3Utils.toHex(val), 64),
       );
-    }
+  }
 
-    public orderToBytes(order) {
-      const v = [].concat(this.toBytes(order.maker))
+  public orderToBytes(order) {
+    const v = [].concat(this.toBytes(order.maker))
         .concat(this.toBytes(order.taker))
         .concat(this.toBytes(order.feeRecipient))
         .concat(this.toBytes(order.makerTokenAmount))
@@ -22,6 +22,6 @@ export class ZeroExHelper {
         .concat(this.toBytes(order.ecSignature.v))
         .concat(this.toBytes(order.ecSignature.r))
         .concat(this.toBytes(order.ecSignature.s));
-      return Web3Utils.bytesToHex(v);
-    }
+    return Web3Utils.bytesToHex(v);
+  }
 }

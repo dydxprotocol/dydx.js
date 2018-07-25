@@ -1,7 +1,7 @@
 import { DYDX } from '../../src/DYDX';
 import bluebird from 'bluebird';
 const web3utils = require('web3-utils');
-const fs =require('fs');
+const fs = require('fs');
 // const solc = require('solc');
 export let dydx = null;
 

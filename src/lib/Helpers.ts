@@ -1,8 +1,8 @@
 export function setupContract(
     contract,
     provider,
-    networkId: number
+    networkId: number,
 ) {
-    contract.setProvider(provider);
-    contract.setNetwork(networkId);
+  contract.setProvider(provider);
+  contract.setNetwork(networkId);
 }

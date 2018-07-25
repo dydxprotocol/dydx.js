@@ -21,18 +21,18 @@ async function expectAssertFailure(promise) {
 }
 
 // Helper function
-function assertCertainError(error, expected_error_msg) {
+function assertCertainError(ERROR, EXPECTED_ERROR_MSG) {
   // This complication is so that the actual error will appear in truffle test output
-  const message = error.message;
-  const matchedIndex = message.search(expected_error_msg);
+  const message = ERROR.message;
+  const matchedIndex = message.search(EXPECTED_ERROR_MSG);
   let matchedString = message;
   if (matchedIndex >= 0) {
-    matchedString = message.substring(matchedIndex, matchedIndex + expected_error_msg.length);
+    matchedString = message.substring(matchedIndex, matchedIndex + EXPECTED_ERROR_MSG.length);
   }
-  expect(matchedString).to.equal(expected_error_msg);
+  expect(matchedString).to.equal(EXPECTED_ERROR_MSG);
 }
 
 module.exports = {
   expectThrow,
-  expectAssertFailure
+  expectAssertFailure,
 };

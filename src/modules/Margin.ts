@@ -1,25 +1,25 @@
 import { LoanOffering, SignedLoanOffering, Position } from '../types';
 import { ExchangeWrapper } from './ExchangeWrapper';
 import bluebird from 'bluebird';
-import ethUtil from 'ethereumjs-util';
+import ethereumjsUtil from 'ethereumjs-util';
 import { BigNumber } from 'bignumber.js';
 import { Margin as MarginContract } from '@dydxprotocol/protocol';
-import contract from 'truffle-contract';
+import truffleContract from 'truffle-contract';
 import { Contracts } from '../lib/Contracts';
-import Web3Utils from 'web3-utils';
+import web3Utils from 'web3-utils';
 
 export class Margin {
-    private contracts: Contracts;
+  private contracts: Contracts;
 
-    constructor(
-        contracts: Contracts
+  constructor(
+        contracts: Contracts,
     ) {
-        this.contracts = contracts;
-    }
+    this.contracts = contracts;
+  }
 
     // ============ Public State Changing Contract Functions ============
 
-    public async openPosition(
+  public async openPosition(
         loanOffering: SignedLoanOffering,
         trader: string,
         owner: string,
@@ -29,55 +29,55 @@ export class Margin {
         depositInHeldToken: boolean,
         exchangeWrapper: ExchangeWrapper,
         orderData: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        const positionId = Web3Utils.soliditySha3(
+    const positionId = Web3Utils.soliditySha3(
             trader,
-            nonce
+            nonce,
         );
 
-        const addresses = [
-            owner,
-            loanOffering.owedToken,
-            loanOffering.heldToken,
-            loanOffering.payer,
-            loanOffering.signer,
-            loanOffering.owner,
-            loanOffering.taker,
-            loanOffering.feeRecipient,
-            loanOffering.lenderFeeTokenAddress,
-            loanOffering.takerFeeTokenAddress,
-            exchangeWrapper.getAddress()
-        ];
+    const addresses = [
+      owner,
+      loanOffering.owedToken,
+      loanOffering.heldToken,
+      loanOffering.payer,
+      loanOffering.signer,
+      loanOffering.owner,
+      loanOffering.taker,
+      loanOffering.feeRecipient,
+      loanOffering.lenderFeeTokenAddress,
+      loanOffering.takerFeeTokenAddress,
+      exchangeWrapper.getAddress(),
+    ];
 
-        const values256 = [
-            loanOffering.maxAmount,
-            loanOffering.minAmount,
-            loanOffering.minHeldToken,
-            loanOffering.lenderFee,
-            loanOffering.takerFee,
-            loanOffering.expirationTimestamp,
-            loanOffering.salt,
-            principal,
-            depositAmount,
-            nonce
-        ];
+    const values256 = [
+      loanOffering.maxAmount,
+      loanOffering.minAmount,
+      loanOffering.minHeldToken,
+      loanOffering.lenderFee,
+      loanOffering.takerFee,
+      loanOffering.expirationTimestamp,
+      loanOffering.salt,
+      principal,
+      depositAmount,
+      nonce,
+    ];
 
-        const values32 = [
-            loanOffering.callTimeLimit,
-            loanOffering.maxDuration,
-            loanOffering.interestRate.times(new BigNumber(10).pow(6)).floor(),
-            loanOffering.interestPeriod
-        ];
+    const values32 = [
+      loanOffering.callTimeLimit,
+      loanOffering.maxDuration,
+      loanOffering.interestRate.times(new BigNumber(10).pow(6)).floor(),
+      loanOffering.interestPeriod,
+    ];
 
-        const sigV = loanOffering.signature.v;
+    const sigV = loanOffering.signature.v;
 
-        const sigRS = [
-            loanOffering.signature.r,
-            loanOffering.signature.s,
-        ];
+    const sigRS = [
+      loanOffering.signature.r,
+      loanOffering.signature.s,
+    ];
 
-        const response = await this.contracts.margin.openPosition(
+    const response = await this.contracts.margin.openPosition(
             addresses,
             values256,
             values32,
@@ -85,15 +85,15 @@ export class Margin {
             sigRS,
             depositInHeldToken,
             orderData,
-            {...options, from: trader }
+            { ...options, from: trader },
         );
 
-        response.id = positionId;
+    response.id = positionId;
 
-        return response;
-    }
+    return response;
+  }
 
-    public async openWithoutCounterparty(
+  public async openWithoutCounterparty(
         trader: string,
         positionOwner: string,
         loanOwner: string,
@@ -106,41 +106,41 @@ export class Margin {
         maxDuration: BigNumber,
         interestRate: BigNumber,
         interestPeriod: BigNumber,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
 
-        const positionId = Web3Utils.soliditySha3(
+    const positionId = Web3Utils.soliditySha3(
             trader,
-            nonce
+            nonce,
         );
 
-        const response = await this.contracts.margin.openWithoutCounterparty(
-            [
-                positionOwner,
-                owedToken,
-                heldToken,
-                loanOwner
-            ],
-            [
-                principal,
-                deposit,
-                nonce
-            ],
-            [
-                callTimeLimit,
-                maxDuration,
-                interestRate.times(new BigNumber(10).pow(6)).floor(),
-                interestPeriod
-            ],
-            { ...options, from: trader }
+    const response = await this.contracts.margin.openWithoutCounterparty(
+      [
+        positionOwner,
+        owedToken,
+        heldToken,
+        loanOwner,
+      ],
+      [
+        principal,
+        deposit,
+        nonce,
+      ],
+      [
+        callTimeLimit,
+        maxDuration,
+        interestRate.times(new BigNumber(10).pow(6)).floor(),
+        interestPeriod,
+      ],
+      { ...options, from: trader },
         );
 
-        response.id = positionId;
-        return response;
+    response.id = positionId;
+    return response;
 
-    }
+  }
 
-    public async createShortToken(
+  public async createShortToken(
         loanOffering: SignedLoanOffering,
         trader: string,
         principal: BigNumber,
@@ -149,9 +149,9 @@ export class Margin {
         depositInHeldToken: boolean,
         exchangeWrapper: ExchangeWrapper,
         orderData: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.openPosition(
+    return this.openPosition(
             loanOffering,
             trader,
             this.contracts.erc20ShortCreator.address,
@@ -161,11 +161,11 @@ export class Margin {
             depositInHeldToken,
             exchangeWrapper,
             orderData,
-            options
+            options,
         );
-    }
+  }
 
-    public async createShortTokenWithoutCounterparty(
+  public async createShortTokenWithoutCounterparty(
         trader: string,
         owedToken: string,
         heldToken: string,
@@ -176,9 +176,9 @@ export class Margin {
         maxDuration: BigNumber,
         interestRate: BigNumber,
         interestPeriod: BigNumber,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.openWithoutCounterparty(
+    return this.openWithoutCounterparty(
             trader,
             this.contracts.erc20ShortCreator.address,
             this.contracts.sharedLoanCreator.address,
@@ -191,11 +191,11 @@ export class Margin {
             maxDuration,
             interestRate,
             interestPeriod,
-            options
+            options,
         );
-    }
+  }
 
-    public async createLeveragedLongToken(
+  public async createLeveragedLongToken(
         loanOffering: SignedLoanOffering,
         trader: string,
         principal: BigNumber,
@@ -204,9 +204,9 @@ export class Margin {
         depositInHeldToken: boolean,
         exchangeWrapper: ExchangeWrapper,
         orderData: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.openPosition(
+    return this.openPosition(
             loanOffering,
             trader,
             this.contracts.erc20LongCreator.address,
@@ -216,11 +216,11 @@ export class Margin {
             depositInHeldToken,
             exchangeWrapper,
             orderData,
-            options
+            options,
         );
-    }
+  }
 
-    public async createLeveragedLongTokenWithoutCounterparty(
+  public async createLeveragedLongTokenWithoutCounterparty(
         trader: string,
         owedToken: string,
         heldToken: string,
@@ -231,9 +231,9 @@ export class Margin {
         maxDuration: BigNumber,
         interestRate: BigNumber,
         interestPeriod: BigNumber,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.openWithoutCounterparty(
+    return this.openWithoutCounterparty(
             trader,
             this.contracts.erc20LongCreator.address,
             this.contracts.sharedLoanCreator.address,
@@ -246,11 +246,11 @@ export class Margin {
             maxDuration,
             interestRate,
             interestPeriod,
-            options
+            options,
         );
-    }
+  }
 
-    public async increasePosition(
+  public async increasePosition(
         positionId: string,
         loanOffering: SignedLoanOffering,
         trader: string,
@@ -258,42 +258,42 @@ export class Margin {
         depositInHeldToken: boolean,
         exchangeWrapper: ExchangeWrapper,
         orderData: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        const addresses = [
-            loanOffering.payer,
-            loanOffering.signer,
-            loanOffering.taker,
-            loanOffering.feeRecipient,
-            loanOffering.lenderFeeTokenAddress,
-            loanOffering.takerFeeTokenAddress,
-            exchangeWrapper.getAddress()
-        ];
+    const addresses = [
+      loanOffering.payer,
+      loanOffering.signer,
+      loanOffering.taker,
+      loanOffering.feeRecipient,
+      loanOffering.lenderFeeTokenAddress,
+      loanOffering.takerFeeTokenAddress,
+      exchangeWrapper.getAddress(),
+    ];
 
-        const values256 = [
-            loanOffering.maxAmount,
-            loanOffering.minAmount,
-            loanOffering.minHeldToken,
-            loanOffering.lenderFee,
-            loanOffering.takerFee,
-            loanOffering.expirationTimestamp,
-            loanOffering.salt,
-            principal
-        ];
+    const values256 = [
+      loanOffering.maxAmount,
+      loanOffering.minAmount,
+      loanOffering.minHeldToken,
+      loanOffering.lenderFee,
+      loanOffering.takerFee,
+      loanOffering.expirationTimestamp,
+      loanOffering.salt,
+      principal,
+    ];
 
-        const values32 = [
-            loanOffering.callTimeLimit,
-            loanOffering.maxDuration
-        ];
+    const values32 = [
+      loanOffering.callTimeLimit,
+      loanOffering.maxDuration,
+    ];
 
-        const sigV = loanOffering.signature.v;
+    const sigV = loanOffering.signature.v;
 
-        const sigRS = [
-            loanOffering.signature.r,
-            loanOffering.signature.s,
-        ];
+    const sigRS = [
+      loanOffering.signature.r,
+      loanOffering.signature.s,
+    ];
 
-        return this.contracts.margin.increasePosition(
+    return this.contracts.margin.increasePosition(
             positionId,
             addresses,
             values256,
@@ -302,11 +302,11 @@ export class Margin {
             sigRS,
             depositInHeldToken,
             orderData,
-            {...options, from: trader }
+            { ...options, from: trader },
         );
-    }
+  }
 
-    public async closePosition(
+  public async closePosition(
         positionId: string,
         closer: string,
         payoutRecipient: string,
@@ -314,172 +314,172 @@ export class Margin {
         payoutInHeldToken: boolean,
         exchangeWrapper: ExchangeWrapper,
         orderData: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.contracts.margin.closePosition(
+    return this.contracts.margin.closePosition(
             positionId,
             closeAmount,
             payoutRecipient,
             exchangeWrapper.getAddress(),
             payoutInHeldToken,
             orderData,
-            {...options, from: closer }
+            { ...options, from: closer },
         );
-    }
+  }
 
-    public async closePositionDirectly(
+  public async closePositionDirectly(
         positionId: string,
         closer: string,
         payoutRecipient: string,
         closeAmount: BigNumber,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.contracts.margin.closePositionDirectly(
+    return this.contracts.margin.closePositionDirectly(
             positionId,
             closeAmount,
             payoutRecipient,
-            {...options, from: closer }
+            { ...options, from: closer },
         );
-    }
+  }
 
-    public async closePositionWithoutCounterparty(
+  public async closePositionWithoutCounterparty(
         positionId: string,
         closer: string,
         payoutRecipient: string,
         closeAmount: BigNumber,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.contracts.margin.closeWithoutCounterparty(
+    return this.contracts.margin.closeWithoutCounterparty(
             positionId,
             closeAmount,
             payoutRecipient,
-            {...options, from: closer }
+            { ...options, from: closer },
         );
-    }
+  }
 
-    public async cancelLoanOffer(
+  public async cancelLoanOffer(
         loanOffering: LoanOffering,
         cancelAmount: BigNumber,
         from: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        const { addresses, values256, values32 } = this.formatLoanOffering(loanOffering);
+    const { addresses, values256, values32 } = this.formatLoanOffering(loanOffering);
 
-        return this.contracts.margin.cancelLoanOffering(
+    return this.contracts.margin.cancelLoanOffering(
             addresses,
             values256,
             values32,
             cancelAmount,
-            {...options, from }
+            { ...options, from },
         );
-    }
+  }
 
-    public async approveLoanOffering(
+  public async approveLoanOffering(
         loanOffering: LoanOffering,
         from: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        const { addresses, values256, values32 } = this.formatLoanOffering(loanOffering);
+    const { addresses, values256, values32 } = this.formatLoanOffering(loanOffering);
 
-        return this.contracts.margin.approveLoanOffering(
+    return this.contracts.margin.approveLoanOffering(
             addresses,
             values256,
             values32,
-            {...options, from }
+            { ...options, from },
         );
-    }
+  }
 
-    public async marginCall(
+  public async marginCall(
         positionId: string,
         requiredDeposit: BigNumber,
         from: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.contracts.margin.marginCall(
+    return this.contracts.margin.marginCall(
             positionId,
             requiredDeposit,
-            {...options, from }
+            { ...options, from },
         );
-    }
+  }
 
-    public async cancelMarginCall(
+  public async cancelMarginCall(
         positionId: string,
         from: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.contracts.margin.cancelMarginCall(
+    return this.contracts.margin.cancelMarginCall(
             positionId,
-            {...options, from }
+            { ...options, from },
         );
-    }
+  }
 
-    public async forceRecoverCollateral(
+  public async forceRecoverCollateral(
         positionId: string,
         collateralRecipient: string,
         from: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.contracts.margin.forceRecoverCollateral(
+    return this.contracts.margin.forceRecoverCollateral(
             positionId,
             collateralRecipient,
-            {...options, from }
+            { ...options, from },
         );
-    }
+  }
 
-    public async depositCollateral(
+  public async depositCollateral(
         positionId: string,
         depositAmount: BigNumber,
         from: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.contracts.margin.forceRecoverCollateral(
+    return this.contracts.margin.forceRecoverCollateral(
             positionId,
             depositAmount,
-            {...options, from }
+            { ...options, from },
         );
-    }
+  }
 
-    public async transferLoan(
+  public async transferLoan(
         positionId: string,
         to: string,
         from: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.contracts.margin.transferLoan(
+    return this.contracts.margin.transferLoan(
             positionId,
             to,
-            {...options, from }
+            { ...options, from },
         );
-    }
+  }
 
-    public async transferPosition(
+  public async transferPosition(
         positionId: string,
         to: string,
         from: string,
-        options: object = {}
+        options: object = {},
     ): Promise<object> {
-        return this.contracts.margin.transferPosition(
+    return this.contracts.margin.transferPosition(
             positionId,
             to,
-            {...options, from }
+            { ...options, from },
         );
-    }
+  }
 
     // ============ Public Constant Contract Functions ============
 
-    public async getPosition(
-        positionId: string
+  public async getPosition(
+        positionId: string,
     ): Promise<Position> {
-        const [
+    const [
             [
                 owedToken,
                 heldToken,
                 lender,
-                owner
+                owner,
             ],
             [
                 principal,
-                requiredDeposit
+                requiredDeposit,
             ],
             [
                 callTimeLimit,
@@ -487,170 +487,170 @@ export class Margin {
                 callTimestamp,
                 maxDuration,
                 interestRate,
-                interestPeriod
-            ]
+                interestPeriod,
+            ],
         ]: [string[], BigNumber[], BigNumber[]] = await this.contracts.margin.getPosition.call(
-            positionId
+            positionId,
         );
 
-         const adjustedInterestRate = interestRate.div(new BigNumber(10).pow(6));
+    const adjustedInterestRate = interestRate.div(new BigNumber(10).pow(6));
 
-        return {
-            owedToken,
-            heldToken,
-            lender,
-            owner,
-            principal,
-            requiredDeposit,
-            callTimeLimit,
-            startTimestamp,
-            callTimestamp,
-            maxDuration,
-            interestRate: adjustedInterestRate,
-            interestPeriod
-        };
-    }
+    return {
+      owedToken,
+      heldToken,
+      lender,
+      owner,
+      principal,
+      requiredDeposit,
+      callTimeLimit,
+      startTimestamp,
+      callTimestamp,
+      maxDuration,
+      interestRate: adjustedInterestRate,
+      interestPeriod: interstPeriod,
+    };
+  }
 
-    public async containsPosition(
-        positionId: string
+  public async containsPosition(
+        positionId: string,
     ): Promise<boolean> {
-        return this.contracts.margin.containsPosition.call(positionId);
-    }
+    return this.contracts.margin.containsPosition.call(positionId);
+  }
 
-    public async isPositionCalled(
-        positionId: string
+  public async isPositionCalled(
+        positionId: string,
     ): Promise<boolean> {
-        return this.contracts.margin.isPositionCalled.call(positionId);
-    }
+    return this.contracts.margin.isPositionCalled.call(positionId);
+  }
 
-    public async isPositionClosed(
-        positionId: string
+  public async isPositionClosed(
+        positionId: string,
     ): Promise<boolean> {
-        return this.contracts.margin.isPositionClosed.call(positionId);
-    }
+    return this.contracts.margin.isPositionClosed.call(positionId);
+  }
 
-    public async getTotalOwedTokenRepaidToLender(
-        positionId: string
+  public async getTotalOwedTokenRepaidToLender(
+        positionId: string,
     ): Promise<BigNumber> {
-        return this.contracts.margin.getTotalOwedTokenRepaidToLender.call(positionId);
-    }
+    return this.contracts.margin.getTotalOwedTokenRepaidToLender.call(positionId);
+  }
 
-    public async getPositionBalance(
-        positionId: string
+  public async getPositionBalance(
+        positionId: string,
     ): Promise<BigNumber> {
-        return this.contracts.margin.getPositionBalance.call(positionId);
-    }
+    return this.contracts.margin.getPositionBalance.call(positionId);
+  }
 
-    public async getTimeUntilInterestIncrease(
-        positionId: string
+  public async getTimeUntilInterestIncrease(
+        positionId: string,
     ): Promise<BigNumber> {
-        return this.contracts.margin.getTimeUntilInterestIncrease.call(positionId);
-    }
+    return this.contracts.margin.getTimeUntilInterestIncrease.call(positionId);
+  }
 
-    public async getPositionOwedAmount(
-        positionId: string
+  public async getPositionOwedAmount(
+        positionId: string,
     ): Promise<BigNumber> {
-        return this.contracts.margin.getPositionOwedAmount.call(positionId);
-    }
+    return this.contracts.margin.getPositionOwedAmount.call(positionId);
+  }
 
-    public async getPositionOwedAmountAtTime(
+  public async getPositionOwedAmountAtTime(
         positionId: string,
         principalToClose: BigNumber,
-        timestampInSeconds: BigNumber
+        timestampInSeconds: BigNumber,
     ): Promise<BigNumber> {
-        return this.contracts.margin.getPositionOwedAmountAtTime.call(
+    return this.contracts.margin.getPositionOwedAmountAtTime.call(
             positionId,
             principalToClose,
-            timestampInSeconds
+            timestampInSeconds,
         );
-    }
+  }
 
-    public async getLenderAmountForIncreasePositionAtTime(
+  public async getLenderAmountForIncreasePositionAtTime(
         positionId: string,
         principalToAdd: BigNumber,
-        timestampInSeconds: BigNumber
+        timestampInSeconds: BigNumber,
     ): Promise<BigNumber> {
-        return this.contracts.margin.getLenderAmountForIncreasePositionAtTime.call(
+    return this.contracts.margin.getLenderAmountForIncreasePositionAtTime.call(
             positionId,
             principalToAdd,
-            timestampInSeconds
+            timestampInSeconds,
         );
-    }
+  }
 
-    public async getLoanUnavailableAmount(
-        loanHash: string
+  public async getLoanUnavailableAmount(
+        loanHash: string,
     ): Promise<BigNumber> {
-        return this.contracts.margin.getLoanUnavailableAmount.call(loanHash);
-    }
+    return this.contracts.margin.getLoanUnavailableAmount.call(loanHash);
+  }
 
-    public async getLoanFilledAmount(
-        loanHash: string
+  public async getLoanFilledAmount(
+        loanHash: string,
     ): Promise<BigNumber> {
-        return this.contracts.margin.getLoanFilledAmount.call(loanHash);
-    }
+    return this.contracts.margin.getLoanFilledAmount.call(loanHash);
+  }
 
-    public async getLoanCanceledAmount(
-        loanHash: string
+  public async getLoanCanceledAmount(
+        loanHash: string,
     ): Promise<BigNumber> {
-        return this.contracts.margin.getLoanCanceledAmount.call(loanHash);
-    }
+    return this.contracts.margin.getLoanCanceledAmount.call(loanHash);
+  }
 
-    public async getLoanNumber(
-        loanHash: string
+  public async getLoanNumber(
+        loanHash: string,
     ): Promise<BigNumber> {
-        return this.contracts.margin.getLoanNumber.call(loanHash);
-    }
+    return this.contracts.margin.getLoanNumber.call(loanHash);
+  }
 
-    public async isLoanApproved(
-        loanHash: string
+  public async isLoanApproved(
+        loanHash: string,
     ): Promise<boolean> {
-        return this.contracts.margin.isLoanApproved.call(loanHash);
-    }
+    return this.contracts.margin.isLoanApproved.call(loanHash);
+  }
 
     // ============ Public Utility Functions ============
 
-    public getAddress(): string {
-        return this.contracts.margin.address;
-    }
+  public getAddress(): string {
+    return this.contracts.margin.address;
+  }
 
     // ============ Private Functions ============
 
-    private formatLoanOffering(loanOffering: LoanOffering): FormattedLoanOffering {
-        const addresses = [
-            loanOffering.owedToken,
-            loanOffering.heldToken,
-            loanOffering.payer,
-            loanOffering.signer,
-            loanOffering.owner,
-            loanOffering.taker,
-            loanOffering.feeRecipient,
-            loanOffering.lenderFeeTokenAddress,
-            loanOffering.takerFeeTokenAddress,
-        ];
+  private formatLoanOffering(loanOffering: LoanOffering): FormattedLoanOffering {
+    const addresses = [
+      loanOffering.owedToken,
+      loanOffering.heldToken,
+      loanOffering.payer,
+      loanOffering.signer,
+      loanOffering.owner,
+      loanOffering.taker,
+      loanOffering.feeRecipient,
+      loanOffering.lenderFeeTokenAddress,
+      loanOffering.takerFeeTokenAddress,
+    ];
 
-        const values256 = [
-            loanOffering.maxAmount,
-            loanOffering.minAmount,
-            loanOffering.minHeldToken,
-            loanOffering.lenderFee,
-            loanOffering.takerFee,
-            loanOffering.expirationTimestamp,
-            loanOffering.salt,
-        ];
+    const values256 = [
+      loanOffering.maxAmount,
+      loanOffering.minAmount,
+      loanOffering.minHeldToken,
+      loanOffering.lenderFee,
+      loanOffering.takerFee,
+      loanOffering.expirationTimestamp,
+      loanOffering.salt,
+    ];
 
-        const values32 = [
-            loanOffering.callTimeLimit,
-            loanOffering.maxDuration,
-            loanOffering.interestRate,
-            loanOffering.interestPeriod
-        ];
+    const values32 = [
+      loanOffering.callTimeLimit,
+      loanOffering.maxDuration,
+      loanOffering.interestRate,
+      loanOffering.interestPeriod,
+    ];
 
-        return { addresses, values256, values32 };
-    }
+    return { addresses, values256, values32 };
+  }
 }
 
 interface FormattedLoanOffering {
-    addresses: string[];
-    values256: BigNumber[];
-    values32: BigNumber[];
+  addresses: string[];
+  values256: BigNumber[];
+  values32: BigNumber[];
 }
