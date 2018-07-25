@@ -5,7 +5,7 @@ const expect = chai.expect;
 const Web3 = require('web3');
 chai.use(require('chai-bignumber')());
 const BigNumber = require('bignumber.js');
-import { DYDX } from '../src/DYDX';
+import { dydx, setDYDXProvider } from './helpers/DYDX';
 import { BIGNUMBERS, ADDRESSES } from './helpers/Constants';
 import bluebird from 'bluebird';
 const web3utils = require('web3-utils');
@@ -24,7 +24,6 @@ const { expectThrow } = require('./helpers/ExpectHelper');
  //dydx --> dydx.js library
  //TestTokenContract --> TestToken contract from dydx
  //accounts --> list of accounts
- let dydx = null;
  let TestTokenContract = null;
  let accounts = null
 
@@ -35,7 +34,7 @@ const { expectThrow } = require('./helpers/ExpectHelper');
 
  describe('#openWithoutCounterparty', ()=>{
    beforeAll( async () => {
-     setDYDXProvider(web3.currentProvider);
+     setupDYDX(web3.currentProvider);
      accounts = await web3.eth.getAccountsAsync();
    });
 
@@ -108,47 +107,71 @@ const { expectThrow } = require('./helpers/ExpectHelper');
 
    }, 10000);
 
-   // it.only('fails if loan owner is 0', async () => {
-   //   const openTx = setup(accounts);
-   //   openTx.loanOwner = ADDRESSES.ZERO;
-   //   await expectThrow(callOpenWithoutCounterparty(openTx));
-   // });
+   // it('can transfer position from one address to other', ()=> {
+   //   const openTx  = setup(accounts);
+   //   // spice it up
+   //   const receiver = accounts[5];
+   //
+   //   const tx = await callOpenWithoutCounterparty(openTx);
+   //
+   //   openTx.id = tx.id;
+   //
+   //   const transferTx = await transferPosition(
+   //                      openTx.id,
+   //                      receiver,
+   //                      openTx.positionOwner);
+   //  const positionTransferred = await dydx.margin.getPosition(openTx.id);
+   //
+   //  expect(openTx.positionOwner)
+   //
+   //
+   //
+   // })
 
-   // it('fails if loan owner is 0', async () => {
-   //   const openTx = setup(accounts);
-   //   openTx.positionOwner = ADDRESSES.ZERO;
-   //   await expectThrow(callOpenWithoutCounterparty(openTx));
-   // });
-   //
-   // it('fails if principal is 0', async () => {
-   //   const openTx = setup(accounts);
-   //   openTx.principal = BIGNUMBERS.ZERO;
-   //   await expectThrow(callOpenWithoutCounterparty(openTx));
-   // });
-   //
-   // it('fails if owedToken is 0', async () => {
-   //   const openTx = setup(accounts);
-   //   openTx.owedToken = ADDRESSES.ZERO;
-   //   await expectThrow(callOpenWithoutCounterparty(openTx));
-   // })
-   //
-   // it('fails if owedToken is equal to held token', async () => {
-   //   const openTx = setup(accounts);
-   //   openTx.owedToken = openTx.heldToken;
-   //   await expectThrow(callOpenWithoutCounterparty(openTx));
-   // });
-   //
-   // it('fails if maxDuration is 0', async () => {
-   //   const openTx = setup(accounts);
-   //   openTx.maxDuration = 0;
-   //   await expectThrow(callOpenWithoutCounterparty(openTx));
-   // })
-   //
-   // it('fails if interestPeriod > maxDuration is 0', async () => {
-   //   const openTx = setup(accounts);
-   //   openTx.interestPeriod = openTx.maxDuration.plus(1);
-   //   await expectThrow(callOpenWithoutCounterparty(openTx));
-   // })
+
+   // Validations
+//
+   it('fails if loan owner is 0', async () => {
+     const openTx = await setup(accounts);
+      openTx.loanOwner = ADDRESSES.ZERO;
+      await expectThrow(callOpenWithoutCounterparty(openTx));
+   });
+
+   it('fails if loan owner is 0', async () => {
+     const openTx = await setup(accounts);
+     openTx.positionOwner = ADDRESSES.ZERO;
+     await expectThrow(callOpenWithoutCounterparty(openTx));
+   });
+
+   it('fails if principal is 0', async () => {
+     const openTx = await setup(accounts);
+     openTx.principal = BIGNUMBERS.ZERO;
+     await expectThrow(callOpenWithoutCounterparty(openTx));
+   });
+
+   it('fails if owedToken is 0', async () => {
+     const openTx = await setup(accounts);
+     openTx.owedToken = ADDRESSES.ZERO;
+     await expectThrow(callOpenWithoutCounterparty(openTx));
+   })
+
+   it('fails if owedToken is equal to held token', async () => {
+     const openTx = await setup(accounts);
+     openTx.owedToken = openTx.heldToken;
+     await expectThrow(callOpenWithoutCounterparty(openTx));
+   });
+
+   it('fails if maxDuration is 0', async () => {
+     const openTx = await setup(accounts);
+     openTx.maxDuration = 0;
+     await expectThrow(callOpenWithoutCounterparty(openTx));
+   })
+
+   it('fails if interestPeriod > maxDuration is 0', async () => {
+     const openTx = await setup(accounts);
+     openTx.interestPeriod = openTx.maxDuration.plus(1);
+     await expectThrow(callOpenWithoutCounterparty(openTx));
+   })
 
 
 
@@ -191,7 +214,6 @@ const { expectThrow } = require('./helpers/ExpectHelper');
     );
 
     contains = await dydx.margin.containsPosition(positionId);
-    expect(contains).to.be.true;
 
     //something with expecting log
 
@@ -301,11 +323,7 @@ async function validate(openTx, tx, startingBalances) {
   );
 }
 
- function setDYDXProvider(provider) {
-   if (dydx === null) {
-     dydx = new DYDX(provider, Number(1212));
-   } else {
-     dydx.setProvider(provider);
-   }
+ function setupDYDX(provider) {
+   setDYDXProvider(web3.currentProvider);
    TestTokenContract = web3.eth.contract(dydx.contracts.TestToken.abi);
  }
