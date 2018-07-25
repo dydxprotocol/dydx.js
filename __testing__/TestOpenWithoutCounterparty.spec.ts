@@ -6,13 +6,14 @@ const Web3 = require('web3');
 chai.use(require('chai-bignumber')());
 const BigNumber = require('bignumber.js');
 import { DYDX } from '../src/DYDX';
-import { BIGNUMBERS } from './helpers/Constants';
+import { BIGNUMBERS, ADDRESSES } from './helpers/Constants';
 import bluebird from 'bluebird';
 const web3utils = require('web3-utils');
 const fs =require('fs');
 // const solc = require('solc');
 const Web3 = require('web3');
 const BigNumber = require('bignumber.js');
+const { expectThrow } = require('./helpers/ExpectHelper');
 
 
  // Connect to local Ethereum node
@@ -38,20 +39,118 @@ const BigNumber = require('bignumber.js');
      accounts = await web3.eth.getAccountsAsync();
    });
 
-   it("should return true",()=> {
-     expect(true==true).to.be.true;
-   });
 
    it('succeeds on valid inputs', async () => {
      const openTx = await setup(accounts);
 
-     const startingBalances = await getBalances(openTx.heldToken, openTx.trader);
+     const startingBalances = await getBalances(openTx);
 
      const tx = await callOpenWithoutCounterparty(openTx);
 
 
-     expect(true==true).to.be.true;
+      await validate(openTx, tx, startingBalances);
    });
+
+   it('succeeds if different nonces are used', async () => {
+     const openTx1 = await setup(accounts);
+     const startBalance1 = await getBalances(openTx1);
+     const tx1 = await callOpenWithoutCounterparty(openTx1);
+     await validate(openTx1, tx1, startBalance1);
+
+     const openTx2 = await setup(accounts);
+     const startBalance2 = await getBalances(openTx2);
+     const tx2 = await callOpenWithoutCounterparty(openTx2);
+     await validate(openTx2, tx2, startBalance2);
+   }, 10000);
+
+   it('fails if positionId already exists', async () => {
+     const openTx1 = await setup(accounts);
+     const openTx2 = await setup(accounts);
+     openTx2.nonce = openTx1.nonce;
+
+     await callOpenWithoutCounterparty(openTx1);
+
+     await expectThrow(
+       callOpenWithoutCounterparty(
+         openTx2,
+         { shouldContain: true }
+       )
+     );
+     //works with different nonce
+     openTx2.nonce = openTx1.nonce.plus(1);
+     await callOpenWithoutCounterparty(openTx2);
+   }, 10000);
+
+   it('Fails if positionId already existed, but was closed', async () => {
+
+      const openTx = await setup(accounts);
+      //open first position
+      const tx = await callOpenWithoutCounterparty(openTx);
+      openTx.id = tx.id;
+
+      await issueAndSetAllowance(
+        openTx.owedToken,
+        openTx.positionOwner,
+        openTx.principal.times(2),
+        dydx.contracts.proxy.address
+      );
+
+      await dydx.margin.closePositionDirectly(
+          openTx.id,
+          openTx.positionOwner,
+          openTx.positionOwner,
+          openTx.principal,
+          { gas: 1000000 }
+      );
+
+      const closed = await dydx.margin.isPositionClosed(openTx.id);
+      expect(closed).to.be.true;
+
+   }, 10000);
+
+   // it.only('fails if loan owner is 0', async () => {
+   //   const openTx = setup(accounts);
+   //   openTx.loanOwner = ADDRESSES.ZERO;
+   //   await expectThrow(callOpenWithoutCounterparty(openTx));
+   // });
+
+   // it('fails if loan owner is 0', async () => {
+   //   const openTx = setup(accounts);
+   //   openTx.positionOwner = ADDRESSES.ZERO;
+   //   await expectThrow(callOpenWithoutCounterparty(openTx));
+   // });
+   //
+   // it('fails if principal is 0', async () => {
+   //   const openTx = setup(accounts);
+   //   openTx.principal = BIGNUMBERS.ZERO;
+   //   await expectThrow(callOpenWithoutCounterparty(openTx));
+   // });
+   //
+   // it('fails if owedToken is 0', async () => {
+   //   const openTx = setup(accounts);
+   //   openTx.owedToken = ADDRESSES.ZERO;
+   //   await expectThrow(callOpenWithoutCounterparty(openTx));
+   // })
+   //
+   // it('fails if owedToken is equal to held token', async () => {
+   //   const openTx = setup(accounts);
+   //   openTx.owedToken = openTx.heldToken;
+   //   await expectThrow(callOpenWithoutCounterparty(openTx));
+   // });
+   //
+   // it('fails if maxDuration is 0', async () => {
+   //   const openTx = setup(accounts);
+   //   openTx.maxDuration = 0;
+   //   await expectThrow(callOpenWithoutCounterparty(openTx));
+   // })
+   //
+   // it('fails if interestPeriod > maxDuration is 0', async () => {
+   //   const openTx = setup(accounts);
+   //   openTx.interestPeriod = openTx.maxDuration.plus(1);
+   //   await expectThrow(callOpenWithoutCounterparty(openTx));
+   // })
+
+
 
 
  })
@@ -96,8 +195,6 @@ const BigNumber = require('bignumber.js');
 
     //something with expecting log
 
-    response.id = positionId;
-
     return response;
 }
 
@@ -115,13 +212,15 @@ const BigNumber = require('bignumber.js');
    ]);
  }
 
- async function getBalances(tokenAddress,trader ) {
-   const heldToken = TestTokenContract.at(tokenAddress);
+
+
+ async function getBalances(openTx) {
+   const heldToken = TestTokenContract.at(openTx.heldToken);
    const [
      traderHeldToken,
      vaultHeldToken
    ] = await Promise.all([
-     heldToken.balanceOf.call(trader),
+     heldToken.balanceOf.call(openTx.trader),
      heldToken.balanceOf.call(dydx.contracts.vault.address),
    ]);
 
@@ -144,12 +243,12 @@ async function setup(accounts) {
 
   const deposit   = new BigNumber('1098765932109876543');
   const principal = new BigNumber('2387492837498237491');
-  const nonce = new BigNumber('19238');
+  const nonce = new BigNumber(Math.floor(Math.random()*1000000));
 
   const callTimeLimit = BIGNUMBERS.ONE_DAY_IN_SECONDS;
   const maxDuration = BIGNUMBERS.ONE_YEAR_IN_SECONDS;
 
-  const interestRate = new BigNumber('600000');
+  const interestRate = new BigNumber('7');
   const interestPeriod = BIGNUMBERS.ONE_DAY_IN_SECONDS;
 
   await issueAndSetAllowance(
@@ -172,6 +271,34 @@ async function setup(accounts) {
     interestRate,
     interestPeriod
   };
+}
+async function validate(openTx, tx, startingBalances) {
+  const [
+    position,
+    positionBalance,
+    { traderHeldToken, vaultHeldToken }
+  ] = await Promise.all([
+    dydx.margin.getPosition(tx.id),
+    dydx.margin.getPositionBalance(tx.id),
+    getBalances(openTx)
+  ]);
+
+  expect(position.owner).to.be.eq(openTx.positionOwner);
+  expect(position.lender).to.be.eq(openTx.loanOwner);
+  expect(position.owedToken).to.be.eq(openTx.owedToken);
+  expect(position.heldToken).to.be.eq(openTx.heldToken);
+  expect(position.principal).to.be.bignumber.eq(openTx.principal);
+  expect(position.callTimeLimit).to.be.bignumber.eq(openTx.callTimeLimit);
+  expect(position.maxDuration).to.be.bignumber.eq(openTx.maxDuration);
+  expect(position.interestRate).to.be.bignumber.eq(openTx.interestRate);
+  expect(position.interestPeriod).to.be.bignumber.eq(openTx.interestPeriod);
+  expect(position.requiredDeposit).to.be.bignumber.eq(BIGNUMBERS.ZERO);
+  expect(position.callTimestamp).to.be.bignumber.eq(BIGNUMBERS.ZERO);
+  expect(positionBalance).to.be.bignumber.eq(openTx.deposit);
+  expect(vaultHeldToken).to.be.bignumber.eq(startingBalances.vaultHeldToken.plus(openTx.deposit));
+  expect(traderHeldToken).to.be.bignumber.eq(
+    startingBalances.traderHeldToken.minus(openTx.deposit)
+  );
 }
 
  function setDYDXProvider(provider) {

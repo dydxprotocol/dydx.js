@@ -113,7 +113,7 @@ export class Margin {
             trader,
             nonce
         );
-        
+
         const response = await this.contracts.margin.openWithoutCounterparty(
             [
                 positionOwner,
@@ -493,7 +493,7 @@ export class Margin {
             positionId
         );
 
-        const adjustedInterestRate = interestRate.div(new BigNumber(10).pow(6));
+         const adjustedInterestRate = interestRate.div(new BigNumber(10).pow(6));
 
         return {
             owedToken,
