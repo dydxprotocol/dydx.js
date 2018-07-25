@@ -27,10 +27,6 @@ const { expectThrow } = require('./helpers/ExpectHelper');
  let TestTokenContract = null;
  let accounts = null
 
-/**
- * having a little trouble using the dYdX contract's TestToken,
- * so for now using the TestToken from the contract
- */
 
  describe('#openWithoutCounterparty', ()=>{
    beforeAll( async () => {
@@ -107,30 +103,25 @@ const { expectThrow } = require('./helpers/ExpectHelper');
 
    }, 10000);
 
-   // it('can transfer position from one address to other', ()=> {
-   //   const openTx  = setup(accounts);
-   //   // spice it up
-   //   const receiver = accounts[5];
-   //
-   //   const tx = await callOpenWithoutCounterparty(openTx);
-   //
-   //   openTx.id = tx.id;
-   //
-   //   const transferTx = await transferPosition(
-   //                      openTx.id,
-   //                      receiver,
-   //                      openTx.positionOwner);
-   //  const positionTransferred = await dydx.margin.getPosition(openTx.id);
-   //
-   //  expect(openTx.positionOwner)
-   //
-   //
-   //
-   // })
+   it('can transfer position from one address to other', async ()=> {
+     const openTx  = await setup(accounts);
+
+     const receiver = accounts[5];
+
+     const tx = await callOpenWithoutCounterparty(openTx);
+     openTx.id = tx.id;
+
+     const transferTx = await dydx.margin.transferPosition(
+                        openTx.id,
+                        receiver,
+                        openTx.positionOwner);
+    const positionTransferred = await dydx.margin.getPosition(openTx.id);
+
+    expect(receiver).to.equal(positionTransferred.owner);
+  });
 
 
-   // Validations
-//
+   // Validations of the input
    it('fails if loan owner is 0', async () => {
      const openTx = await setup(accounts);
       openTx.loanOwner = ADDRESSES.ZERO;
@@ -153,7 +144,7 @@ const { expectThrow } = require('./helpers/ExpectHelper');
      const openTx = await setup(accounts);
      openTx.owedToken = ADDRESSES.ZERO;
      await expectThrow(callOpenWithoutCounterparty(openTx));
-   })
+   });
 
    it('fails if owedToken is equal to held token', async () => {
      const openTx = await setup(accounts);
@@ -165,22 +156,17 @@ const { expectThrow } = require('./helpers/ExpectHelper');
      const openTx = await setup(accounts);
      openTx.maxDuration = 0;
      await expectThrow(callOpenWithoutCounterparty(openTx));
-   })
+   });
 
    it('fails if interestPeriod > maxDuration is 0', async () => {
      const openTx = await setup(accounts);
      openTx.interestPeriod = openTx.maxDuration.plus(1);
      await expectThrow(callOpenWithoutCounterparty(openTx));
-   })
-
-
-
-
- })
+   });
+ });
  /**
   * Helper Functions
   */
- //callOpenWithoutCounterparty
  async function callOpenWithoutCounterparty(
   openTx,
   { shouldContain = false } = {}
@@ -215,8 +201,6 @@ const { expectThrow } = require('./helpers/ExpectHelper');
 
     contains = await dydx.margin.containsPosition(positionId);
 
-    //something with expecting log
-
     return response;
 }
 
@@ -233,8 +217,6 @@ const { expectThrow } = require('./helpers/ExpectHelper');
      tokenInstance.approve(allowed, amount, { from: account })
    ]);
  }
-
-
 
  async function getBalances(openTx) {
    const heldToken = TestTokenContract.at(openTx.heldToken);
