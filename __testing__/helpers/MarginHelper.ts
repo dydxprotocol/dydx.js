@@ -11,7 +11,6 @@ import expect = chai.expect;
  // Connect to local Ethereum node
 const web3Instance = new web3(new web3.providers.HttpProvider(ENVIRONMENT.GANACHE_URL));
 web3Instance.eth.defaultAccount = web3Instance.eth.accounts[0];
-
  // dydx --> dydx.js library
  // testTokenContract --> TestToken contract from dydx
  // accounts --> list of accounts
@@ -81,8 +80,8 @@ export async function setup(accounts) {
   const loanOwner = accounts[2];
   const positionOwner = accounts[3];
 
-  const heldToken = await deployERC20(accounts);
-  const owedToken = await deployERC20(accounts);
+  const heldToken = await deployERC20(dydx, accounts);
+  const owedToken = await deployERC20(dydx, accounts);
 
   const deposit   = new BigNumber('1098765932109876543');
   const principal = new BigNumber('2387492837498237491');
