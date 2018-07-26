@@ -1,13 +1,10 @@
 import { DYDX } from '../../src/DYDX';
-import bluebird from 'bluebird';
-const web3utils = require('web3-utils');
-const fs = require('fs');
-// const solc = require('solc');
+import { ENVIRONMENT } from './Constants';
 export let dydx = null;
 
 export function setDYDXProvider(provider) {
   if (dydx === null) {
-    dydx = new DYDX(provider, Number(1212));
+    dydx = new DYDX(provider, Number(ENVIRONMENT.TEST_NETWORK_ID));
   } else {
     dydx.setProvider(provider);
   }

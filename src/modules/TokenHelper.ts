@@ -1,11 +1,11 @@
 import { Contracts } from '../lib/Contracts';
-import BigNumber from 'bignumber.js';
+import bignumberJs from 'bignumber.js';
 import { ERC20 } from '@dydxprotocol/protocol';
 import truffleContract from 'truffle-contract';
-import { BIGNUMBERS } from '../lib/Constants';
+import { BIG_NUMBERS } from '../lib/Constants';
 import { setupContract } from '../lib/Helpers';
 
-const TOKEN = truffleContract(ERC20);
+const Token = truffleContract(ERC20);
 
 export class TokenHelper {
   private contracts: Contracts;
@@ -15,7 +15,7 @@ export class TokenHelper {
         networkId: number,
         contracts: Contracts,
     ) {
-    setupContract(TOKEN, provider, networkId);
+    setupContract(Token, provider, networkId);
 
     this.contracts = contracts;
   }
@@ -24,7 +24,7 @@ export class TokenHelper {
         tokenAddress: string,
         ownerAddress: string,
         spenderAddress: string,
-    ): Promise<BigNumber> {
+    ): Promise<bignumberJs> {
     const token = await this.getToken(tokenAddress);
 
     return token.allowance.call(ownerAddress, spenderAddress);
@@ -33,7 +33,7 @@ export class TokenHelper {
   public async getBalance(
         tokenAddress: string,
         ownerAddress: string,
-    ): Promise<BigNumber> {
+    ): Promise<bignumberJs> {
     const token = await this.getToken(tokenAddress);
 
     return token.balanceOf.call(ownerAddress);
@@ -42,7 +42,7 @@ export class TokenHelper {
   public async getProxyAllowance(
         tokenAddress: string,
         ownerAddress: string,
-    ): Promise<BigNumber> {
+    ): Promise<bignumberJs> {
     return this.getAllowance(
             tokenAddress,
             ownerAddress,
@@ -54,7 +54,7 @@ export class TokenHelper {
         tokenAddress: string,
         ownerAddress: string,
         spenderAddress: string,
-        amount: BigNumber,
+        amount: bignumberJs,
         options: object = {},
     ): Promise<object> {
     const token = await this.getToken(tokenAddress);
@@ -65,7 +65,7 @@ export class TokenHelper {
   public async setProxyAllowance(
         tokenAddress: string,
         ownerAddress: string,
-        amount: BigNumber,
+        amount: bignumberJs,
         options: object = {},
     ): Promise<object> {
     return this.setAllowance(
@@ -87,7 +87,7 @@ export class TokenHelper {
             tokenAddress,
             ownerAddress,
             spenderAddress,
-            BIGNUMBERS.ONES_255,
+            BIG_NUMBERS.ONES_255,
             options,
         );
   }
@@ -101,7 +101,7 @@ export class TokenHelper {
             tokenAddress,
             ownerAddress,
             this.contracts.proxy.address,
-            BIGNUMBERS.ONES_255,
+            BIG_NUMBERS.ONES_255,
             options,
         );
   }
@@ -115,7 +115,7 @@ export class TokenHelper {
             tokenAddress,
             ownerAddress,
             this.contracts.proxy.address,
-            BIGNUMBERS.ZERO,
+            BIG_NUMBERS.ZERO,
             options,
         );
   }
@@ -124,7 +124,7 @@ export class TokenHelper {
         tokenAddress: string,
         fromAddress: string,
         toAddress: string,
-        amount: BigNumber,
+        amount: bignumberJs,
         options: object = {},
     ): Promise<object> {
     const token = await this.getToken(tokenAddress);
@@ -137,7 +137,7 @@ export class TokenHelper {
         fromAddress: string,
         toAddress: string,
         senderAddress: string,
-        amount: BigNumber,
+        amount: bignumberJs,
         options: object = {},
     ): Promise<object> {
     const token = await this.getToken(tokenAddress);
@@ -151,13 +151,13 @@ export class TokenHelper {
   }
 
   public setProvider(provider, networkId: number) {
-    setupContract(TOKEN, provider, networkId);
+    setupContract(Token, provider, networkId);
   }
 
   private getToken(
         tokenAddress: string,
     ): Promise<any> {
 
-    return TOKEN.at(tokenAddress);
+    return Token.at(tokenAddress);
   }
 }

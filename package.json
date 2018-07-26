@@ -31,11 +31,10 @@
     "abi-decoder": "^1.1.0",
     "bignumber.js": "^4.1.0",
     "chai-bignumber": "^2.0.2",
+    "dotenv": "^6.0.0",
     "ethereumjs-util": "^5.2.0",
     "ethjs": "^0.4.0",
-    "solc": "^0.4.24",
-    "truffle-contract": "^3.0.5",
-    "zeppelin-solidity": "^1.10.0"
+    "truffle-contract": "^3.0.5"
   },
   "devDependencies": {
     "@types/node": "^10.5.2",

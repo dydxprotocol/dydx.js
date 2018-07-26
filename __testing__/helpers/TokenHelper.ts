@@ -1,11 +1,6 @@
 declare var require: any;
 declare var process: any;
-const chai = require('chai');
-const expect = chai.expect;
-chai.use(require('chai-bignumber')());
 import { dydx, setDYDXProvider } from './DYDX';
-import bluebird from 'bluebird';
-// const solc = require('solc');
 const WEB3 = require('web3');
 const { expectThrow } = require('./ExpectHelper');
 
