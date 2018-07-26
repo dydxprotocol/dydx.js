@@ -7,18 +7,6 @@ export async function expectThrow(promise) {
     await promise;
     throw new Error('Did not throw');
   } catch (e) {
-    assertCertainError(e, 'Exception while processing transaction: revert');
+    expect(e).to.match(/Exception while processing transaction: revert/);
   }
-}
-
-// Helper function
-function assertCertainError(ERROR, EXPECTED_ERROR_MSG) {
-  // This complication is so that the actual error will appear in truffle test output
-  const message = ERROR.message;
-  const matchedIndex = message.search(EXPECTED_ERROR_MSG);
-  let matchedString = message;
-  if (matchedIndex >= 0) {
-    matchedString = message.substring(matchedIndex, matchedIndex + EXPECTED_ERROR_MSG.length);
-  }
-  expect(matchedString).to.equal(EXPECTED_ERROR_MSG);
 }
