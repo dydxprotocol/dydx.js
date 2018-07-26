@@ -68,7 +68,6 @@ export async function issueAndSetAllowance(
   ]);
 }
 
-
 export async function getBalances(tokenAddress, holders) {
   const heldToken = testTokenContract.at(tokenAddress);
   const balances = holders.map(holder => heldToken.balanceOf.call(holder));
