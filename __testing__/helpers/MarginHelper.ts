@@ -68,27 +68,9 @@ export async function issueAndSetAllowance(
   ]);
 }
 
-// export async function getBalances(openTx) {
-//   const heldToken = testTokenContract.at(openTx.heldToken);
-//   const [
-//      traderHeldToken,
-//      vaultHeldToken,
-//    ] = await Promise.all([
-//      heldToken.balanceOf.call(openTx.trader),
-//      heldToken.balanceOf.call(dydx.contracts.VAULT.address),
-//    ]);
-//
-//   return { traderHeldToken, vaultHeldToken };
-// }
+
 export async function getBalances(tokenAddress, holders) {
   const heldToken = testTokenContract.at(tokenAddress);
-  // const [
-  //    traderHeldToken,
-  //    vaultHeldToken,
-  //  ] = await Promise.all([
-  //    heldToken.balanceOf.call(openTx.trader),
-  //    heldToken.balanceOf.call(dydx.contracts.VAULT.address),
-  //  ]);
   const balances = holders.map(holder => heldToken.balanceOf.call(holder));
   const result = await Promise.all(balances);
 

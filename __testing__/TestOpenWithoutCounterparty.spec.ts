@@ -27,11 +27,6 @@ const { expectThrow } = require('./helpers/ExpectHelper');
 const web3 = new WEB3(new WEB3.providers.HttpProvider(ENVIRONMENT.GANACHE_URL));
 bluebird.promisifyAll(web3.eth);
 web3.eth.defaultAccount = web3.eth.accounts[0];
-
-// dydx --> dydx.js library
-// testTokenContract --> TestToken contract from dydx
-// accounts --> list of accounts
-// let testTokenContract = null;
 let accounts = null;
 
 describe('#openWithoutCounterparty', () => {
