@@ -1,16 +1,16 @@
-declare var require: any;
+declare var from: any;
 import { BigNumber } from 'bignumber.js';
 import { dydx, setDYDXProvider } from './DYDX';
 import { deployERC20 } from './TokenHelper';
 import { BIG_NUMBERS, ADDRESSES, ENVIRONMENT } from './Constants';
-const WEB3 = require('web3');
-const web3utils = require('web3-utils');
-const chai = require('chai');
-const expect = chai.expect;
+import web3  from 'web3';
+import web3Utils from 'web3-utils';
+import chai from 'chai' ;
+import expect = chai.expect;
 
  // Connect to local Ethereum node
-const web3 = new WEB3(new WEB3.providers.HttpProvider(ENVIRONMENT.GANACHE_URL));
-web3.eth.defaultAccount = web3.eth.accounts[0];
+const web3Instance = new web3(new web3.providers.HttpProvider(ENVIRONMENT.GANACHE_URL));
+web3Instance.eth.defaultAccount = web3Instance.eth.accounts[0];
 
  // dydx --> dydx.js library
  // testTokenContract --> TestToken contract from dydx
@@ -21,7 +21,7 @@ export async function callOpenWithoutCounterparty(
   openTx,
   { shouldContain = false } = {},
 ) {
-  const positionId = web3utils.soliditySha3(
+  const positionId = web3Utils.soliditySha3(
       openTx.trader,
       openTx.nonce,
     );
@@ -146,6 +146,6 @@ export async function validate(openTx, txID, traderHeldTokenBalance, vaultHeldTo
 }
 
 export function setupDYDX(provider) {
-  setDYDXProvider(web3.currentProvider);
-  testTokenContract = web3.eth.contract(dydx.contracts.TESTTOKEN.abi);
+  setDYDXProvider(web3Instance.currentProvider);
+  testTokenContract = web3Instance.eth.contract(dydx.contracts.TESTTOKEN.abi);
 }

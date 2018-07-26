@@ -4,7 +4,6 @@ declare var describe: any;
 declare var beforeAll: any;
 import { BigNumber } from 'bignumber.js';
 import { dydx, setDYDXProvider } from './helpers/DYDX';
-import { deployERC20 } from './helpers/TokenHelper';
 import { BIG_NUMBERS, ADDRESSES, ENVIRONMENT } from './helpers/Constants';
 import {
   testTokenContract,
@@ -16,23 +15,22 @@ import {
   setupDYDX,
 } from './helpers/MarginHelper';
 import bluebird from 'bluebird';
-const chai = require('chai');
+import chai from 'chai';
+import web3 from 'web3';
+import { expectThrow } from './helpers/ExpectHelper';
 const expect = chai.expect;
-const WEB3 = require('web3');
 chai.use(require('chai-bignumber')());
-const web3utils = require('web3-utils');
-const { expectThrow } = require('./helpers/ExpectHelper');
 
  // Connect to local Ethereum node
-const web3 = new WEB3(new WEB3.providers.HttpProvider(ENVIRONMENT.GANACHE_URL));
-bluebird.promisifyAll(web3.eth);
-web3.eth.defaultAccount = web3.eth.accounts[0];
+const web3Instance = new web3(new web3.providers.HttpProvider(ENVIRONMENT.GANACHE_URL));
+bluebird.promisifyAll(web3Instance.eth);
+web3Instance.eth.defaultAccount = web3Instance.eth.accounts[0];
 let accounts = null;
 
 describe('#openWithoutCounterparty', () => {
   beforeAll(async () => {
-    setupDYDX(web3.currentProvider);
-    accounts = await web3.eth.getAccountsAsync();
+    setupDYDX(web3Instance.currentProvider);
+    accounts = await web3Instance.eth.getAccountsAsync();
   });
 
   it('succeeds on valid inputs', async () => {
@@ -46,7 +44,6 @@ describe('#openWithoutCounterparty', () => {
     );
 
     const tx = await callOpenWithoutCounterparty(openTx);
-    //
     await validate(openTx, tx.id, traderHeldTokenBalance, vaultHeldTokenBalance);
   });
 
