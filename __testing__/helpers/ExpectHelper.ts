@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 
 // For solidity function calls that violate require()
-async function expectThrow(promise) {
+export async function expectThrow(promise) {
   try {
     await promise;
     throw new Error('Did not throw');
@@ -11,7 +11,7 @@ async function expectThrow(promise) {
 }
 
 // For solidity function calls that violate assert()
-async function expectAssertFailure(promise) {
+export async function expectAssertFailure(promise) {
   try {
     await promise;
     throw new Error('Did not throw');
@@ -31,8 +31,3 @@ function assertCertainError(ERROR, EXPECTED_ERROR_MSG) {
   }
   expect(matchedString).to.equal(EXPECTED_ERROR_MSG);
 }
-
-module.exports = {
-  expectThrow,
-  expectAssertFailure,
-};
