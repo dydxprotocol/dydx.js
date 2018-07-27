@@ -86,9 +86,6 @@ workflows:
       - lint:
           requires:
             - checkout_and_install
-      - coverage:
-          requires:
-            - checkout_and_install
       - build:
           requires:
             - checkout_and_install
