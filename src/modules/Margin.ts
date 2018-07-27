@@ -1,10 +1,6 @@
 import { LoanOffering, SignedLoanOffering, Position } from '../types';
 import { ExchangeWrapper } from './ExchangeWrapper';
-import bluebird from 'bluebird';
-import ethereumjsUtil from 'ethereumjs-util';
-import  bignumberJs  from 'bignumber.js';
-import { Margin as MarginContract } from '@dydxprotocol/protocol';
-import truffleContract from 'truffle-contract';
+import  BigNumber  from 'bignumber.js';
 import { Contracts } from '../lib/Contracts';
 import web3Utils from 'web3-utils';
 
@@ -23,9 +19,9 @@ export class Margin {
         loanOffering: SignedLoanOffering,
         trader: string,
         owner: string,
-        principal: bignumberJs,
-        depositAmount: bignumberJs,
-        nonce: bignumberJs,
+        principal: BigNumber,
+        depositAmount: BigNumber,
+        nonce: BigNumber,
         depositInHeldToken: boolean,
         exchangeWrapper: ExchangeWrapper,
         orderData: string,
@@ -66,7 +62,7 @@ export class Margin {
     const values32 = [
       loanOffering.callTimeLimit,
       loanOffering.maxDuration,
-      loanOffering.interestRate.times(new bignumberJs(10).pow(6)).floor(),
+      loanOffering.interestRate.times(new BigNumber(10).pow(6)).floor(),
       loanOffering.interestPeriod,
     ];
 
@@ -99,13 +95,13 @@ export class Margin {
         loanOwner: string,
         owedToken: string,
         heldToken: string,
-        nonce: bignumberJs,
-        deposit: bignumberJs,
-        principal: bignumberJs,
-        callTimeLimit: bignumberJs,
-        maxDuration: bignumberJs,
-        interestRate: bignumberJs,
-        interestPeriod: bignumberJs,
+        nonce: BigNumber,
+        deposit: BigNumber,
+        principal: BigNumber,
+        callTimeLimit: BigNumber,
+        maxDuration: BigNumber,
+        interestRate: BigNumber,
+        interestPeriod: BigNumber,
         options: object = {},
     ): Promise<object> {
 
@@ -129,7 +125,7 @@ export class Margin {
       [
         callTimeLimit,
         maxDuration,
-        interestRate.times(new bignumberJs(10).pow(6)).floor(),
+        interestRate.times(new BigNumber(10).pow(6)).floor(),
         interestPeriod,
       ],
       { ...options, from: trader },
@@ -143,9 +139,9 @@ export class Margin {
   public async createShortToken(
         loanOffering: SignedLoanOffering,
         trader: string,
-        principal: bignumberJs,
-        depositAmount: bignumberJs,
-        nonce: bignumberJs,
+        principal: BigNumber,
+        depositAmount: BigNumber,
+        nonce: BigNumber,
         depositInHeldToken: boolean,
         exchangeWrapper: ExchangeWrapper,
         orderData: string,
@@ -169,13 +165,13 @@ export class Margin {
         trader: string,
         owedToken: string,
         heldToken: string,
-        nonce: bignumberJs,
-        deposit: bignumberJs,
-        principal: bignumberJs,
-        callTimeLimit: bignumberJs,
-        maxDuration: bignumberJs,
-        interestRate: bignumberJs,
-        interestPeriod: bignumberJs,
+        nonce: BigNumber,
+        deposit: BigNumber,
+        principal: BigNumber,
+        callTimeLimit: BigNumber,
+        maxDuration: BigNumber,
+        interestRate: BigNumber,
+        interestPeriod: BigNumber,
         options: object = {},
     ): Promise<object> {
     return this.openWithoutCounterparty(
@@ -198,9 +194,9 @@ export class Margin {
   public async createLeveragedLongToken(
         loanOffering: SignedLoanOffering,
         trader: string,
-        principal: bignumberJs,
-        depositAmount: bignumberJs,
-        nonce: bignumberJs,
+        principal: BigNumber,
+        depositAmount: BigNumber,
+        nonce: BigNumber,
         depositInHeldToken: boolean,
         exchangeWrapper: ExchangeWrapper,
         orderData: string,
@@ -224,13 +220,13 @@ export class Margin {
         trader: string,
         owedToken: string,
         heldToken: string,
-        nonce: bignumberJs,
-        deposit: bignumberJs,
-        principal: bignumberJs,
-        callTimeLimit: bignumberJs,
-        maxDuration: bignumberJs,
-        interestRate: bignumberJs,
-        interestPeriod: bignumberJs,
+        nonce: BigNumber,
+        deposit: BigNumber,
+        principal: BigNumber,
+        callTimeLimit: BigNumber,
+        maxDuration: BigNumber,
+        interestRate: BigNumber,
+        interestPeriod: BigNumber,
         options: object = {},
     ): Promise<object> {
     return this.openWithoutCounterparty(
@@ -254,7 +250,7 @@ export class Margin {
         positionId: string,
         loanOffering: SignedLoanOffering,
         trader: string,
-        principal: bignumberJs,
+        principal: BigNumber,
         depositInHeldToken: boolean,
         exchangeWrapper: ExchangeWrapper,
         orderData: string,
@@ -310,7 +306,7 @@ export class Margin {
         positionId: string,
         closer: string,
         payoutRecipient: string,
-        closeAmount: bignumberJs,
+        closeAmount: BigNumber,
         payoutInHeldToken: boolean,
         exchangeWrapper: ExchangeWrapper,
         orderData: string,
@@ -331,7 +327,7 @@ export class Margin {
         positionId: string,
         closer: string,
         payoutRecipient: string,
-        closeAmount: bignumberJs,
+        closeAmount: BigNumber,
         options: object = {},
     ): Promise<object> {
     return this.contracts.margin.closePositionDirectly(
@@ -346,7 +342,7 @@ export class Margin {
         positionId: string,
         closer: string,
         payoutRecipient: string,
-        closeAmount: bignumberJs,
+        closeAmount: BigNumber,
         options: object = {},
     ): Promise<object> {
     return this.contracts.margin.closeWithoutCounterparty(
@@ -359,7 +355,7 @@ export class Margin {
 
   public async cancelLoanOffer(
         loanOffering: LoanOffering,
-        cancelAmount: bignumberJs,
+        cancelAmount: BigNumber,
         from: string,
         options: object = {},
     ): Promise<object> {
@@ -391,7 +387,7 @@ export class Margin {
 
   public async marginCall(
         positionId: string,
-        requiredDeposit: bignumberJs,
+        requiredDeposit: BigNumber,
         from: string,
         options: object = {},
     ): Promise<object> {
@@ -428,7 +424,7 @@ export class Margin {
 
   public async depositCollateral(
         positionId: string,
-        depositAmount: bignumberJs,
+        depositAmount: BigNumber,
         from: string,
         options: object = {},
     ): Promise<object> {
@@ -489,11 +485,11 @@ export class Margin {
                 interestRate,
                 interestPeriod,
             ],
-        ]: [string[], bignumberJs[], bignumberJs[]] = await this.contracts.margin.getPosition.call(
+        ]: [string[], BigNumber[], BigNumber[]] = await this.contracts.margin.getPosition.call(
             positionId,
         );
 
-    const adjustedInterestRate = interestRate.div(new bignumberJs(10).pow(6));
+    const adjustedInterestRate = interestRate.div(new BigNumber(10).pow(6));
 
     return {
       owedToken,
@@ -532,33 +528,33 @@ export class Margin {
 
   public async getTotalOwedTokenRepaidToLender(
         positionId: string,
-    ): Promise < bignumberJs > {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getTotalOwedTokenRepaidToLender.call(positionId);
   }
 
   public async getPositionBalance(
         positionId: string,
-    ): Promise < bignumberJs > {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getPositionBalance.call(positionId);
   }
 
   public async getTimeUntilInterestIncrease(
         positionId: string,
-    ): Promise < bignumberJs > {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getTimeUntilInterestIncrease.call(positionId);
   }
 
   public async getPositionOwedAmount(
         positionId: string,
-    ): Promise < bignumberJs > {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getPositionOwedAmount.call(positionId);
   }
 
   public async getPositionOwedAmountAtTime(
         positionId: string,
-        principalToClose: bignumberJs,
-        timestampInSeconds: bignumberJs,
-    ): Promise < bignumberJs > {
+        principalToClose: BigNumber,
+        timestampInSeconds: BigNumber,
+    ): Promise < BigNumber > {
     return this.contracts.margin.getPositionOwedAmountAtTime.call(
             positionId,
             principalToClose,
@@ -568,9 +564,9 @@ export class Margin {
 
   public async getLenderAmountForIncreasePositionAtTime(
         positionId: string,
-        principalToAdd: bignumberJs,
-        timestampInSeconds: bignumberJs,
-    ): Promise < bignumberJs > {
+        principalToAdd: BigNumber,
+        timestampInSeconds: BigNumber,
+    ): Promise < BigNumber > {
     return this.contracts.margin.getLenderAmountForIncreasePositionAtTime.call(
             positionId,
             principalToAdd,
@@ -580,25 +576,25 @@ export class Margin {
 
   public async getLoanUnavailableAmount(
         loanHash: string,
-    ): Promise < bignumberJs > {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getLoanUnavailableAmount.call(loanHash);
   }
 
   public async getLoanFilledAmount(
         loanHash: string,
-    ): Promise < bignumberJs > {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getLoanFilledAmount.call(loanHash);
   }
 
   public async getLoanCanceledAmount(
         loanHash: string,
-    ): Promise < bignumberJs > {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getLoanCanceledAmount.call(loanHash);
   }
 
   public async getLoanNumber(
         loanHash: string,
-    ): Promise < bignumberJs > {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getLoanNumber.call(loanHash);
   }
 
@@ -652,6 +648,6 @@ export class Margin {
 
 interface FormattedLoanOffering {
   addresses: string[];
-  values256: bignumberJs[];
-  values32: bignumberJs[];
+  values256: BigNumber[];
+  values32: BigNumber[];
 }

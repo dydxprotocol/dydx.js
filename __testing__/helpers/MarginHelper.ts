@@ -1,8 +1,7 @@
-declare var from: any;
 import { BigNumber } from 'bignumber.js';
 import { dydx, setDYDXProvider } from './DYDX';
 import { deployERC20 } from './TokenHelper';
-import { BIG_NUMBERS, ADDRESSES, ENVIRONMENT } from './Constants';
+import { BIG_NUMBERS, ENVIRONMENT } from './Constants';
 import web3  from 'web3';
 import web3Utils from 'web3-utils';
 import chai from 'chai' ;
@@ -97,7 +96,7 @@ export async function setup(accounts) {
       heldToken,
       trader,
       deposit,
-      dydx.contracts.PROXY.address);
+      dydx.contracts.Proxy.address);
 
   return {
     trader,
@@ -123,7 +122,7 @@ export async function validate(openTx, txID, traderHeldTokenBalance, vaultHeldTo
   ] = await Promise.all([
     dydx.margin.getPosition(txID),
     dydx.margin.getPositionBalance(txID),
-    getBalances(openTx.heldToken, [openTx.trader, dydx.contracts.VAULT.address]),
+    getBalances(openTx.heldToken, [openTx.trader, dydx.contracts.Vault.address]),
   ]);
 
   expect(position.owner).to.be.eq(openTx.positionOwner);
@@ -146,5 +145,5 @@ export async function validate(openTx, txID, traderHeldTokenBalance, vaultHeldTo
 
 export function setupDYDX(provider) {
   setDYDXProvider(web3Instance.currentProvider);
-  testTokenContract = web3Instance.eth.contract(dydx.contracts.TESTTOKEN.abi);
+  testTokenContract = web3Instance.eth.contract(dydx.contracts.TestToken.abi);
 }

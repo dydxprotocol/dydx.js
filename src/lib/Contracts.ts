@@ -11,13 +11,13 @@ import truffleContract from 'truffle-contract';
 import { setupContract } from './Helpers';
 
 export class Contracts {
-  public MARGIN = truffleContract(MarginContract);
-  public PROXY = truffleContract(ProxyContract);
-  public ERC20SHORTCREATOR = truffleContract(ERC20ShortCreatorContract);
-  public ERC20LONGCREATOR = truffleContract(ERC20LongCreatorContract);
-  public SHAREDLOANCREATOR = truffleContract(SharedLoanCreatorContract);
-  public VAULT = truffleContract(VaultContract);
-  public TESTTOKEN = truffleContract(TestTokenContract);
+  public Margin = truffleContract(MarginContract);
+  public Proxy = truffleContract(ProxyContract);
+  public ERC20ShortCreator = truffleContract(ERC20ShortCreatorContract);
+  public ERC20LongCreator = truffleContract(ERC20LongCreatorContract);
+  public SharedLoanCreator = truffleContract(SharedLoanCreatorContract);
+  public Vault = truffleContract(VaultContract);
+  public TestToken = truffleContract(TestTokenContract);
 
   public margin;
   public proxy;
@@ -44,13 +44,13 @@ export class Contracts {
         provider: any,
         networkId: number,
     ) {
-    setupContract(this.MARGIN, provider, networkId);
-    setupContract(this.PROXY, provider, networkId);
-    setupContract(this.ERC20SHORTCREATOR, provider, networkId);
-    setupContract(this.ERC20LONGCREATOR, provider, networkId);
-    setupContract(this.SHAREDLOANCREATOR, provider, networkId);
-    setupContract(this.VAULT, provider, networkId);
-    setupContract(this.TESTTOKEN, provider, networkId);
+    setupContract(this.Margin, provider, networkId);
+    setupContract(this.Proxy, provider, networkId);
+    setupContract(this.ERC20ShortCreator, provider, networkId);
+    setupContract(this.ERC20LongCreator, provider, networkId);
+    setupContract(this.SharedLoanCreator, provider, networkId);
+    setupContract(this.Vault, provider, networkId);
+    setupContract(this.TestToken, provider, networkId);
 
     const [
             margin,
@@ -60,12 +60,12 @@ export class Contracts {
             sharedLoanCreator,
             vault,
         ] = await Promise.all([
-          this.MARGIN.deployed(),
-          this.PROXY.deployed(),
-          this.ERC20SHORTCREATOR.deployed(),
-          this.ERC20LONGCREATOR.deployed(),
-          this.SHAREDLOANCREATOR.deployed(),
-          this.VAULT.deployed(),
+          this.Margin.deployed(),
+          this.Proxy.deployed(),
+          this.ERC20ShortCreator.deployed(),
+          this.ERC20LongCreator.deployed(),
+          this.SharedLoanCreator.deployed(),
+          this.Vault.deployed(),
         ]);
 
     this.margin = margin;

@@ -1,4 +1,4 @@
-import bignumberJs from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 
 export interface LoanOffering {
   owedToken:              string;
@@ -10,17 +10,17 @@ export interface LoanOffering {
   feeRecipient:           string;
   lenderFeeTokenAddress:  string;
   takerFeeTokenAddress:   string;
-  maxAmount:              bignumberJs;
-  minAmount:              bignumberJs;
-  minHeldToken:           bignumberJs;
-  lenderFee:              bignumberJs;
-  takerFee:               bignumberJs;
-  interestRate:           bignumberJs;
-  interestPeriod:         bignumberJs;
-  expirationTimestamp:    bignumberJs;
-  callTimeLimit:          bignumberJs;
-  maxDuration:            bignumberJs;
-  salt:                   bignumberJs;
+  maxAmount:              BigNumber;
+  minAmount:              BigNumber;
+  minHeldToken:           BigNumber;
+  lenderFee:              BigNumber;
+  takerFee:               BigNumber;
+  interestRate:           BigNumber;
+  interestPeriod:         BigNumber;
+  expirationTimestamp:    BigNumber;
+  callTimeLimit:          BigNumber;
+  maxDuration:            BigNumber;
+  salt:                   BigNumber;
 }
 
 export interface SignedLoanOffering extends LoanOffering {
@@ -42,12 +42,12 @@ export interface Position {
   heldToken:          string;
   lender:             string;
   owner:              string;
-  principal:          bignumberJs;
-  requiredDeposit:    bignumberJs;
-  callTimeLimit:      bignumberJs;
-  startTimestamp:     bignumberJs;
-  callTimestamp:      bignumberJs;
-  maxDuration:        bignumberJs;
-  interestRate:       bignumberJs;
-  interestPeriod:     bignumberJs;
+  principal:          BigNumber;
+  requiredDeposit:    BigNumber;
+  callTimeLimit:      BigNumber;
+  startTimestamp:     BigNumber;
+  callTimestamp:      BigNumber;
+  maxDuration:        BigNumber;
+  interestRate:       BigNumber;
+  interestPeriod:     BigNumber;
 }

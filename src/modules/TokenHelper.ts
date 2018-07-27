@@ -1,5 +1,5 @@
 import { Contracts } from '../lib/Contracts';
-import bignumberJs from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import { ERC20 } from '@dydxprotocol/protocol';
 import truffleContract from 'truffle-contract';
 import { BIG_NUMBERS } from '../lib/Constants';
@@ -24,7 +24,7 @@ export class TokenHelper {
         tokenAddress: string,
         ownerAddress: string,
         spenderAddress: string,
-    ): Promise<bignumberJs> {
+    ): Promise<BigNumber> {
     const token = await this.getToken(tokenAddress);
 
     return token.allowance.call(ownerAddress, spenderAddress);
@@ -33,7 +33,7 @@ export class TokenHelper {
   public async getBalance(
         tokenAddress: string,
         ownerAddress: string,
-    ): Promise<bignumberJs> {
+    ): Promise<BigNumber> {
     const token = await this.getToken(tokenAddress);
 
     return token.balanceOf.call(ownerAddress);
@@ -42,7 +42,7 @@ export class TokenHelper {
   public async getProxyAllowance(
         tokenAddress: string,
         ownerAddress: string,
-    ): Promise<bignumberJs> {
+    ): Promise<BigNumber> {
     return this.getAllowance(
             tokenAddress,
             ownerAddress,
@@ -54,7 +54,7 @@ export class TokenHelper {
         tokenAddress: string,
         ownerAddress: string,
         spenderAddress: string,
-        amount: bignumberJs,
+        amount: BigNumber,
         options: object = {},
     ): Promise<object> {
     const token = await this.getToken(tokenAddress);
@@ -65,7 +65,7 @@ export class TokenHelper {
   public async setProxyAllowance(
         tokenAddress: string,
         ownerAddress: string,
-        amount: bignumberJs,
+        amount: BigNumber,
         options: object = {},
     ): Promise<object> {
     return this.setAllowance(
@@ -124,7 +124,7 @@ export class TokenHelper {
         tokenAddress: string,
         fromAddress: string,
         toAddress: string,
-        amount: bignumberJs,
+        amount: BigNumber,
         options: object = {},
     ): Promise<object> {
     const token = await this.getToken(tokenAddress);
@@ -137,7 +137,7 @@ export class TokenHelper {
         fromAddress: string,
         toAddress: string,
         senderAddress: string,
-        amount: bignumberJs,
+        amount: BigNumber,
         options: object = {},
     ): Promise<object> {
     const token = await this.getToken(tokenAddress);

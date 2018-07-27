@@ -2,11 +2,11 @@ declare var require: any;
 declare var it: any;
 declare var describe: any;
 declare var beforeAll: any;
-import { BigNumber } from 'bignumber.js';
-import { dydx, setDYDXProvider } from './helpers/DYDX';
+declare var expect: any;
+
+import { dydx } from './helpers/DYDX';
 import { BIG_NUMBERS, ADDRESSES, ENVIRONMENT } from './helpers/Constants';
 import {
-  testTokenContract,
   callOpenWithoutCounterparty,
   issueAndSetAllowance,
   getBalances,
@@ -17,8 +17,6 @@ import {
 import bluebird from 'bluebird';
 import chai from 'chai';
 import web3 from 'web3';
-import { expectThrow } from './helpers/ExpectHelper';
-const expect = chai.expect;
 chai.use(require('chai-bignumber')());
 
  // Connect to local Ethereum node
@@ -40,7 +38,7 @@ describe('#openWithoutCounterparty', () => {
       vaultHeldTokenBalance,
     ] = await getBalances(
         openTx.heldToken,
-        [openTx.trader, dydx.contracts.VAULT.address],
+        [openTx.trader, dydx.contracts.Vault.address],
     );
 
     const tx = await callOpenWithoutCounterparty(openTx);
@@ -54,7 +52,7 @@ describe('#openWithoutCounterparty', () => {
       vaultHeldTokenBalance1,
     ] = await getBalances(
         openTx1.heldToken,
-        [openTx1.trader, dydx.contracts.VAULT.address],
+        [openTx1.trader, dydx.contracts.Vault.address],
     );
 
     const tx1 = await callOpenWithoutCounterparty(openTx1);
@@ -66,7 +64,7 @@ describe('#openWithoutCounterparty', () => {
       vaultHeldTokenBalance2,
     ] = await getBalances(
         openTx2.heldToken,
-        [openTx2.trader, dydx.contracts.VAULT.address],
+        [openTx2.trader, dydx.contracts.Vault.address],
     );
 
     const tx2 = await callOpenWithoutCounterparty(openTx2);
@@ -80,12 +78,12 @@ describe('#openWithoutCounterparty', () => {
 
     await callOpenWithoutCounterparty(openTx1);
 
-    await expectThrow(
+    await expect(
        callOpenWithoutCounterparty(
          openTx2,
          { shouldContain: true },
        ),
-     );
+     ).rejects.toThrow(/VM Exception while processing transaction: revert/);
      // works with different nonce
     openTx2.nonce = openTx1.nonce.plus(1);
     await callOpenWithoutCounterparty(openTx2);
@@ -102,7 +100,7 @@ describe('#openWithoutCounterparty', () => {
         openTx.owedToken,
         openTx.positionOwner,
         openTx.principal.times(2),
-        dydx.contracts.PROXY.address,
+        dydx.contracts.Proxy.address,
       );
 
     await dydx.margin.closePositionDirectly(
@@ -114,7 +112,14 @@ describe('#openWithoutCounterparty', () => {
       );
 
     const closed = await dydx.margin.isPositionClosed(openTx.id);
-    expect(closed).to.be.true;
+    expect(closed).toBe(true);
+
+    await expect(
+       callOpenWithoutCounterparty(
+         openTx,
+         { shouldContain: true },
+       ),
+     ).rejects.toThrow(/VM Exception while processing transaction: revert/);
 
   }, 10000);
 
@@ -126,55 +131,62 @@ describe('#openWithoutCounterparty', () => {
     const tx = await callOpenWithoutCounterparty(openTx);
     openTx.id = tx.id;
 
-    const transferTx = await dydx.margin.transferPosition(
+    await dydx.margin.transferPosition(
                         openTx.id,
                         receiver,
                         openTx.positionOwner);
     const positionTransferred = await dydx.margin.getPosition(openTx.id);
 
-    expect(receiver).to.equal(positionTransferred.owner);
+    expect(receiver).toEqual(positionTransferred.owner);
   });
 
    // Validations of the input
   it('fails if loan owner is 0', async () => {
     const openTx = await setup(accounts);
     openTx.loanOwner = ADDRESSES.ZERO;
-    await expectThrow(callOpenWithoutCounterparty(openTx));
+    await expect(callOpenWithoutCounterparty(openTx))
+          .rejects.toThrow(/VM Exception while processing transaction: revert/);
   });
 
   it('fails if position owner is 0', async () => {
     const openTx = await setup(accounts);
     openTx.positionOwner = ADDRESSES.ZERO;
-    await expectThrow(callOpenWithoutCounterparty(openTx));
+    await expect(callOpenWithoutCounterparty(openTx))
+          .rejects.toThrow(/VM Exception while processing transaction: revert/);
   });
 
   it('fails if principal is 0', async () => {
     const openTx = await setup(accounts);
     openTx.principal = BIG_NUMBERS.ZERO;
-    await expectThrow(callOpenWithoutCounterparty(openTx));
+    await expect(callOpenWithoutCounterparty(openTx))
+          .rejects.toThrow(/VM Exception while processing transaction: revert/);
   });
 
   it('fails if owedToken is 0', async () => {
     const openTx = await setup(accounts);
     openTx.owedToken = ADDRESSES.ZERO;
-    await expectThrow(callOpenWithoutCounterparty(openTx));
+    await expect(callOpenWithoutCounterparty(openTx))
+          .rejects.toThrow(/VM Exception while processing transaction: revert/);
   });
 
   it('fails if owedToken is equal to held token', async () => {
     const openTx = await setup(accounts);
     openTx.owedToken = openTx.heldToken;
-    await expectThrow(callOpenWithoutCounterparty(openTx));
+    await expect(callOpenWithoutCounterparty(openTx))
+          .rejects.toThrow(/VM Exception while processing transaction: revert/);
   });
 
   it('fails if maxDuration is 0', async () => {
     const openTx = await setup(accounts);
     openTx.maxDuration = BIG_NUMBERS.ZERO;
-    await expectThrow(callOpenWithoutCounterparty(openTx));
+    await expect(callOpenWithoutCounterparty(openTx))
+          .rejects.toThrow(/VM Exception while processing transaction: revert/);
   });
 
   it('fails if interestPeriod > maxDuration', async () => {
     const openTx = await setup(accounts);
     openTx.interestPeriod = openTx.maxDuration.plus(1);
-    await expectThrow(callOpenWithoutCounterparty(openTx));
+    await expect(callOpenWithoutCounterparty(openTx))
+          .rejects.toThrow(/VM Exception while processing transaction: revert/);
   });
 });
