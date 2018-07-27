@@ -32,6 +32,7 @@
     "abi-decoder": "^1.1.0",
     "bignumber.js": "^4.1.0",
     "chai-bignumber": "^2.0.2",
+    "dotenv": "^6.0.0",
     "ethereumjs-util": "^5.2.0",
     "ethjs": "^0.4.0",
     "truffle-contract": "^3.0.5"
@@ -45,6 +46,7 @@
     "ethjs-util": "^0.1.6",
     "jest": "^23.4.1",
     "ts-jest": "^23.0.1",
+    "ts-node": "^7.0.0",
     "tslint": "^5.11.0",
     "tslint-config-airbnb": "^5.9.2",
     "typescript": "^2.9.2",
