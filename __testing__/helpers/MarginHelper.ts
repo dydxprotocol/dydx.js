@@ -6,7 +6,6 @@ import web3  from 'web3';
 import web3Utils from 'web3-utils';
 import chai from 'chai' ;
 import expect = chai.expect;
-
  // Connect to local Ethereum node
 const web3Instance = new web3(new web3.providers.HttpProvider(ENVIRONMENT.GANACHE_URL));
 web3Instance.eth.defaultAccount = web3Instance.eth.accounts[0];

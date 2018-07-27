@@ -1,6 +1,5 @@
 import chai from 'chai';
 const expect = chai.expect;
-
 // For solidity function calls that violate require()
 export async function expectThrow(promise) {
   try {

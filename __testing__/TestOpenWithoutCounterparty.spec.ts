@@ -3,7 +3,6 @@ declare var it: any;
 declare var describe: any;
 declare var beforeAll: any;
 declare var expect: any;
-
 import { dydx } from './helpers/DYDX';
 import { BIG_NUMBERS, ADDRESSES, ENVIRONMENT } from './helpers/Constants';
 import {
