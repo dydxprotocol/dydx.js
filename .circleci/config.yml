@@ -55,6 +55,9 @@ jobs:
       - restore_cache:
           key: build-{{ .Environment.CIRCLE_SHA1 }}
       - run:
+          name: Wait for contracts to be deployed
+          command: sleep 15
+      - run:
           name: Test
           command: npm test
   coverage:

@@ -24,60 +24,16 @@ bluebird.promisifyAll(web3Instance.eth);
 web3Instance.eth.defaultAccount = web3Instance.eth.accounts[0];
 let accounts = null;
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve,ms));
+}
+
 describe('#openWithoutCounterparty', () => {
   beforeAll(async () => {
     setupDYDX(web3Instance.currentProvider);
     accounts = await web3Instance.eth.getAccountsAsync();
   });
-   // Validations of the input
-  it('fails if loan owner is 0', async () => {
-    const openTx = await setup(accounts);
-    openTx.loanOwner = ADDRESSES.ZERO;
-    await expect(callOpenWithoutCounterparty(openTx))
-          .rejects.toThrow(/VM Exception while processing transaction: revert/);
-  });
 
-  it('fails if position owner is 0', async () => {
-    const openTx = await setup(accounts);
-    openTx.positionOwner = ADDRESSES.ZERO;
-    await expect(callOpenWithoutCounterparty(openTx))
-          .rejects.toThrow(/VM Exception while processing transaction: revert/);
-  });
-
-  it('fails if principal is 0', async () => {
-    const openTx = await setup(accounts);
-    openTx.principal = BIG_NUMBERS.ZERO;
-    await expect(callOpenWithoutCounterparty(openTx))
-          .rejects.toThrow(/VM Exception while processing transaction: revert/);
-  });
-
-  it('fails if owedToken is 0', async () => {
-    const openTx = await setup(accounts);
-    openTx.owedToken = ADDRESSES.ZERO;
-    await expect(callOpenWithoutCounterparty(openTx))
-          .rejects.toThrow(/VM Exception while processing transaction: revert/);
-  });
-
-  it('fails if owedToken is equal to held token', async () => {
-    const openTx = await setup(accounts);
-    openTx.owedToken = openTx.heldToken;
-    await expect(callOpenWithoutCounterparty(openTx))
-          .rejects.toThrow(/VM Exception while processing transaction: revert/);
-  });
-
-  it('fails if maxDuration is 0', async () => {
-    const openTx = await setup(accounts);
-    openTx.maxDuration = BIG_NUMBERS.ZERO;
-    await expect(callOpenWithoutCounterparty(openTx))
-          .rejects.toThrow(/VM Exception while processing transaction: revert/);
-  });
-
-  it('fails if interestPeriod > maxDuration', async () => {
-    const openTx = await setup(accounts);
-    openTx.interestPeriod = openTx.maxDuration.plus(1);
-    await expect(callOpenWithoutCounterparty(openTx))
-          .rejects.toThrow(/VM Exception while processing transaction: revert/);
-  });
   it('succeeds on valid inputs', async () => {
     const openTx = await setup(accounts);
     const [
@@ -187,4 +143,53 @@ describe('#openWithoutCounterparty', () => {
     expect(receiver).toEqual(positionTransferred.owner);
   });
 
+   // Validations of the input
+  it('fails if loan owner is 0', async () => {
+    const openTx = await setup(accounts);
+    openTx.loanOwner = ADDRESSES.ZERO;
+    await expect(callOpenWithoutCounterparty(openTx))
+          .rejects.toThrow(/VM Exception while processing transaction: revert/);
+  });
+
+  it('fails if position owner is 0', async () => {
+    const openTx = await setup(accounts);
+    openTx.positionOwner = ADDRESSES.ZERO;
+    await expect(callOpenWithoutCounterparty(openTx))
+          .rejects.toThrow(/VM Exception while processing transaction: revert/);
+  });
+
+  it('fails if principal is 0', async () => {
+    const openTx = await setup(accounts);
+    openTx.principal = BIG_NUMBERS.ZERO;
+    await expect(callOpenWithoutCounterparty(openTx))
+          .rejects.toThrow(/VM Exception while processing transaction: revert/);
+  });
+
+  it('fails if owedToken is 0', async () => {
+    const openTx = await setup(accounts);
+    openTx.owedToken = ADDRESSES.ZERO;
+    await expect(callOpenWithoutCounterparty(openTx))
+          .rejects.toThrow(/VM Exception while processing transaction: revert/);
+  });
+
+  it('fails if owedToken is equal to held token', async () => {
+    const openTx = await setup(accounts);
+    openTx.owedToken = openTx.heldToken;
+    await expect(callOpenWithoutCounterparty(openTx))
+          .rejects.toThrow(/VM Exception while processing transaction: revert/);
+  });
+
+  it('fails if maxDuration is 0', async () => {
+    const openTx = await setup(accounts);
+    openTx.maxDuration = BIG_NUMBERS.ZERO;
+    await expect(callOpenWithoutCounterparty(openTx))
+          .rejects.toThrow(/VM Exception while processing transaction: revert/);
+  });
+
+  it('fails if interestPeriod > maxDuration', async () => {
+    const openTx = await setup(accounts);
+    openTx.interestPeriod = openTx.maxDuration.plus(1);
+    await expect(callOpenWithoutCounterparty(openTx))
+          .rejects.toThrow(/VM Exception while processing transaction: revert/);
+  });
 });
