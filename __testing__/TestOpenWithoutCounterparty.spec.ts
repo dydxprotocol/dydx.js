@@ -24,10 +24,6 @@ bluebird.promisifyAll(web3Instance.eth);
 web3Instance.eth.defaultAccount = web3Instance.eth.accounts[0];
 let accounts = null;
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve,ms));
-}
-
 describe('#openWithoutCounterparty', () => {
   beforeAll(async () => {
     setupDYDX(web3Instance.currentProvider);
