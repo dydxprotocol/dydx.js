@@ -16,9 +16,9 @@ export class DYDX {
   private contracts: Contracts;
 
   constructor(
-        provider: any,
-        networkId: number,
-    ) {
+    provider: any,
+    networkId: number,
+  ) {
     this.currentProvider = provider;
     this.currentNetworkId = networkId;
 

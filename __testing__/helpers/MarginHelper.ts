@@ -1,17 +1,12 @@
 import { BigNumber } from 'bignumber.js';
 import { dydx, setDYDXProvider } from './DYDX';
 import { deployERC20 } from './TokenHelper';
-import { BIG_NUMBERS, ENVIRONMENT } from './Constants';
-import web3  from 'web3';
+import { BIG_NUMBERS } from '../../src/lib/Constants';
+import web3  from './web3';
 import web3Utils from 'web3-utils';
 import chai from 'chai' ;
 import expect = chai.expect;
- // Connect to local Ethereum node
-const web3Instance = new web3(new web3.providers.HttpProvider(ENVIRONMENT.GANACHE_URL));
-web3Instance.eth.defaultAccount = web3Instance.eth.accounts[0];
- // dydx --> dydx.js library
- // testTokenContract --> TestToken contract from dydx
- // accounts --> list of accounts
+
 export let testTokenContract = null;
 
 export async function callOpenWithoutCounterparty(
@@ -19,9 +14,9 @@ export async function callOpenWithoutCounterparty(
   { shouldContain = false } = {},
 ) {
   const positionId = web3Utils.soliditySha3(
-      openTx.trader,
-      openTx.nonce,
-    );
+    openTx.trader,
+    openTx.nonce,
+  );
 
   let contains;
 
@@ -31,20 +26,19 @@ export async function callOpenWithoutCounterparty(
   }
 
   const response =  await dydx.margin.openWithoutCounterparty(
-      openTx.trader,
-      openTx.positionOwner,
-      openTx.loanOwner,
-      openTx.owedToken,
-      openTx.heldToken,
-      openTx.nonce,
-      openTx.deposit,
-      openTx.principal,
-      openTx.callTimeLimit,
-      openTx.maxDuration,
-      openTx.interestRate,
-      openTx.interestPeriod,
-      { gas: 1500000 },
-    );
+    openTx.trader,
+    openTx.positionOwner,
+    openTx.loanOwner,
+    openTx.owedToken,
+    openTx.heldToken,
+    openTx.nonce,
+    openTx.deposit,
+    openTx.principal,
+    openTx.callTimeLimit,
+    openTx.maxDuration,
+    openTx.interestRate,
+    openTx.interestPeriod,
+  );
 
   contains = await dydx.margin.containsPosition(positionId);
 
@@ -57,7 +51,7 @@ export async function issueAndSetAllowance(
    account,
    amount,
    allowed,
- ) {
+) {
   const tokenInstance = testTokenContract.at(token);
   await Promise.all([
     tokenInstance.issueTo(account, amount),
@@ -83,7 +77,7 @@ export async function setup(accounts) {
 
   const deposit   = new BigNumber('1098765932109876543');
   const principal = new BigNumber('2387492837498237491');
-  const nonce = new BigNumber(Math.floor(Math.random() * 1000000));
+  const nonce = new BigNumber(Math.floor(Math.random() * 100000000));
 
   const callTimeLimit = BIG_NUMBERS.ONE_DAY_IN_SECONDS;
   const maxDuration = BIG_NUMBERS.ONE_YEAR_IN_SECONDS;
@@ -92,10 +86,11 @@ export async function setup(accounts) {
   const interestPeriod = BIG_NUMBERS.ONE_DAY_IN_SECONDS;
 
   await issueAndSetAllowance(
-      heldToken,
-      trader,
-      deposit,
-      dydx.contracts.Proxy.address);
+    heldToken,
+    trader,
+    deposit,
+    dydx.contracts.Proxy.address,
+  );
 
   return {
     trader,
@@ -143,6 +138,6 @@ export async function validate(openTx, txID, traderHeldTokenBalance, vaultHeldTo
 }
 
 export function setupDYDX(provider) {
-  setDYDXProvider(web3Instance.currentProvider);
-  testTokenContract = web3Instance.eth.contract(dydx.contracts.TestToken.abi);
+  setDYDXProvider(web3.currentProvider);
+  testTokenContract = web3.eth.contract(dydx.contracts.TestToken.abi);
 }

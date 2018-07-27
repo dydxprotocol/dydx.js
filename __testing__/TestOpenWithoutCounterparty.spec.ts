@@ -4,7 +4,7 @@ declare var describe: any;
 declare var beforeAll: any;
 declare var expect: any;
 import { dydx } from './helpers/DYDX';
-import { BIG_NUMBERS, ADDRESSES, ENVIRONMENT } from './helpers/Constants';
+import { BIG_NUMBERS, ADDRESSES } from '../src/lib/Constants';
 import {
   callOpenWithoutCounterparty,
   issueAndSetAllowance,
@@ -13,21 +13,16 @@ import {
   validate,
   setupDYDX,
 } from './helpers/MarginHelper';
-import bluebird from 'bluebird';
 import chai from 'chai';
-import web3 from 'web3';
+import web3 from './helpers/web3';
 chai.use(require('chai-bignumber')());
 
- // Connect to local Ethereum node
-const web3Instance = new web3(new web3.providers.HttpProvider(ENVIRONMENT.GANACHE_URL));
-bluebird.promisifyAll(web3Instance.eth);
-web3Instance.eth.defaultAccount = web3Instance.eth.accounts[0];
 let accounts = null;
 
 describe('#openWithoutCounterparty', () => {
   beforeAll(async () => {
-    setupDYDX(web3Instance.currentProvider);
-    accounts = await web3Instance.eth.getAccountsAsync();
+    setupDYDX(web3.currentProvider);
+    accounts = await web3.eth.getAccountsAsync();
   });
 
   it('succeeds on valid inputs', async () => {
@@ -36,8 +31,8 @@ describe('#openWithoutCounterparty', () => {
       traderHeldTokenBalance,
       vaultHeldTokenBalance,
     ] = await getBalances(
-        openTx.heldToken,
-        [openTx.trader, dydx.contracts.Vault.address],
+      openTx.heldToken,
+      [openTx.trader, dydx.contracts.Vault.address],
     );
 
     const tx = await callOpenWithoutCounterparty(openTx);
@@ -50,8 +45,8 @@ describe('#openWithoutCounterparty', () => {
       traderHeldTokenBalance1,
       vaultHeldTokenBalance1,
     ] = await getBalances(
-        openTx1.heldToken,
-        [openTx1.trader, dydx.contracts.Vault.address],
+      openTx1.heldToken,
+      [openTx1.trader, dydx.contracts.Vault.address],
     );
 
     const tx1 = await callOpenWithoutCounterparty(openTx1);
@@ -62,8 +57,8 @@ describe('#openWithoutCounterparty', () => {
       traderHeldTokenBalance2,
       vaultHeldTokenBalance2,
     ] = await getBalances(
-        openTx2.heldToken,
-        [openTx2.trader, dydx.contracts.Vault.address],
+      openTx2.heldToken,
+      [openTx2.trader, dydx.contracts.Vault.address],
     );
 
     const tx2 = await callOpenWithoutCounterparty(openTx2);

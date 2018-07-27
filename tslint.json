@@ -6,6 +6,6 @@
       true,
       "allow-pascal-case",
       "ban-keywords"
-      ]
+    ]
   }
 }

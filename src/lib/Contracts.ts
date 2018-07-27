@@ -53,20 +53,20 @@ export class Contracts {
     setupContract(this.TestToken, provider, networkId);
 
     const [
-            margin,
-            proxy,
-            erc20ShortCreator,
-            erc20LongCreator,
-            sharedLoanCreator,
-            vault,
-        ] = await Promise.all([
-          this.Margin.deployed(),
-          this.Proxy.deployed(),
-          this.ERC20ShortCreator.deployed(),
-          this.ERC20LongCreator.deployed(),
-          this.SharedLoanCreator.deployed(),
-          this.Vault.deployed(),
-        ]);
+      margin,
+      proxy,
+      erc20ShortCreator,
+      erc20LongCreator,
+      sharedLoanCreator,
+      vault,
+    ] = await Promise.all([
+      this.Margin.deployed(),
+      this.Proxy.deployed(),
+      this.ERC20ShortCreator.deployed(),
+      this.ERC20LongCreator.deployed(),
+      this.SharedLoanCreator.deployed(),
+      this.Vault.deployed(),
+    ]);
 
     this.margin = margin;
     this.proxy = proxy;
