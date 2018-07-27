@@ -9,11 +9,13 @@
     "src/"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\"",
-    "coverage": "echo \"Error: no coverage specified\"",
-    "lint": "echo \"Error: no linter specified\"",
+    "test": "jest",
     "build": "tsc",
-    "start": "node dist/js/index.js"
+    "lint": "tslint --project . -t verbose",
+    "start": "node dist/js/index.js",
+    "debug": "truffle debug",
+    "coverage": "echo \"Error: no coverage specified\"",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -26,16 +28,27 @@
   },
   "homepage": "https://github.com/dydxexchange/dydx.js#readme",
   "dependencies": {
-    "@dydxprotocol/protocol": "0.1.2",
+    "@dydxprotocol/protocol": "0.1.4",
+    "abi-decoder": "^1.1.0",
     "bignumber.js": "^4.1.0",
-    "bluebird": "^3.5.1",
+    "chai-bignumber": "^2.0.2",
     "ethereumjs-util": "^5.2.0",
     "ethjs": "^0.4.0",
-    "truffle-contract": "^3.0.5",
-    "web3-utils": "^1.0.0-beta.34"
+    "truffle-contract": "^3.0.5"
   },
   "devDependencies": {
-    "coveralls": "^3.0.2",
-    "typescript": "^2.8.3"
+    "@types/node": "^10.5.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "bluebird": "^3.5.1",
+    "chai": "^4.1.2",
+    "ethjs-util": "^0.1.6",
+    "jest": "^23.4.1",
+    "ts-jest": "^23.0.1",
+    "tslint": "^5.11.0",
+    "tslint-config-airbnb": "^5.9.2",
+    "typescript": "^2.9.2",
+    "web3": "^0.20.6",
+    "web3-utils": "^1.0.0-beta.34"
   }
 }

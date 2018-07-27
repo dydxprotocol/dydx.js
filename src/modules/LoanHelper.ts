@@ -1,43 +1,43 @@
 import { LoanOffering, SignedLoanOffering, Signature } from '../types';
-import ethUtil from 'ethereumjs-util';
+import ethereumjsUtil from 'ethereumjs-util';
 import { Contracts } from '../lib/Contracts';
-import Eth from 'ethjs';
-import Web3Utils from 'web3-utils';
+import ethjs from 'ethjs';
+import web3Utils from 'web3-utils';
 import bluebird from 'bluebird';
 
 export class LoanHelper {
-    private eth;
+  private eth;
 
-    private contracts: Contracts;
+  private contracts: Contracts;
 
-    constructor(
+  constructor(
         currentProvider,
-        contracts: Contracts
+        contracts: Contracts,
     ) {
-        this.eth = new Eth(currentProvider);
-        bluebird.promisifyAll(this.eth);
-        this.contracts = contracts;
-    }
+    this.eth = new ethjs(currentProvider);
+    bluebird.promisifyAll(this.eth);
+    this.contracts = contracts;
+  }
 
-    public async signLoanOffering(loanOffering: LoanOffering): Promise<SignedLoanOffering> {
-        const hash: string = this.getLoanOfferingHash(loanOffering);
+  public async signLoanOffering(loanOffering: LoanOffering): Promise<SignedLoanOffering> {
+    const hash: string = this.getLoanOfferingHash(loanOffering);
 
-        const signatureString: string = await this.eth.personal_signAsync(
-            loanOffering.signer, hash
+    const signatureString: string = await this.eth.personal_signAsync(
+            loanOffering.signer, hash,
         );
 
-        const signature: Signature = ethUtil.fromRpcSig(signatureString);
+    const signature: Signature = ethereumjsUtil.fromRpcSig(signatureString);
 
-        const signedOffering: SignedLoanOffering = {
-            ...loanOffering,
-            signature
-        };
+    const signedOffering: SignedLoanOffering = {
+      ...loanOffering,
+      signature,
+    };
 
-        return signedOffering;
-    }
+    return signedOffering;
+  }
 
-    public getLoanOfferingHash(loanOffering: LoanOffering): string {
-        const valuesHash = Web3Utils.soliditySha3(
+  public getLoanOfferingHash(loanOffering: LoanOffering): string {
+    const valuesHash = web3Utils.soliditySha3(
             loanOffering.maxAmount,
             loanOffering.minAmount,
             loanOffering.minHeldToken,
@@ -48,9 +48,9 @@ export class LoanHelper {
             { type: 'uint32', value: loanOffering.callTimeLimit },
             { type: 'uint32', value: loanOffering.maxDuration },
             { type: 'uint32', value: loanOffering.interestRate },
-            { type: 'uint32', value: loanOffering.interestPeriod }
+            { type: 'uint32', value: loanOffering.interestPeriod },
         );
-        return Web3Utils.soliditySha3(
+    return web3Utils.soliditySha3(
             this.contracts.margin.address,
             loanOffering.owedToken,
             loanOffering.heldToken,
@@ -61,12 +61,12 @@ export class LoanHelper {
             loanOffering.feeRecipient,
             loanOffering.lenderFeeTokenAddress,
             loanOffering.takerFeeTokenAddress,
-            valuesHash
+            valuesHash,
         );
-    }
+  }
 
-    public setProvider(currentProvider) {
-        this.eth = new Eth(currentProvider);
-        bluebird.promisifyAll(this.eth);
-    }
+  public setProvider(currentProvider) {
+    this.eth = new ethjs(currentProvider);
+    bluebird.promisifyAll(this.eth);
+  }
 }

@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 
 export const ADDRESSES = {
   ZERO: '0x0000000000000000000000000000000000000000',
@@ -15,6 +15,7 @@ export const BIG_NUMBERS = {
     ), // 2**256-1
 };
 
-export const BYTES32 = {
-  ZERO: '0x0000000000000000000000000000000000000000000000000000000000000000'.valueOf(),
+export const ENVIRONMENT = {
+  TEST_NETWORK_ID: 1212,
+  GANACHE_URL: 'http://localhost:8545',
 };

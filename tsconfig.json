@@ -6,15 +6,18 @@
     "strict": false,
     "sourceMap": true,
     "declaration": true,
+    "noUnusedLocals": true,
     "esModuleInterop": true,
     "declarationDir": "dist/types",
     "outDir": "dist/js",
     "typeRoots": [
       "node_modules/@types"
-    ]
+    ],
+    "types": ["node"],
   },
   "include": [
-    "src"
+    "src",
+    "__testing__"
   ],
   "compileOnSave": true
 }
