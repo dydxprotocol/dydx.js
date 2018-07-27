@@ -15,7 +15,7 @@
     "start": "node dist/js/index.js",
     "debug": "truffle debug",
     "prepublishOnly": "npm run build"
-  },
+ },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dydxexchange/dydx.js.git"
@@ -49,5 +49,7 @@
     "typescript": "^2.9.2",
     "web3": "^0.20.6",
     "web3-utils": "^1.0.0-beta.34"
+    "coveralls": "^3.0.2",
+    "typescript": "^2.8.3"
   }
 }
