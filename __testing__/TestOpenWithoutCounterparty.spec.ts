@@ -68,7 +68,7 @@ describe('#openWithoutCounterparty', () => {
 
     const tx2 = await callOpenWithoutCounterparty(openTx2);
     await validate(openTx2, tx2.id, traderHeldTokenBalance2, vaultHeldTokenBalance2);
-  }, 15000);
+  }, 20000);
 
   it('fails if positionId already exists', async () => {
     const openTx1 = await setup(accounts);
