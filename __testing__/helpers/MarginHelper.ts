@@ -43,7 +43,7 @@ export async function callOpenWithoutCounterparty(
       openTx.maxDuration,
       openTx.interestRate,
       openTx.interestPeriod,
-      { gas: 1000000 },
+      { gas: 1500000 },
     );
 
   contains = await dydx.margin.containsPosition(positionId);

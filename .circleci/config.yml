@@ -55,19 +55,11 @@ jobs:
       - restore_cache:
           key: build-{{ .Environment.CIRCLE_SHA1 }}
       - run:
+          name: Wait for contracts to be deployed
+          command: sleep 15
+      - run:
           name: Test
           command: npm test
-  coverage:
-      docker:
-        - image: circleci/node:9.11.1
-        - image: dydxprotocol/protocol:latest
-      working_directory: ~/build
-      steps:
-        - restore_cache:
-            key: build-{{ .Environment.CIRCLE_SHA1 }}
-        - run:
-            name: Coverage
-            command: npm run coverage -- --coverageReporters=text-lcov | node_modules/.bin/coveralls
   publish:
     docker:
       - image: circleci/node:9.11.1
@@ -92,9 +84,6 @@ workflows:
           requires:
             - checkout_and_install
       - lint:
-          requires:
-            - checkout_and_install
-      - coverage:
           requires:
             - checkout_and_install
       - build:

@@ -42,7 +42,7 @@ describe('#openWithoutCounterparty', () => {
 
     const tx = await callOpenWithoutCounterparty(openTx);
     await validate(openTx, tx.id, traderHeldTokenBalance, vaultHeldTokenBalance);
-  });
+  }, 10000);
 
   it('succeeds if different nonces are used', async () => {
     const openTx1 = await setup(accounts);
@@ -68,7 +68,7 @@ describe('#openWithoutCounterparty', () => {
 
     const tx2 = await callOpenWithoutCounterparty(openTx2);
     await validate(openTx2, tx2.id, traderHeldTokenBalance2, vaultHeldTokenBalance2);
-  }, 10000);
+  }, 20000);
 
   it('fails if positionId already exists', async () => {
     const openTx1 = await setup(accounts);

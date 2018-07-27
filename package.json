@@ -14,7 +14,7 @@
     "lint": "tslint --project . -t verbose",
     "start": "node dist/js/index.js",
     "debug": "truffle debug",
-    "coverage": "echo \"Error: no coverage specified\"",
+    "coverage": "jest --coverage",
     "prepublishOnly": "npm run build"
   },
   "repository": {
@@ -32,6 +32,7 @@
     "abi-decoder": "^1.1.0",
     "bignumber.js": "^4.1.0",
     "chai-bignumber": "^2.0.2",
+    "dotenv": "^6.0.0",
     "ethereumjs-util": "^5.2.0",
     "ethjs": "^0.4.0",
     "truffle-contract": "^3.0.5"
@@ -42,6 +43,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "bluebird": "^3.5.1",
     "chai": "^4.1.2",
+    "coveralls": "^3.0.2",
     "ethjs-util": "^0.1.6",
     "jest": "^23.4.1",
     "ts-jest": "^23.0.1",
