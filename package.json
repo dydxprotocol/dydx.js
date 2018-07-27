@@ -14,7 +14,7 @@
     "lint": "tslint --project . -t verbose",
     "start": "node dist/js/index.js",
     "debug": "truffle debug",
-    "coverage": "echo \"Error: no coverage specified\"",
+    "coverage": "jest --coverage",
     "prepublishOnly": "npm run build"
   },
   "repository": {
