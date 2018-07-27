@@ -510,43 +510,43 @@ export class Margin {
 
   public async containsPosition(
         positionId: string,
-    ): Promise<boolean> {
+    ): Promise < boolean > {
     return this.contracts.margin.containsPosition.call(positionId);
   }
 
   public async isPositionCalled(
         positionId: string,
-    ): Promise<boolean> {
+    ): Promise < boolean > {
     return this.contracts.margin.isPositionCalled.call(positionId);
   }
 
   public async isPositionClosed(
         positionId: string,
-    ): Promise<boolean> {
+    ): Promise < boolean > {
     return this.contracts.margin.isPositionClosed.call(positionId);
   }
 
   public async getTotalOwedTokenRepaidToLender(
         positionId: string,
-    ): Promise<BigNumber> {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getTotalOwedTokenRepaidToLender.call(positionId);
   }
 
   public async getPositionBalance(
         positionId: string,
-    ): Promise<BigNumber> {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getPositionBalance.call(positionId);
   }
 
   public async getTimeUntilInterestIncrease(
         positionId: string,
-    ): Promise<BigNumber> {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getTimeUntilInterestIncrease.call(positionId);
   }
 
   public async getPositionOwedAmount(
         positionId: string,
-    ): Promise<BigNumber> {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getPositionOwedAmount.call(positionId);
   }
 
@@ -554,7 +554,7 @@ export class Margin {
         positionId: string,
         principalToClose: BigNumber,
         timestampInSeconds: BigNumber,
-    ): Promise<BigNumber> {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getPositionOwedAmountAtTime.call(
             positionId,
             principalToClose,
@@ -566,7 +566,7 @@ export class Margin {
         positionId: string,
         principalToAdd: BigNumber,
         timestampInSeconds: BigNumber,
-    ): Promise<BigNumber> {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getLenderAmountForIncreasePositionAtTime.call(
             positionId,
             principalToAdd,
@@ -576,31 +576,31 @@ export class Margin {
 
   public async getLoanUnavailableAmount(
         loanHash: string,
-    ): Promise<BigNumber> {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getLoanUnavailableAmount.call(loanHash);
   }
 
   public async getLoanFilledAmount(
         loanHash: string,
-    ): Promise<BigNumber> {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getLoanFilledAmount.call(loanHash);
   }
 
   public async getLoanCanceledAmount(
         loanHash: string,
-    ): Promise<BigNumber> {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getLoanCanceledAmount.call(loanHash);
   }
 
   public async getLoanNumber(
         loanHash: string,
-    ): Promise<BigNumber> {
+    ): Promise < BigNumber > {
     return this.contracts.margin.getLoanNumber.call(loanHash);
   }
 
   public async isLoanApproved(
         loanHash: string,
-    ): Promise<boolean> {
+    ): Promise < boolean > {
     return this.contracts.margin.isLoanApproved.call(loanHash);
   }
 
