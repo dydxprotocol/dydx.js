@@ -1,8 +1,8 @@
 {
   "name": "@dydxprotocol/dydx.js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Javascript library for interacting with the dYdX Protocol",
-  "main": "dist/js/index.js",
+  "main": "dist/js/src/index.js",
   "types": "dist/types/index.d.ts",
   "files": [
     "dist/",
@@ -14,8 +14,7 @@
     "lint": "tslint --project . -t verbose",
     "start": "node dist/js/index.js",
     "debug": "truffle debug",
-    "coverage": "jest --coverage",
-    "prepublishOnly": "npm run build"
+    "coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
