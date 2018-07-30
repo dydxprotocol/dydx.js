@@ -4,6 +4,7 @@ import { Contracts } from '../lib/Contracts';
 import ethjs from 'ethjs';
 import web3Utils from 'web3-utils';
 import bluebird from 'bluebird';
+import { SIGNATURE_TYPE } from '../lib/Constants';
 
 export class LoanHelper {
   private eth;
@@ -11,11 +12,8 @@ export class LoanHelper {
   private contracts: Contracts;
 
   constructor(
-    currentProvider,
     contracts: Contracts,
   ) {
-    this.eth = new ethjs(currentProvider);
-    bluebird.promisifyAll(this.eth);
     this.contracts = contracts;
   }
 
@@ -28,9 +26,18 @@ export class LoanHelper {
 
     const signature: Signature = ethereumjsUtil.fromRpcSig(signatureString);
 
+    const signatureBytes = ethereumjsUtil.bufferToHex(
+      Buffer.concat([
+        ethereumjsUtil.toBuffer(SIGNATURE_TYPE.DEC),
+        ethereumjsUtil.toBuffer(signature.v),
+        signature.r,
+        signature.s,
+      ]),
+    );
+
     const signedOffering: SignedLoanOffering = {
       ...loanOffering,
-      signature,
+      signature: signatureBytes,
     };
 
     return signedOffering;

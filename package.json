@@ -1,6 +1,6 @@
 {
   "name": "@dydxprotocol/dydx.js",
-  "version": "0.0.20",
+  "version": "0.1.0",
   "description": "Javascript library for interacting with the dYdX Protocol",
   "main": "dist/js/index.js",
   "types": "dist/types/index.d.ts",
@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/dydxexchange/dydx.js#readme",
   "dependencies": {
-    "@dydxprotocol/protocol": "0.1.4",
+    "@dydxprotocol/protocol": "0.1.7",
     "abi-decoder": "^1.1.0",
     "bignumber.js": "^4.1.0",
     "chai-bignumber": "^2.0.2",

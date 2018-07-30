@@ -24,7 +24,7 @@ export interface LoanOffering {
 }
 
 export interface SignedLoanOffering extends LoanOffering {
-  signature: Signature;
+  signature: string;
 }
 
 export interface Contract {

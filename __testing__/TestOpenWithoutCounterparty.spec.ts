@@ -94,7 +94,7 @@ describe('#openWithoutCounterparty', () => {
         openTx.owedToken,
         openTx.positionOwner,
         openTx.principal.times(2),
-        dydx.contracts.Proxy.address,
+        dydx.contracts.TokenProxy.address,
       );
 
     await dydx.margin.closePositionDirectly(

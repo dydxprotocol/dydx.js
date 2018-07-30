@@ -18,3 +18,10 @@ export const BIG_NUMBERS = {
 export const BYTES32 = {
   ZERO: '0x0000000000000000000000000000000000000000000000000000000000000000'.valueOf(),
 };
+
+export const SIGNATURE_TYPE = {
+  INVALID: 0,
+  NUL: 1,
+  DEC: 2,
+  HEX: 3,
+};

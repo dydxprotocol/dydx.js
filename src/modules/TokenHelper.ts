@@ -11,12 +11,8 @@ export class TokenHelper {
   private contracts: Contracts;
 
   constructor(
-    provider,
-    networkId: number,
     contracts: Contracts,
   ) {
-    setupContract(Token, provider, networkId);
-
     this.contracts = contracts;
   }
 
@@ -46,7 +42,7 @@ export class TokenHelper {
     return this.getAllowance(
       tokenAddress,
       ownerAddress,
-      this.contracts.proxy.address,
+      this.contracts.tokenProxy.address,
     );
   }
 
@@ -76,7 +72,7 @@ export class TokenHelper {
     return this.setAllowance(
       tokenAddress,
       ownerAddress,
-      this.contracts.proxy.address,
+      this.contracts.tokenProxy.address,
       amount,
       options,
     );
@@ -105,7 +101,7 @@ export class TokenHelper {
     return this.setAllowance(
       tokenAddress,
       ownerAddress,
-      this.contracts.proxy.address,
+      this.contracts.tokenProxy.address,
       BIG_NUMBERS.ONES_255,
       options,
     );
@@ -119,7 +115,7 @@ export class TokenHelper {
     return this.setAllowance(
       tokenAddress,
       ownerAddress,
-      this.contracts.proxy.address,
+      this.contracts.tokenProxy.address,
       BIG_NUMBERS.ZERO,
       options,
     );

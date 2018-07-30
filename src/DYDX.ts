@@ -9,30 +9,27 @@ export class DYDX {
   public loanOffering: LoanHelper;
   public zeroEx: ZeroExHelper;
   public token: TokenHelper;
+  public contracts: Contracts;
 
   public currentProvider;
   public currentNetworkId;
+  public initialized;
 
-  private contracts: Contracts;
+  constructor() {
+    this.initialized = false;
 
-  constructor(
-    provider: any,
-    networkId: number,
-  ) {
-    this.currentProvider = provider;
-    this.currentNetworkId = networkId;
+    this.contracts = new Contracts();
 
-    this.contracts = new Contracts(provider, networkId);
-
-    this.loanOffering = new LoanHelper(provider, this.contracts);
+    this.loanOffering = new LoanHelper(this.contracts);
     this.margin = new Margin(this.contracts);
     this.zeroEx = new ZeroExHelper();
-    this.token = new TokenHelper(provider, networkId, this.contracts);
+    this.token = new TokenHelper(this.contracts);
   }
 
-  public async setProvider(provider, networkId) {
+  public async initialize(provider, networkId) {
     this.currentProvider = provider;
     this.currentNetworkId = networkId;
+    this.initialized = true;
 
     await this.contracts.setProvider(provider, networkId);
     this.token.setProvider(provider, networkId);

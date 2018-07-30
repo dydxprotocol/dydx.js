@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { dydx, setDYDXProvider } from './DYDX';
+import { dydx, initialize } from './DYDX';
 import { deployERC20 } from './TokenHelper';
 import { BIG_NUMBERS } from '../../src/lib/Constants';
 import web3  from './web3';
@@ -12,7 +12,7 @@ export let testTokenContract = null;
 export async function callOpenWithoutCounterparty(
   openTx,
   { shouldContain = false } = {},
-) {
+) : Promise<any> {
   const positionId = web3Utils.soliditySha3(
     openTx.trader,
     openTx.nonce,
@@ -89,7 +89,7 @@ export async function setup(accounts) {
     heldToken,
     trader,
     deposit,
-    dydx.contracts.Proxy.address,
+    dydx.contracts.TokenProxy.address,
   );
 
   return {
@@ -137,7 +137,7 @@ export async function validate(openTx, txID, traderHeldTokenBalance, vaultHeldTo
   );
 }
 
-export function setupDYDX(provider) {
-  setDYDXProvider(web3.currentProvider);
+export async function setupDYDX(provider) {
+  await initialize(provider);
   testTokenContract = web3.eth.contract(dydx.contracts.TestToken.abi);
 }

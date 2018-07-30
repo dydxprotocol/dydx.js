@@ -1,10 +1,6 @@
 import { DYDX } from '../../src/DYDX';
-export let dydx = null;
+export const dydx = new DYDX();
 
-export function setDYDXProvider(provider) {
-  if (dydx === null) {
-    dydx = new DYDX(provider, Number(process.env.TEST_NETWORK_ID));
-  } else {
-    dydx.setProvider(provider);
-  }
+export async function initialize(provider) {
+  await dydx.initialize(provider, Number(process.env.TEST_NETWORK_ID));
 }

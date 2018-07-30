@@ -14,7 +14,7 @@ export class Margin {
     this.contracts = contracts;
   }
 
-    // ============ Public State Changing Contract Functions ============
+  // ============ Public State Changing Contract Functions ============
 
   public async openPosition(
     loanOffering: SignedLoanOffering,
@@ -67,21 +67,13 @@ export class Margin {
       loanOffering.interestPeriod,
     ];
 
-    const sigV = loanOffering.signature.v;
-
-    const sigRS = [
-      loanOffering.signature.r,
-      loanOffering.signature.s,
-    ];
-
     const response = await callContractFunction(
       this.contracts.margin.openPosition,
       { ...options, from: trader },
       addresses,
       values256,
       values32,
-      sigV,
-      sigRS,
+      loanOffering.signature,
       depositInHeldToken,
       orderData,
     );
@@ -285,13 +277,6 @@ export class Margin {
       loanOffering.maxDuration,
     ];
 
-    const sigV = loanOffering.signature.v;
-
-    const sigRS = [
-      loanOffering.signature.r,
-      loanOffering.signature.s,
-    ];
-
     return callContractFunction(
       this.contracts.margin.increasePosition,
       { ...options, from: trader },
@@ -299,9 +284,8 @@ export class Margin {
       addresses,
       values256,
       values32,
-      sigV,
-      sigRS,
       depositInHeldToken,
+      loanOffering.signature,
       orderData,
     );
   }
@@ -460,7 +444,7 @@ export class Margin {
     );
   }
 
-    // ============ Public Constant Contract Functions ============
+  // ============ Public Constant Contract Functions ============
 
   public async getPosition(
     positionId: string,
@@ -602,13 +586,13 @@ export class Margin {
     return this.contracts.margin.isLoanApproved.call(loanHash);
   }
 
-    // ============ Public Utility Functions ============
+  // ============ Public Utility Functions ============
 
   public getAddress(): string {
     return this.contracts.margin.address;
   }
 
-    // ============ Private Functions ============
+  // ============ Private Functions ============
 
   private formatLoanOffering(loanOffering: LoanOffering): FormattedLoanOffering {
     const addresses = [

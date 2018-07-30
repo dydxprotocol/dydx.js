@@ -1,6 +1,6 @@
 import {
     Margin as MarginContract,
-    Proxy as ProxyContract,
+    TokenProxy as TokenProxyContract,
     ERC20ShortCreator as ERC20ShortCreatorContract,
     ERC20LongCreator as ERC20LongCreatorContract,
     SharedLoanCreator as SharedLoanCreatorContract,
@@ -12,7 +12,7 @@ import { setupContract } from './Helpers';
 
 export class Contracts {
   public Margin = truffleContract(MarginContract);
-  public Proxy = truffleContract(ProxyContract);
+  public TokenProxy = truffleContract(TokenProxyContract);
   public ERC20ShortCreator = truffleContract(ERC20ShortCreatorContract);
   public ERC20LongCreator = truffleContract(ERC20LongCreatorContract);
   public SharedLoanCreator = truffleContract(SharedLoanCreatorContract);
@@ -20,18 +20,11 @@ export class Contracts {
   public TestToken = truffleContract(TestTokenContract);
 
   public margin;
-  public proxy;
+  public tokenProxy;
   public erc20ShortCreator;
   public erc20LongCreator;
   public sharedLoanCreator;
   public vault;
-
-  constructor(
-    provider: any,
-    networkId: number,
-  ) {
-    this.connectContracts(provider, networkId).catch(e => console.error(e));
-  }
 
   public async setProvider(
     provider: any,
@@ -45,7 +38,7 @@ export class Contracts {
     networkId: number,
   ) {
     setupContract(this.Margin, provider, networkId);
-    setupContract(this.Proxy, provider, networkId);
+    setupContract(this.TokenProxy, provider, networkId);
     setupContract(this.ERC20ShortCreator, provider, networkId);
     setupContract(this.ERC20LongCreator, provider, networkId);
     setupContract(this.SharedLoanCreator, provider, networkId);
@@ -54,14 +47,14 @@ export class Contracts {
 
     const [
       margin,
-      proxy,
+      tokenProxy,
       erc20ShortCreator,
       erc20LongCreator,
       sharedLoanCreator,
       vault,
     ] = await Promise.all([
       this.Margin.deployed(),
-      this.Proxy.deployed(),
+      this.TokenProxy.deployed(),
       this.ERC20ShortCreator.deployed(),
       this.ERC20LongCreator.deployed(),
       this.SharedLoanCreator.deployed(),
@@ -69,7 +62,7 @@ export class Contracts {
     ]);
 
     this.margin = margin;
-    this.proxy = proxy;
+    this.tokenProxy = tokenProxy;
     this.erc20ShortCreator = erc20ShortCreator;
     this.erc20LongCreator = erc20LongCreator;
     this.sharedLoanCreator = sharedLoanCreator;
