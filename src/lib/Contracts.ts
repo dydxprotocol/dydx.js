@@ -27,23 +27,23 @@ export class Contracts {
   public vault;
 
   constructor(
-        provider: any,
-        networkId: number,
-    ) {
+    provider: any,
+    networkId: number,
+  ) {
     this.connectContracts(provider, networkId).catch(e => console.error(e));
   }
 
   public async setProvider(
-        provider: any,
-        networkId: number,
-    ): Promise<any> {
+    provider: any,
+    networkId: number,
+  ): Promise<any> {
     return this.connectContracts(provider, networkId);
   }
 
   private async connectContracts(
-        provider: any,
-        networkId: number,
-    ) {
+    provider: any,
+    networkId: number,
+  ) {
     setupContract(this.Margin, provider, networkId);
     setupContract(this.Proxy, provider, networkId);
     setupContract(this.ERC20ShortCreator, provider, networkId);
