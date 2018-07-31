@@ -9,6 +9,27 @@ import expect = chai.expect;
 
 export let testTokenContract = null;
 
+export async function callIncreaseWithoutCounterparty(
+  positionId,
+  principalToAdd,
+  from,
+  { shouldContain = false } = {},
+) {
+  let contains;
+
+  if(!shouldContain) {
+    contains = await dydx.margin.containsPosition(positionId);
+    expect(contains).to.be.false;
+  }
+
+  const response = dydx.margin.increaseWithoutCounterparty(
+                               positionId,
+                               principalToAdd,
+                               from
+                             );
+  return response;
+}
+
 export async function callOpenWithoutCounterparty(
   openTx,
   { shouldContain = false } = {},
@@ -59,7 +80,7 @@ export async function issueAndSetAllowance(
   ]);
 }
 
-export async function getBalances(tokenAddress, holders) {
+export async function getBalances(tokenAddress, holders):Promise<any []> {
   const heldToken = testTokenContract.at(tokenAddress);
   const balances = holders.map(holder => heldToken.balanceOf.call(holder));
   const result = await Promise.all(balances);
