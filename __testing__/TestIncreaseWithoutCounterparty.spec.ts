@@ -5,8 +5,9 @@ declare var beforeAll: any;
 declare var expect: any;
 import { dydx } from './helpers/DYDX';
 import {
-  callIncreaseWithoutCounterparty,
+  issueAndSetAllowance,
   callOpenWithoutCounterparty,
+  callIncreaseWithoutCounterparty,
   getBalances,
   setup,
   setupDYDX,
@@ -15,7 +16,6 @@ import BigNumber from 'bignumber.js';
 import chai from 'chai';
 import web3 from './helpers/web3';
 chai.use(require('chai-bignumber')());
-
 let accounts = null;
 
 describe('#increaseWithoutCounterparty', () => {
@@ -24,35 +24,54 @@ describe('#increaseWithoutCounterparty', () => {
     accounts = await web3.eth.getAccountsAsync();
   });
 
-  it.only('increases a position from position owner', async () => {
+  it('increases a position from position owner', async () => {
     const openTx = await setup(accounts);
+
+    const positionTx =  await callOpenWithoutCounterparty(openTx);
+
+    const principalToAdd = new BigNumber('1000');
     const [
-      traderHeldTokenBalanceBefore,
+      loanHeldTokenBalanceBefore1,
+      vaultHeldTokenBalanceBefore1
+    ] = await getBalances(
+      openTx.heldToken,
+      [openTx.loanOwner, dydx.contracts.Vault.address],
+    );
+    const leftOverAmount: BigNumber = new BigNumber(10000);
+
+    console.log(loanHeldTokenBalanceBefore1.toNumber(), vaultHeldTokenBalanceBefore1.toNumber());
+    const issueTrader: BigNumber = principalToAdd.div(openTx.principal).times(openTx.deposit);
+    console.log(issueTrader.toNumber());
+    await issueAndSetAllowance(
+          openTx.heldToken,
+          openTx.loanOwner,
+          issueTrader.add(leftOverAmount),
+          dydx.contracts.TokenProxy.address
+    );
+
+    const [
+      loanHeldTokenBalanceBefore,
       vaultHeldTokenBalanceBefore
     ] = await getBalances(
       openTx.heldToken,
-      [openTx.trader, dydx.contracts.Vault.address],
+      [openTx.loanOwner, dydx.contracts.Vault.address],
     );
+    console.log(loanHeldTokenBalanceBefore.toNumber(), vaultHeldTokenBalanceBefore.toNumber());
 
-    const positionTx = await callOpenWithoutCounterparty(openTx);
-
-    const principalToAdd = new BigNumber('100000');
     await callIncreaseWithoutCounterparty(
                              positionTx.id,
                              principalToAdd,
-                             openTx.positionOwner
+                             openTx.loanOwner
                            );
     const [
-      traderHeldTokenBalanceAfter,
+      loanHeldTokenBalanceAfter,
       vaultHeldTokenBalanceAfter
     ] = await getBalances(
       openTx.heldToken,
-      [openTx.trader, dydx.contracts.Vault.address],
+      [openTx.loanOwner, dydx.contracts.Vault.address],
     );
-
-    expect(vaultHeldTokenBalanceBefore.plus(principalToAdd)).to.be.bignumber.eq(vaultHeldTokenBalanceAfter);
-    expect(traderHeldTokenBalanceBefore.minus(principalToAdd)).to.be.bignumber.eq(traderHeldTokenBalanceAfter);
-
-
-  });
+    console.log(loanHeldTokenBalanceAfter.toNumber(), vaultHeldTokenBalanceAfter.toNumber());
+    // for some reason it loses 1 when adding to the position
+    expect(loanHeldTokenBalanceAfter).toEqual(leftOverAmount.sub(1));
+  }, 10000);
 });

@@ -156,7 +156,7 @@ describe('#openWithoutCounterparty', () => {
           .rejects.toThrow(/VM Exception while processing transaction: revert/);
   });
 
-  it('fails if owedToken is 0', async () => {
+  it.only('fails if owedToken is 0', async () => {
     const openTx = await setup(accounts);
     openTx.owedToken = ADDRESSES.ZERO;
     await expect(callOpenWithoutCounterparty(openTx))
