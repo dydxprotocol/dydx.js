@@ -9,6 +9,19 @@ import expect = chai.expect;
 
 export let testTokenContract = null;
 
+export async function callIncreaseWithoutCounterparty(
+  positionId: string,
+  principalToAdd: BigNumber,
+  from: string,
+  { shouldContain = false } = {},
+): Promise<any> {
+  return dydx.margin.increaseWithoutCounterparty(
+                               positionId,
+                               principalToAdd,
+                               from,
+                             );
+}
+
 export async function callOpenWithoutCounterparty(
   openTx,
   { shouldContain = false } = {},
@@ -59,7 +72,7 @@ export async function issueAndSetAllowance(
   ]);
 }
 
-export async function getBalances(tokenAddress, holders) {
+export async function getBalances(tokenAddress, holders):Promise<any []> {
   const heldToken = testTokenContract.at(tokenAddress);
   const balances = holders.map(holder => heldToken.balanceOf.call(holder));
   const result = await Promise.all(balances);
@@ -70,13 +83,13 @@ export async function getBalances(tokenAddress, holders) {
 export async function setup(accounts) {
   const trader = accounts[1];
   const loanOwner = accounts[2];
-  const positionOwner = accounts[3];
+  const positionOwner = accounts[2];
 
   const heldToken = await deployERC20(dydx, accounts);
   const owedToken = await deployERC20(dydx, accounts);
 
-  const deposit   = new BigNumber('1098765932109876543');
-  const principal = new BigNumber('2387492837498237491');
+  const deposit   = new BigNumber('10000000000000');
+  const principal = new BigNumber('200000000000000');
   const nonce = new BigNumber(Math.floor(Math.random() * 100000000));
 
   const callTimeLimit = BIG_NUMBERS.ONE_DAY_IN_SECONDS;
@@ -88,7 +101,8 @@ export async function setup(accounts) {
   await issueAndSetAllowance(
     heldToken,
     trader,
-    deposit,
+    /* need to have extra in order for the contract not to throw */
+    deposit.mul(3),
     dydx.contracts.TokenProxy.address,
   );
 
