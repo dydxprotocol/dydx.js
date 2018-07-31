@@ -14,13 +14,12 @@ export async function callIncreaseWithoutCounterparty(
   principalToAdd: BigNumber,
   from: string,
   { shouldContain = false } = {},
-) {
-  const response = dydx.margin.increaseWithoutCounterparty(
+): Promise<any> {
+  return dydx.margin.increaseWithoutCounterparty(
                                positionId,
                                principalToAdd,
                                from,
                              );
-  return response;
 }
 
 export async function callOpenWithoutCounterparty(
@@ -89,8 +88,8 @@ export async function setup(accounts) {
   const heldToken = await deployERC20(dydx, accounts);
   const owedToken = await deployERC20(dydx, accounts);
 
-  const deposit   = new BigNumber('9098765932109876543');
-  const principal = new BigNumber('7492837498237491');
+  const deposit   = new BigNumber('10000000000000');
+  const principal = new BigNumber('200000000000000');
   const nonce = new BigNumber(Math.floor(Math.random() * 100000000));
 
   const callTimeLimit = BIG_NUMBERS.ONE_DAY_IN_SECONDS;
@@ -102,6 +101,7 @@ export async function setup(accounts) {
   await issueAndSetAllowance(
     heldToken,
     trader,
+    /* need to have extra in order for the contract not to throw */
     deposit.mul(3),
     dydx.contracts.TokenProxy.address,
   );

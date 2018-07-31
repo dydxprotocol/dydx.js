@@ -31,32 +31,28 @@ describe('#increaseWithoutCounterparty', () => {
 
     const principalToAdd = new BigNumber('1000');
     const [
-      loanHeldTokenBalanceBefore1,
-      vaultHeldTokenBalanceBefore1,
+      loanHeldTokenBalanceAfterOpen,
+      vaultHeldTokenBalanceAfterOpen,
     ] = await getBalances(
       openTx.heldToken,
       [openTx.loanOwner, dydx.contracts.Vault.address],
     );
-    const leftOverAmount: BigNumber = new BigNumber(10000);
+    expect(loanHeldTokenBalanceAfterOpen).toEqual(new BigNumber(0));
+    expect(vaultHeldTokenBalanceAfterOpen).toEqual(openTx.deposit);
 
-    console.log(loanHeldTokenBalanceBefore1.toNumber(), vaultHeldTokenBalanceBefore1.toNumber());
-    const issueTrader: BigNumber = principalToAdd.div(openTx.principal).times(openTx.deposit);
-    console.log(issueTrader.toNumber());
+    const leftOverAmount: BigNumber = new BigNumber(10000);
+    const issueLoaner: BigNumber = principalToAdd.div(openTx.principal).times(openTx.deposit);
+
     await issueAndSetAllowance(
           openTx.heldToken,
           openTx.loanOwner,
-          issueTrader.add(leftOverAmount),
+          issueLoaner.add(leftOverAmount),
           dydx.contracts.TokenProxy.address,
     );
 
-    const [
-      loanHeldTokenBalanceBefore,
-      vaultHeldTokenBalanceBefore,
-    ] = await getBalances(
-      openTx.heldToken,
-      [openTx.loanOwner, dydx.contracts.Vault.address],
-    );
-    console.log(loanHeldTokenBalanceBefore.toNumber(), vaultHeldTokenBalanceBefore.toNumber());
+    const [loanHeldTokenBalanceBeforeIncrease]
+                = await getBalances(openTx.heldToken, [openTx.loanOwner]);
+    expect(loanHeldTokenBalanceBeforeIncrease).toEqual(issueLoaner.plus(leftOverAmount));
 
     await callIncreaseWithoutCounterparty(
                              positionTx.id,
@@ -64,14 +60,15 @@ describe('#increaseWithoutCounterparty', () => {
                              openTx.loanOwner,
                            );
     const [
-      loanHeldTokenBalanceAfter,
-      vaultHeldTokenBalanceAfter,
+      loanHeldTokenBalanceAfterIncrease,
+      vaultHeldTokenBalanceAfterIncrease,
     ] = await getBalances(
       openTx.heldToken,
       [openTx.loanOwner, dydx.contracts.Vault.address],
     );
-    console.log(loanHeldTokenBalanceAfter.toNumber(), vaultHeldTokenBalanceAfter.toNumber());
-    // for some reason it loses 1 when adding to the position
-    expect(loanHeldTokenBalanceAfter).toEqual(leftOverAmount.sub(1));
+    expect(loanHeldTokenBalanceAfterIncrease).toEqual(leftOverAmount);
+    expect(vaultHeldTokenBalanceAfterIncrease)
+          .toEqual(vaultHeldTokenBalanceAfterOpen.plus(issueLoaner));
+
   }, 10000);
 });
