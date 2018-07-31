@@ -244,15 +244,15 @@ export class Margin {
   public async increaseWithoutCounterparty(
     positionId: string,
     principalToAdd: BigNumber,
-    from: string,
+    sender: string,
     options: object = {},
   ): Promise<object> {
     return callContractFunction(
       this.contracts.margin.increaseWithoutCounterparty,
-        { ...options, from: from },
-        positionId,
-        principalToAdd,
-      );
+      { ...options, from: sender },
+      positionId,
+      principalToAdd,
+    );
   }
 
   public async increasePosition(

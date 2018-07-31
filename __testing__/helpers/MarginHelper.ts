@@ -18,7 +18,7 @@ export async function callIncreaseWithoutCounterparty(
   const response = dydx.margin.increaseWithoutCounterparty(
                                positionId,
                                principalToAdd,
-                               from
+                               from,
                              );
   return response;
 }

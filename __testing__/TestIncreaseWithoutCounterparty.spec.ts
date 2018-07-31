@@ -32,7 +32,7 @@ describe('#increaseWithoutCounterparty', () => {
     const principalToAdd = new BigNumber('1000');
     const [
       loanHeldTokenBalanceBefore1,
-      vaultHeldTokenBalanceBefore1
+      vaultHeldTokenBalanceBefore1,
     ] = await getBalances(
       openTx.heldToken,
       [openTx.loanOwner, dydx.contracts.Vault.address],
@@ -46,12 +46,12 @@ describe('#increaseWithoutCounterparty', () => {
           openTx.heldToken,
           openTx.loanOwner,
           issueTrader.add(leftOverAmount),
-          dydx.contracts.TokenProxy.address
+          dydx.contracts.TokenProxy.address,
     );
 
     const [
       loanHeldTokenBalanceBefore,
-      vaultHeldTokenBalanceBefore
+      vaultHeldTokenBalanceBefore,
     ] = await getBalances(
       openTx.heldToken,
       [openTx.loanOwner, dydx.contracts.Vault.address],
@@ -61,11 +61,11 @@ describe('#increaseWithoutCounterparty', () => {
     await callIncreaseWithoutCounterparty(
                              positionTx.id,
                              principalToAdd,
-                             openTx.loanOwner
+                             openTx.loanOwner,
                            );
     const [
       loanHeldTokenBalanceAfter,
-      vaultHeldTokenBalanceAfter
+      vaultHeldTokenBalanceAfter,
     ] = await getBalances(
       openTx.heldToken,
       [openTx.loanOwner, dydx.contracts.Vault.address],
