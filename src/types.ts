@@ -51,3 +51,16 @@ export interface Position {
   interestRate:       BigNumber;
   interestPeriod:     BigNumber;
 }
+
+export interface ZeroExOrder {
+  maker: string;
+  taker: string;
+  feeRecipient: string;
+  makerTokenAmount: BigNumber;
+  takerTokenAmount: BigNumber;
+  makerFee: BigNumber;
+  takerFee: BigNumber;
+  expirationUnixTimestampSec: BigNumber;
+  salt: BigNumber;
+  ecSignature: Signature;
+}

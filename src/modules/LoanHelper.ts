@@ -1,12 +1,12 @@
 import { LoanOffering, SignedLoanOffering, Signature } from '../types';
 import ethereumjsUtil from 'ethereumjs-util';
-import { Contracts } from '../lib/Contracts';
+import Contracts from '../lib/Contracts';
 import ethjs from 'ethjs';
 import web3Utils from 'web3-utils';
 import bluebird from 'bluebird';
 import { SIGNATURE_TYPE } from '../lib/Constants';
 
-export class LoanHelper {
+export default class LoanHelper {
   private eth;
 
   private contracts: Contracts;

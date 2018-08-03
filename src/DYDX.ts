@@ -1,13 +1,13 @@
-import { LoanHelper } from './modules/LoanHelper';
-import { ZeroExHelper } from './modules/ZeroExHelper';
-import { Margin } from './modules/Margin';
-import { TokenHelper } from './modules/TokenHelper';
-import { Contracts } from './lib/Contracts';
+import LoanHelper from './modules/LoanHelper';
+import ZeroExExchangeWrapper from './modules/exchange_wrappers/ZeroExExchangeWrapper';
+import Margin from './modules/Margin';
+import TokenHelper from './modules/TokenHelper';
+import Contracts from './lib/Contracts';
 
 export class DYDX {
   public margin: Margin;
   public loanOffering: LoanHelper;
-  public zeroEx: ZeroExHelper;
+  public zeroExExchangeWrapper: ZeroExExchangeWrapper;
   public token: TokenHelper;
   public contracts: Contracts;
 
@@ -22,7 +22,7 @@ export class DYDX {
 
     this.loanOffering = new LoanHelper(this.contracts);
     this.margin = new Margin(this.contracts);
-    this.zeroEx = new ZeroExHelper();
+    this.zeroExExchangeWrapper = new ZeroExExchangeWrapper(this.contracts);
     this.token = new TokenHelper(this.contracts);
   }
 

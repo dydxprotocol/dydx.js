@@ -6,11 +6,12 @@ import {
     SharedLoanCreator as SharedLoanCreatorContract,
     TestToken as TestTokenContract,
     Vault as VaultContract,
+    ZeroExExchangeWrapper as ZeroExExchangeWrapperContract,
 } from '@dydxprotocol/protocol';
 import truffleContract from 'truffle-contract';
 import { setupContract } from './Helpers';
 
-export class Contracts {
+export default class Contracts {
   public Margin = truffleContract(MarginContract);
   public TokenProxy = truffleContract(TokenProxyContract);
   public ERC20ShortCreator = truffleContract(ERC20ShortCreatorContract);
@@ -18,6 +19,7 @@ export class Contracts {
   public SharedLoanCreator = truffleContract(SharedLoanCreatorContract);
   public Vault = truffleContract(VaultContract);
   public TestToken = truffleContract(TestTokenContract);
+  public ZeroExExchangeWrapper = truffleContract(ZeroExExchangeWrapperContract);
 
   public margin;
   public tokenProxy;
@@ -25,6 +27,7 @@ export class Contracts {
   public erc20LongCreator;
   public sharedLoanCreator;
   public vault;
+  public zeroExExchangeWrapper;
 
   public async setProvider(
     provider: any,
@@ -44,6 +47,7 @@ export class Contracts {
     setupContract(this.SharedLoanCreator, provider, networkId);
     setupContract(this.Vault, provider, networkId);
     setupContract(this.TestToken, provider, networkId);
+    setupContract(this.ZeroExExchangeWrapper, provider, networkId);
 
     const [
       margin,
@@ -52,6 +56,7 @@ export class Contracts {
       erc20LongCreator,
       sharedLoanCreator,
       vault,
+      zeroExExchangeWrapper,
     ] = await Promise.all([
       this.Margin.deployed(),
       this.TokenProxy.deployed(),
@@ -59,6 +64,7 @@ export class Contracts {
       this.ERC20LongCreator.deployed(),
       this.SharedLoanCreator.deployed(),
       this.Vault.deployed(),
+      this.ZeroExExchangeWrapper.deployed(),
     ]);
 
     this.margin = margin;
@@ -67,5 +73,6 @@ export class Contracts {
     this.erc20LongCreator = erc20LongCreator;
     this.sharedLoanCreator = sharedLoanCreator;
     this.vault = vault;
+    this.zeroExExchangeWrapper = zeroExExchangeWrapper;
   }
 }

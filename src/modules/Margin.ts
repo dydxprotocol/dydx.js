@@ -1,11 +1,11 @@
 import { LoanOffering, SignedLoanOffering, Position } from '../types';
-import { ExchangeWrapper } from './ExchangeWrapper';
-import  BigNumber  from 'bignumber.js';
-import { Contracts } from '../lib/Contracts';
+import ExchangeWrapper from './exchange_wrappers/ExchangeWrapper';
+import BigNumber  from 'bignumber.js';
+import Contracts from '../lib/Contracts';
 import web3Utils from 'web3-utils';
 import { callContractFunction } from '../lib/Helpers';
 
-export class Margin {
+export default class Margin {
   private contracts: Contracts;
 
   constructor(

@@ -1,4 +1,4 @@
-import { Contracts } from '../lib/Contracts';
+import Contracts from '../lib/Contracts';
 import BigNumber from 'bignumber.js';
 import { ERC20 } from '@dydxprotocol/protocol';
 import truffleContract from 'truffle-contract';
@@ -7,7 +7,7 @@ import { setupContract, callContractFunction } from '../lib/Helpers';
 
 const Token = truffleContract(ERC20);
 
-export class TokenHelper {
+export default class TokenHelper {
   private contracts: Contracts;
 
   constructor(
