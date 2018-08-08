@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/dydxexchange/dydx.js#readme",
   "dependencies": {
-    "@dydxprotocol/protocol": "0.1.7",
+    "@dydxprotocol/protocol": "^0.1.11",
     "abi-decoder": "^1.1.0",
     "bignumber.js": "^4.1.0",
     "chai-bignumber": "^2.0.2",
