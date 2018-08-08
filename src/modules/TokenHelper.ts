@@ -35,6 +35,12 @@ export default class TokenHelper {
     return token.balanceOf.call(ownerAddress);
   }
 
+  public async getTotalSupply(tokenAddress: string): Promise<BigNumber> {
+    const token = await this.getToken(tokenAddress);
+
+    return token.totalSupply.call();
+  }
+
   public async getProxyAllowance(
     tokenAddress: string,
     ownerAddress: string,

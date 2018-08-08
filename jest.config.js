@@ -11,5 +11,6 @@ module.exports = {
       "js",
       "jsx",
       "json"
-    ]
+    ],
+    "testURL":"http://localhost/",
 };
