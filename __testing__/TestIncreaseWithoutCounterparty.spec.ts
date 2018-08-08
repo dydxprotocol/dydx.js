@@ -70,5 +70,5 @@ describe('#increaseWithoutCounterparty', () => {
     expect(vaultHeldTokenBalanceAfterIncrease)
           .toEqual(vaultHeldTokenBalanceAfterOpen.plus(issueLoaner));
 
-  }, 10000);
+  }, 15000);
 });
