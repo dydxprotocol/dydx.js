@@ -2,7 +2,6 @@ import { BigNumber } from 'bignumber.js';
 import { dydx, initialize } from './DYDX';
 import { deployERC20 } from './TokenHelper';
 import { BIG_NUMBERS } from '../../src/lib/Constants';
-import web3  from './web3';
 import web3Utils from 'web3-utils';
 import chai from 'chai' ;
 import expect = chai.expect;
@@ -153,5 +152,5 @@ export async function validate(openTx, txID, traderHeldTokenBalance, vaultHeldTo
 
 export async function setupDYDX(provider) {
   await initialize(provider);
-  testTokenContract = web3.eth.contract(dydx.contracts.TestToken.abi);
+  testTokenContract = dydx.contracts.web3.eth.contract(dydx.contracts.TestToken.abi);
 }

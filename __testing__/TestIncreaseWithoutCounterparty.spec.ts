@@ -3,6 +3,7 @@ declare var it: any;
 declare var describe: any;
 declare var beforeAll: any;
 declare var expect: any;
+import Web3 from 'web3';
 import { dydx } from './helpers/DYDX';
 import {
   issueAndSetAllowance,
@@ -14,14 +15,13 @@ import {
 } from './helpers/MarginHelper';
 import BigNumber from 'bignumber.js';
 import chai from 'chai';
-import web3 from './helpers/web3';
 chai.use(require('chai-bignumber')());
 let accounts = null;
 
 describe('#increaseWithoutCounterparty', () => {
   beforeAll(async () => {
-    setupDYDX(web3.currentProvider);
-    accounts = await web3.eth.getAccountsAsync();
+    setupDYDX(new Web3.providers.HttpProvider(process.env.GANACHE_URL));
+    accounts = await dydx.contracts.web3.eth.getAccountsAsync();
   });
 
   it('increases a position from position owner', async () => {
@@ -70,5 +70,5 @@ describe('#increaseWithoutCounterparty', () => {
     expect(vaultHeldTokenBalanceAfterIncrease)
           .toEqual(vaultHeldTokenBalanceAfterOpen.plus(issueLoaner));
 
-  }, 15000);
+  }, 18000);
 });

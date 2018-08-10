@@ -10,6 +10,8 @@ import {
 } from '@dydxprotocol/protocol';
 import truffleContract from 'truffle-contract';
 import { setupContract } from './Helpers';
+import Web3 from 'web3';
+import bluebird from 'bluebird';
 
 export default class Contracts {
   public Margin = truffleContract(MarginContract);
@@ -28,6 +30,12 @@ export default class Contracts {
   public sharedLoanCreator;
   public vault;
   public zeroExExchangeWrapper;
+  public web3;
+
+  constructor() {
+    this.web3 = new Web3('');
+    bluebird.promisifyAll(this.web3.eth);
+  }
 
   public async setProvider(
     provider: any,
@@ -48,6 +56,8 @@ export default class Contracts {
     setupContract(this.Vault, provider, networkId);
     setupContract(this.TestToken, provider, networkId);
     setupContract(this.ZeroExExchangeWrapper, provider, networkId);
+    this.web3.setProvider(provider);
+    this.web3.eth.defaultAccount = this.web3.eth.accounts[0];
 
     const [
       margin,

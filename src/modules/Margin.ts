@@ -3,6 +3,7 @@ import ExchangeWrapper from './exchange_wrappers/ExchangeWrapper';
 import BigNumber  from 'bignumber.js';
 import Contracts from '../lib/Contracts';
 import web3Utils from 'web3-utils';
+import bluebird from 'bluebird';
 import { callContractFunction } from '../lib/Helpers';
 
 export default class Margin {
@@ -598,6 +599,21 @@ export default class Margin {
     loanHash: string,
   ): Promise<boolean> {
     return this.contracts.margin.isLoanApproved.call(loanHash);
+  }
+
+  public async getAllPositionClosedEvents(
+    id: string,
+  ): Promise<any[]> {
+    const positionClosedFilter = this.contracts
+      .margin.PositionClosed({ positionId: id }, { fromBlock: 0, toBlock: 'latest' });
+    bluebird.promisifyAll(positionClosedFilter);
+    const getPositionClosedEvents = await positionClosedFilter.getAsync();
+    const getBlockPromises = (event) =>
+      { return this.contracts.web3.eth.getBlockAsync(event.blockNumber); };
+    const positionClosedBlocks = await Promise.all(getPositionClosedEvents.map(getBlockPromises));
+    const positionEvents = positionClosedBlocks.map((elem: any, index) =>
+      { return { timestamp: elem.timestamp, args: getPositionClosedEvents[index].args }; });
+    return positionEvents;
   }
 
   // ============ Public Utility Functions ============
