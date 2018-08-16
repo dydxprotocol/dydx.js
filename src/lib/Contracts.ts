@@ -61,7 +61,6 @@ export default class Contracts {
     setupContract(this.ZeroExExchangeWrapper, provider, networkId);
     setupContract(this.PayableMarginMinter, provider, networkId);
     this.web3.setProvider(provider);
-    this.web3.eth.defaultAccount = this.web3.eth.accounts[0];
 
     const [
       margin,

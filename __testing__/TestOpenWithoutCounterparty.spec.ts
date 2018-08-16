@@ -2,7 +2,6 @@ import { dydx } from './helpers/DYDX';
 import { BIG_NUMBERS, ADDRESSES } from '../src/lib/Constants';
 import {
   callOpenWithoutCounterparty,
-  issueAndSetAllowance,
   getBalances,
   setup,
   validate,
@@ -72,40 +71,6 @@ describe('#openWithoutCounterparty', () => {
      // works with different nonce
     openTx2.nonce = openTx1.nonce.plus(1);
     await callOpenWithoutCounterparty(openTx2);
-  }, 10000);
-
-  it('Fails if positionId already existed, but was closed', async () => {
-
-    const openTx = await setup(accounts);
-      // open first position
-    const tx = await callOpenWithoutCounterparty(openTx);
-    openTx.id = tx.id;
-
-    await issueAndSetAllowance(
-        openTx.owedToken,
-        openTx.positionOwner,
-        openTx.principal.times(2),
-        dydx.contracts.TokenProxy.address,
-      );
-
-    await dydx.margin.closePositionDirectly(
-          openTx.id,
-          openTx.positionOwner,
-          openTx.positionOwner,
-          openTx.principal,
-          { gas: 1000000 },
-      );
-
-    const closed = await dydx.margin.isPositionClosed(openTx.id);
-    expect(closed).toBe(true);
-
-    await expect(
-       callOpenWithoutCounterparty(
-         openTx,
-         { shouldContain: true },
-       ),
-     ).rejects.toThrow(/VM Exception while processing transaction: revert/);
-
   }, 10000);
 
   it('can transfer position from one address to other', async () => {

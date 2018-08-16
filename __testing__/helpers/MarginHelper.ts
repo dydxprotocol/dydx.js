@@ -1,4 +1,5 @@
 import { BigNumber } from 'bignumber.js';
+import Web3 from 'web3';
 import { dydx, initialize } from './DYDX';
 import { deployERC20 } from './TokenHelper';
 import { BIG_NUMBERS } from '../../src/lib/Constants';
@@ -107,6 +108,14 @@ export async function setup(accounts) {
   };
 }
 
+async function setupTestContract() {
+  const [defaultAccount] = await dydx.contracts.web3.eth.getAccountsAsync();
+  testTokenContract = dydx.contracts.TestToken;
+  testTokenContract.setProvider(new Web3.providers.HttpProvider(process.env.GANACHE_URL));
+  testTokenContract.setNetwork(Number(process.env.TEST_NETWORK_ID));
+  testTokenContract.defaults({ from: defaultAccount });
+}
+
 export async function validate(openTx, txID, traderHeldTokenBalance, vaultHeldTokenBalance) {
   const [
     position,
@@ -138,5 +147,5 @@ export async function validate(openTx, txID, traderHeldTokenBalance, vaultHeldTo
 
 export async function setupDYDX() {
   await initialize();
-  testTokenContract = dydx.contracts.web3.eth.contract(dydx.contracts.TestToken.abi);
+  await setupTestContract();
 }
