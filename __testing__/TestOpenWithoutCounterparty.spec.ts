@@ -1,9 +1,3 @@
-declare var require: any;
-declare var it: any;
-declare var describe: any;
-declare var beforeAll: any;
-declare var expect: any;
-import Web3 from 'web3';
 import { dydx } from './helpers/DYDX';
 import { BIG_NUMBERS, ADDRESSES } from '../src/lib/Constants';
 import {
@@ -14,14 +8,12 @@ import {
   validate,
   setupDYDX,
 } from './helpers/MarginHelper';
-import chai from 'chai';
-chai.use(require('chai-bignumber')());
 
 let accounts = null;
 
 describe('#openWithoutCounterparty', () => {
   beforeAll(async () => {
-    setupDYDX(new Web3.providers.HttpProvider(process.env.GANACHE_URL));
+    await setupDYDX();
     accounts = await dydx.contracts.web3.eth.getAccountsAsync();
   });
 

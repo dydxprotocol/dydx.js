@@ -8,15 +8,63 @@
 
 A TypeScript/Javascript library for interacting with the dYdX protocol.
 
-### Development
+## Usage
 
-#### Install
+### Install
+
+```
+npm install --save @dydxprotocol/dydx.js
+```
+
+### Initialize
+
+```javascript
+import { DYDX } from '@dydxprotocol/dydx.js';
+
+const dydx = new DYDX();
+await dydx.initialize(provider, networkId);
+```
+
+### Short & Leveraged Tokens
+
+#### Mint
+
+```javascript
+await dydx.shortToken.mint(
+  positionId,
+  trader,
+  tokensToMint,
+  payInHeldToken,
+  exchangeWrapper,
+  orderData,
+  options,
+);
+```
+
+Or mint with ETH:
+
+```javascript
+await dydx.shortToken.mintWithETH(
+  positionId,
+  trader,
+  tokensToMint,
+  ethToSend,
+  ethIsHeldToken,
+  exchangeWrapper,
+  orderData,
+  options,
+);
+```
+
+## Development
+
+### Install
 
 ```
 npm install
 ```
 
-#### Compile
+### Compile
 
 ```
 npm run build

@@ -21,7 +21,7 @@ export default class LoanHelper {
     const hash: string = this.getLoanOfferingHash(loanOffering);
 
     const signatureString: string = await this.eth.personal_signAsync(
-      loanOffering.signer, hash,
+      loanOffering.payer, hash,
     );
 
     const signature: Signature = ethereumjsUtil.fromRpcSig(signatureString);
@@ -62,9 +62,9 @@ export default class LoanHelper {
       loanOffering.owedToken,
       loanOffering.heldToken,
       loanOffering.payer,
-      loanOffering.signer,
       loanOffering.owner,
       loanOffering.taker,
+      loanOffering.positionOwner,
       loanOffering.feeRecipient,
       loanOffering.lenderFeeTokenAddress,
       loanOffering.takerFeeTokenAddress,

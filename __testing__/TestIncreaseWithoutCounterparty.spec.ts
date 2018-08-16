@@ -1,26 +1,17 @@
-declare var require: any;
-declare var it: any;
-declare var describe: any;
-declare var beforeAll: any;
-declare var expect: any;
-import Web3 from 'web3';
 import { dydx } from './helpers/DYDX';
 import {
   issueAndSetAllowance,
   callOpenWithoutCounterparty,
-  callIncreaseWithoutCounterparty,
   getBalances,
   setup,
   setupDYDX,
 } from './helpers/MarginHelper';
 import BigNumber from 'bignumber.js';
-import chai from 'chai';
-chai.use(require('chai-bignumber')());
 let accounts = null;
 
 describe('#increaseWithoutCounterparty', () => {
   beforeAll(async () => {
-    setupDYDX(new Web3.providers.HttpProvider(process.env.GANACHE_URL));
+    await setupDYDX();
     accounts = await dydx.contracts.web3.eth.getAccountsAsync();
   });
 
@@ -54,11 +45,11 @@ describe('#increaseWithoutCounterparty', () => {
                 = await getBalances(openTx.heldToken, [openTx.loanOwner]);
     expect(loanHeldTokenBalanceBeforeIncrease).toEqual(issueLoaner.plus(leftOverAmount));
 
-    await callIncreaseWithoutCounterparty(
-                             positionTx.id,
-                             principalToAdd,
-                             openTx.loanOwner,
-                           );
+    await dydx.margin.increaseWithoutCounterparty(
+      positionTx.id,
+      principalToAdd,
+      openTx.loanOwner,
+    );
     const [
       loanHeldTokenBalanceAfterIncrease,
       vaultHeldTokenBalanceAfterIncrease,

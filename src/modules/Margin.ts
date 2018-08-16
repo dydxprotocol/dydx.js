@@ -39,9 +39,9 @@ export default class Margin {
       loanOffering.owedToken,
       loanOffering.heldToken,
       loanOffering.payer,
-      loanOffering.signer,
       loanOffering.owner,
       loanOffering.taker,
+      loanOffering.positionOwner,
       loanOffering.feeRecipient,
       loanOffering.lenderFeeTokenAddress,
       loanOffering.takerFeeTokenAddress,
@@ -99,7 +99,6 @@ export default class Margin {
     interestPeriod: BigNumber,
     options: object = {},
   ): Promise<object> {
-
     const positionId = web3Utils.soliditySha3(
       trader,
       nonce,
@@ -129,131 +128,6 @@ export default class Margin {
 
     response.id = positionId;
     return response;
-
-  }
-
-  public async createShortToken(
-    loanOffering: SignedLoanOffering,
-    trader: string,
-    principal: BigNumber,
-    depositAmount: BigNumber,
-    nonce: BigNumber,
-    depositInHeldToken: boolean,
-    exchangeWrapper: ExchangeWrapper,
-    orderData: string,
-    options: object = {},
-  ): Promise<object> {
-    return this.openPosition(
-      loanOffering,
-      trader,
-      this.contracts.erc20ShortCreator.address,
-      principal,
-      depositAmount,
-      nonce,
-      depositInHeldToken,
-      exchangeWrapper,
-      orderData,
-      options,
-    );
-  }
-
-  public async createShortTokenWithoutCounterparty(
-    trader: string,
-    owedToken: string,
-    heldToken: string,
-    nonce: BigNumber,
-    deposit: BigNumber,
-    principal: BigNumber,
-    callTimeLimit: BigNumber,
-    maxDuration: BigNumber,
-    interestRate: BigNumber,
-    interestPeriod: BigNumber,
-    options: object = {},
-  ): Promise<object> {
-    return this.openWithoutCounterparty(
-      trader,
-      this.contracts.erc20ShortCreator.address,
-      this.contracts.sharedLoanCreator.address,
-      owedToken,
-      heldToken,
-      nonce,
-      deposit,
-      principal,
-      callTimeLimit,
-      maxDuration,
-      interestRate,
-      interestPeriod,
-      options,
-    );
-  }
-
-  public async createLeveragedLongToken(
-    loanOffering: SignedLoanOffering,
-    trader: string,
-    principal: BigNumber,
-    depositAmount: BigNumber,
-    nonce: BigNumber,
-    depositInHeldToken: boolean,
-    exchangeWrapper: ExchangeWrapper,
-    orderData: string,
-    options: object = {},
-  ): Promise<object> {
-    return this.openPosition(
-      loanOffering,
-      trader,
-      this.contracts.erc20LongCreator.address,
-      principal,
-      depositAmount,
-      nonce,
-      depositInHeldToken,
-      exchangeWrapper,
-      orderData,
-      options,
-    );
-  }
-
-  public async createLeveragedLongTokenWithoutCounterparty(
-    trader: string,
-    owedToken: string,
-    heldToken: string,
-    nonce: BigNumber,
-    deposit: BigNumber,
-    principal: BigNumber,
-    callTimeLimit: BigNumber,
-    maxDuration: BigNumber,
-    interestRate: BigNumber,
-    interestPeriod: BigNumber,
-    options: object = {},
-  ): Promise<object> {
-    return this.openWithoutCounterparty(
-      trader,
-      this.contracts.erc20LongCreator.address,
-      this.contracts.sharedLoanCreator.address,
-      owedToken,
-      heldToken,
-      nonce,
-      deposit,
-      principal,
-      callTimeLimit,
-      maxDuration,
-      interestRate,
-      interestPeriod,
-      options,
-    );
-  }
-
-  public async increaseWithoutCounterparty(
-    positionId: string,
-    principalToAdd: BigNumber,
-    sender: string,
-    options: object = {},
-  ): Promise<object> {
-    return callContractFunction(
-      this.contracts.margin.increaseWithoutCounterparty,
-      { ...options, from: sender },
-      positionId,
-      principalToAdd,
-    );
   }
 
   public async increasePosition(
@@ -268,8 +142,8 @@ export default class Margin {
   ): Promise<object> {
     const addresses = [
       loanOffering.payer,
-      loanOffering.signer,
       loanOffering.taker,
+      loanOffering.positionOwner,
       loanOffering.feeRecipient,
       loanOffering.lenderFeeTokenAddress,
       loanOffering.takerFeeTokenAddress,
@@ -302,6 +176,20 @@ export default class Margin {
       depositInHeldToken,
       loanOffering.signature,
       orderData,
+    );
+  }
+
+  public async increaseWithoutCounterparty(
+    positionId: string,
+    principalToAdd: BigNumber,
+    sender: string,
+    options: object = {},
+  ): Promise<object> {
+    return callContractFunction(
+      this.contracts.margin.increaseWithoutCounterparty,
+      { ...options, from: sender },
+      positionId,
+      principalToAdd,
     );
   }
 
@@ -501,6 +389,7 @@ export default class Margin {
       callTimestamp,
       maxDuration,
       interestPeriod,
+      id: positionId,
       interestRate: adjustedInterestRate,
     };
   }
@@ -607,12 +496,18 @@ export default class Margin {
     const positionClosedFilter = this.contracts
       .margin.PositionClosed({ positionId: id }, { fromBlock: 0, toBlock: 'latest' });
     bluebird.promisifyAll(positionClosedFilter);
+
     const getPositionClosedEvents = await positionClosedFilter.getAsync();
-    const getBlockPromises = (event) =>
-      { return this.contracts.web3.eth.getBlockAsync(event.blockNumber); };
-    const positionClosedBlocks = await Promise.all(getPositionClosedEvents.map(getBlockPromises));
-    const positionEvents = positionClosedBlocks.map((elem: any, index) =>
-      { return { timestamp: elem.timestamp, args: getPositionClosedEvents[index].args }; });
+    const positionClosedBlocks = await Promise.all(
+      getPositionClosedEvents.map(
+        event => this.contracts.web3.eth.getBlockAsync(event.blockNumber),
+      ),
+    );
+
+    const positionEvents = positionClosedBlocks.map((elem: any, index) => ({
+      timestamp: elem.timestamp,
+      args: getPositionClosedEvents[index].args,
+    }));
     return positionEvents;
   }
 
@@ -629,9 +524,9 @@ export default class Margin {
       loanOffering.owedToken,
       loanOffering.heldToken,
       loanOffering.payer,
-      loanOffering.signer,
       loanOffering.owner,
       loanOffering.taker,
+      loanOffering.positionOwner,
       loanOffering.feeRecipient,
       loanOffering.lenderFeeTokenAddress,
       loanOffering.takerFeeTokenAddress,

@@ -1,12 +1,13 @@
 import {
-    Margin as MarginContract,
-    TokenProxy as TokenProxyContract,
-    ERC20ShortCreator as ERC20ShortCreatorContract,
-    ERC20LongCreator as ERC20LongCreatorContract,
-    SharedLoanCreator as SharedLoanCreatorContract,
-    TestToken as TestTokenContract,
-    Vault as VaultContract,
-    ZeroExExchangeWrapper as ZeroExExchangeWrapperContract,
+  Margin as MarginContract,
+  TokenProxy as TokenProxyContract,
+  ERC20ShortCreator as ERC20ShortCreatorContract,
+  ERC20LongCreator as ERC20LongCreatorContract,
+  SharedLoanCreator as SharedLoanCreatorContract,
+  TestToken as TestTokenContract,
+  Vault as VaultContract,
+  ZeroExExchangeWrapper as ZeroExExchangeWrapperContract,
+  PayableMarginMinter as PayableMarginMinterContract,
 } from '@dydxprotocol/protocol';
 import truffleContract from 'truffle-contract';
 import { setupContract } from './Helpers';
@@ -22,6 +23,7 @@ export default class Contracts {
   public Vault = truffleContract(VaultContract);
   public TestToken = truffleContract(TestTokenContract);
   public ZeroExExchangeWrapper = truffleContract(ZeroExExchangeWrapperContract);
+  public PayableMarginMinter = truffleContract(PayableMarginMinterContract);
 
   public margin;
   public tokenProxy;
@@ -31,6 +33,7 @@ export default class Contracts {
   public vault;
   public zeroExExchangeWrapper;
   public web3;
+  public payableMarginMinter;
 
   constructor() {
     this.web3 = new Web3('');
@@ -56,6 +59,7 @@ export default class Contracts {
     setupContract(this.Vault, provider, networkId);
     setupContract(this.TestToken, provider, networkId);
     setupContract(this.ZeroExExchangeWrapper, provider, networkId);
+    setupContract(this.PayableMarginMinter, provider, networkId);
     this.web3.setProvider(provider);
     this.web3.eth.defaultAccount = this.web3.eth.accounts[0];
 
@@ -67,6 +71,7 @@ export default class Contracts {
       sharedLoanCreator,
       vault,
       zeroExExchangeWrapper,
+      payableMarginMinter,
     ] = await Promise.all([
       this.Margin.deployed(),
       this.TokenProxy.deployed(),
@@ -75,6 +80,7 @@ export default class Contracts {
       this.SharedLoanCreator.deployed(),
       this.Vault.deployed(),
       this.ZeroExExchangeWrapper.deployed(),
+      this.PayableMarginMinter.deployed(),
     ]);
 
     this.margin = margin;
@@ -84,5 +90,6 @@ export default class Contracts {
     this.sharedLoanCreator = sharedLoanCreator;
     this.vault = vault;
     this.zeroExExchangeWrapper = zeroExExchangeWrapper;
+    this.payableMarginMinter = payableMarginMinter;
   }
 }

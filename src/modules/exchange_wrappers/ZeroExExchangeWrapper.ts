@@ -3,12 +3,13 @@ import ExchangeWrapper from './ExchangeWrapper';
 import Contracts from '../../lib/Contracts';
 import { ZeroExOrder } from '../../types';
 
-export default class ZeroExExchangeWrapper implements ExchangeWrapper {
+export default class ZeroExExchangeWrapper extends ExchangeWrapper {
   private contracts: Contracts;
 
   constructor(
     contracts: Contracts,
   ) {
+    super();
     this.contracts = contracts;
   }
 

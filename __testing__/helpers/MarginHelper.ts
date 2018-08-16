@@ -3,23 +3,8 @@ import { dydx, initialize } from './DYDX';
 import { deployERC20 } from './TokenHelper';
 import { BIG_NUMBERS } from '../../src/lib/Constants';
 import web3Utils from 'web3-utils';
-import chai from 'chai' ;
-import expect = chai.expect;
 
 export let testTokenContract = null;
-
-export async function callIncreaseWithoutCounterparty(
-  positionId: string,
-  principalToAdd: BigNumber,
-  from: string,
-  { shouldContain = false } = {},
-): Promise<any> {
-  return dydx.margin.increaseWithoutCounterparty(
-                               positionId,
-                               principalToAdd,
-                               from,
-                             );
-}
 
 export async function callOpenWithoutCounterparty(
   openTx,
@@ -34,7 +19,7 @@ export async function callOpenWithoutCounterparty(
 
   if (!shouldContain) {
     contains = await dydx.margin.containsPosition(positionId);
-    expect(contains).to.be.false;
+    expect(contains).toBeFalsy();
   }
 
   const response =  await dydx.margin.openWithoutCounterparty(
@@ -121,6 +106,7 @@ export async function setup(accounts) {
     id: null,
   };
 }
+
 export async function validate(openTx, txID, traderHeldTokenBalance, vaultHeldTokenBalance) {
   const [
     position,
@@ -132,25 +118,25 @@ export async function validate(openTx, txID, traderHeldTokenBalance, vaultHeldTo
     getBalances(openTx.heldToken, [openTx.trader, dydx.contracts.Vault.address]),
   ]);
 
-  expect(position.owner).to.be.eq(openTx.positionOwner);
-  expect(position.lender).to.be.eq(openTx.loanOwner);
-  expect(position.owedToken).to.be.eq(openTx.owedToken);
-  expect(position.heldToken).to.be.eq(openTx.heldToken);
-  expect(position.principal).to.be.bignumber.eq(openTx.principal);
-  expect(position.callTimeLimit).to.be.bignumber.eq(openTx.callTimeLimit);
-  expect(position.maxDuration).to.be.bignumber.eq(openTx.maxDuration);
-  expect(position.interestRate).to.be.bignumber.eq(openTx.interestRate);
-  expect(position.interestPeriod).to.be.bignumber.eq(openTx.interestPeriod);
-  expect(position.requiredDeposit).to.be.bignumber.eq(BIG_NUMBERS.ZERO);
-  expect(position.callTimestamp).to.be.bignumber.eq(BIG_NUMBERS.ZERO);
-  expect(positionBalance).to.be.bignumber.eq(openTx.deposit);
-  expect(vaultHeldToken).to.be.bignumber.eq(vaultHeldTokenBalance.plus(openTx.deposit));
-  expect(traderHeldToken).to.be.bignumber.eq(
+  expect(position.owner).toEqual(openTx.positionOwner);
+  expect(position.lender).toEqual(openTx.loanOwner);
+  expect(position.owedToken).toEqual(openTx.owedToken);
+  expect(position.heldToken).toEqual(openTx.heldToken);
+  expect(position.principal.equals(openTx.principal)).toBeTruthy();
+  expect(position.callTimeLimit.equals(openTx.callTimeLimit)).toBeTruthy();
+  expect(position.maxDuration.equals(openTx.maxDuration)).toBeTruthy();
+  expect(position.interestRate.equals(openTx.interestRate)).toBeTruthy();
+  expect(position.interestPeriod.equals(openTx.interestPeriod)).toBeTruthy();
+  expect(position.requiredDeposit.equals(BIG_NUMBERS.ZERO)).toBeTruthy();
+  expect(position.callTimestamp.equals(BIG_NUMBERS.ZERO)).toBeTruthy();
+  expect(positionBalance.equals(openTx.deposit)).toBeTruthy();
+  expect(vaultHeldToken.equals(vaultHeldTokenBalance.plus(openTx.deposit))).toBeTruthy();
+  expect(traderHeldToken.equals(
     traderHeldTokenBalance.minus(openTx.deposit),
-  );
+  )).toBeTruthy();
 }
 
-export async function setupDYDX(provider) {
-  await initialize(provider);
+export async function setupDYDX() {
+  await initialize();
   testTokenContract = dydx.contracts.web3.eth.contract(dydx.contracts.TestToken.abi);
 }

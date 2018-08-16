@@ -4,9 +4,9 @@ export interface LoanOffering {
   owedToken:              string;
   heldToken:              string;
   payer:                  string;
-  signer:                 string;
   owner:                  string;
   taker:                  string;
+  positionOwner:          string;
   feeRecipient:           string;
   lenderFeeTokenAddress:  string;
   takerFeeTokenAddress:   string;
@@ -38,6 +38,7 @@ export interface Signature {
 }
 
 export interface Position {
+  id:                 string;
   owedToken:          string;
   heldToken:          string;
   lender:             string;
