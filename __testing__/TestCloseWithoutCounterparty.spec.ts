@@ -5,6 +5,7 @@ import {
   setup,
   setupDYDX,
 } from './helpers/MarginHelper';
+import { resetEVM } from './helpers/SnapshotHelper';
 
 let accounts = null;
 
@@ -12,6 +13,10 @@ describe('#closeWithoutCounterparty', () => {
   beforeAll(async () => {
     await setupDYDX();
     accounts = await dydx.contracts.web3.eth.getAccountsAsync();
+  });
+
+  beforeEach(async () => {
+    await resetEVM();
   });
 
   it('successfully closes and emits event', async () => {

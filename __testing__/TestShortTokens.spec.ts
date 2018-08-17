@@ -5,6 +5,7 @@ import {
   ZeroExOrder,
   Position,
 } from '../src/types';
+import { resetEVM } from './helpers/SnapshotHelper';
 
 describe('ShortToken', () => {
   let accounts: string[] = null;
@@ -12,6 +13,10 @@ describe('ShortToken', () => {
   beforeAll(async () => {
     await initialize();
     accounts = await dydx.contracts.web3.eth.getAccountsAsync();
+  });
+
+  beforeEach(async () => {
+    await resetEVM();
   });
 
   describe('#mintWithETH', () => {

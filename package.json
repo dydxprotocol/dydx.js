@@ -9,12 +9,12 @@
     "src/"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "jest --runInBand",
     "build": "tsc",
     "lint": "tslint --project . -t verbose",
     "start": "node dist/js/index.js",
     "debug": "truffle debug",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage --runInBand"
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/dydxexchange/dydx.js#readme",
   "dependencies": {
-    "@dydxprotocol/protocol": "0.2.9",
+    "@dydxprotocol/protocol": "0.2.10",
     "abi-decoder": "^1.1.0",
     "bignumber.js": "^4.1.0",
     "bluebird": "^3.5.1",

@@ -7,12 +7,18 @@ import {
   setupDYDX,
 } from './helpers/MarginHelper';
 import BigNumber from 'bignumber.js';
+import { resetEVM } from './helpers/SnapshotHelper';
+
 let accounts = null;
 
 describe('#increaseWithoutCounterparty', () => {
   beforeAll(async () => {
     await setupDYDX();
     accounts = await dydx.contracts.web3.eth.getAccountsAsync();
+  });
+
+  beforeEach(async () => {
+    await resetEVM();
   });
 
   it('increases a position from position owner', async () => {

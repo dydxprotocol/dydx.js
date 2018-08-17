@@ -7,6 +7,7 @@ import {
   validate,
   setupDYDX,
 } from './helpers/MarginHelper';
+import { resetEVM } from './helpers/SnapshotHelper';
 
 let accounts = null;
 
@@ -14,6 +15,10 @@ describe('#openWithoutCounterparty', () => {
   beforeAll(async () => {
     await setupDYDX();
     accounts = await dydx.contracts.web3.eth.getAccountsAsync();
+  });
+
+  beforeEach(async () => {
+    await resetEVM();
   });
 
   it('succeeds on valid inputs', async () => {

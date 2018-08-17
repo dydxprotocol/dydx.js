@@ -6,6 +6,8 @@ NAME=@dydxprotocol/dydx.js
 test -z "$(npm info $NAME@$VERSION)"
 if [ $? -eq 0 ]
 then
+    set -e
+
     mkdir -p ~/.ssh
     touch ~/.ssh/known_hosts
     ssh-keyscan -H github.com >> ~/.ssh/known_hosts
