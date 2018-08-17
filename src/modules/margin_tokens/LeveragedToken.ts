@@ -40,4 +40,32 @@ export default class LeveragedToken extends MarginToken {
 
     return {};
   }
+
+  public async close(
+    positionId: string,
+    closer: string,
+    tokensToClose: BigNumber,
+    payoutInHeldToken: boolean,
+    exchangeWrapper: ExchangeWrapper,
+    orderData: string,
+    options: object,
+  ): Promise<object> {
+    // TODO
+
+    return {};
+  }
+
+  public async closeWithETHPayout(
+    positionId: string,
+    closer: string,
+    tokensToClose: BigNumber,
+    ethIsHeldToken: boolean,
+    exchangeWrapper: ExchangeWrapper,
+    orderData: string,
+    options: object,
+  ): Promise<object> {
+    // TODO
+
+    return {};
+  }
 }

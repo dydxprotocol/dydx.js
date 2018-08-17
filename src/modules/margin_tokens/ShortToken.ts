@@ -89,4 +89,46 @@ export default class ShortToken extends MarginToken {
       orderData,
     );
   }
+
+  public async close(
+    positionId: string,
+    closer: string,
+    tokensToClose: BigNumber,
+    payoutInHeldToken: boolean,
+    exchangeWrapper: ExchangeWrapper,
+    orderData: string,
+    options: object,
+  ): Promise<object> {
+    return this.margin.closePosition(
+      positionId,
+      closer,
+      closer,
+      tokensToClose,
+      payoutInHeldToken,
+      exchangeWrapper,
+      orderData,
+      options,
+    );
+  }
+
+  public async closeWithETHPayout(
+    positionId: string,
+    closer: string,
+    tokensToClose: BigNumber,
+    ethIsHeldToken: boolean,
+    exchangeWrapper: ExchangeWrapper,
+    orderData: string,
+    options: object,
+  ): Promise<object> {
+    return this.margin.closePosition(
+      positionId,
+      closer,
+      this.contracts.wethPayoutRecipient,
+      tokensToClose,
+      ethIsHeldToken,
+      exchangeWrapper,
+      orderData,
+      options,
+    );
+  }
 }

@@ -38,6 +38,26 @@ export default abstract class MarginToken {
     options: object,
   ): Promise<object>;
 
+  public abstract async close(
+    positionId: string,
+    closer: string,
+    tokensToClose: BigNumber,
+    payoutInHeldToken: boolean,
+    exchangeWrapper: ExchangeWrapper,
+    orderData: string,
+    options: object,
+  ): Promise<object>;
+
+  public abstract async closeWithETHPayout(
+    positionId: string,
+    closer: string,
+    tokensToClose: BigNumber,
+    ethIsHeldToken: boolean,
+    exchangeWrapper: ExchangeWrapper,
+    orderData: string,
+    options: object,
+  ): Promise<object>;
+
   protected prepareMintLoanOffering(position: Position): SignedLoanOffering {
     return {
       owedToken:              '', // Unused
