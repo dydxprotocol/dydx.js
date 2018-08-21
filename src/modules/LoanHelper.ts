@@ -1,4 +1,4 @@
-import { LoanOffering, SignedLoanOffering, Signature } from '../types';
+import { LoanOffering, SignedLoanOffering, Signature, Provider } from '../types';
 import ethereumjsUtil from 'ethereumjs-util';
 import Contracts from '../lib/Contracts';
 import ethjs from 'ethjs';
@@ -72,7 +72,7 @@ export default class LoanHelper {
     );
   }
 
-  public setProvider(currentProvider) {
+  public setProvider(currentProvider: Provider) {
     this.eth = new ethjs(currentProvider);
     bluebird.promisifyAll(this.eth);
   }

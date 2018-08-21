@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import Margin from '../Margin';
 import Contracts from '../../lib/Contracts';
 import ExchangeWrapper from '../exchange_wrappers/ExchangeWrapper';
-import { Position, SignedLoanOffering } from '../../types';
+import { Position, SignedLoanOffering, ContractCallOptions } from '../../types';
 import { ADDRESSES, BIG_NUMBERS } from '../../lib/Constants';
 
 export default abstract class MarginToken {
@@ -24,7 +24,7 @@ export default abstract class MarginToken {
     payInHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object,
+    options: ContractCallOptions,
   ): Promise<object>;
 
   public abstract async mintWithETH(
@@ -35,7 +35,7 @@ export default abstract class MarginToken {
     ethIsHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object,
+    options: ContractCallOptions,
   ): Promise<object>;
 
   public abstract async close(
@@ -45,7 +45,7 @@ export default abstract class MarginToken {
     payoutInHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object,
+    options: ContractCallOptions,
   ): Promise<object>;
 
   public abstract async closeWithETHPayout(
@@ -55,7 +55,7 @@ export default abstract class MarginToken {
     ethIsHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object,
+    options: ContractCallOptions,
   ): Promise<object>;
 
   protected prepareMintLoanOffering(position: Position): SignedLoanOffering {

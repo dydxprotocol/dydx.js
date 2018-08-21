@@ -3,6 +3,7 @@ import MarginToken from './MarginToken';
 import Margin from '../Margin';
 import ExchangeWrapper from '../exchange_wrappers/ExchangeWrapper';
 import Contracts from '../../lib/Contracts';
+import { ContractCallOptions } from '../../types';
 
 export default class LeveragedToken extends MarginToken {
   constructor(
@@ -19,7 +20,7 @@ export default class LeveragedToken extends MarginToken {
     payInHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     // TODO
 
@@ -34,7 +35,7 @@ export default class LeveragedToken extends MarginToken {
     ethIsHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     // TODO
 
@@ -48,7 +49,7 @@ export default class LeveragedToken extends MarginToken {
     payoutInHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object,
+    options: ContractCallOptions = {},
   ): Promise<object> {
     // TODO
 
@@ -62,7 +63,7 @@ export default class LeveragedToken extends MarginToken {
     ethIsHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object,
+    options: ContractCallOptions = {},
   ): Promise<object> {
     // TODO
 

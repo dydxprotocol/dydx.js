@@ -4,7 +4,9 @@ import Margin from './modules/Margin';
 import TokenHelper from './modules/TokenHelper';
 import ShortToken from './modules/margin_tokens/ShortToken';
 import LeveragedToken from './modules/margin_tokens/LeveragedToken';
+import BucketLender from './modules/lending/BucketLender';
 import Contracts from './lib/Contracts';
+import { Provider } from './types';
 
 export class DYDX {
   public margin: Margin;
@@ -14,10 +16,11 @@ export class DYDX {
   public contracts: Contracts;
   public shortToken: ShortToken;
   public leveragedToken: LeveragedToken;
+  public bucketLender: BucketLender;
 
-  public currentProvider;
-  public currentNetworkId;
-  public initialized;
+  public currentProvider: Provider;
+  public currentNetworkId: number;
+  public initialized: boolean;
 
   constructor() {
     this.initialized = false;
@@ -30,15 +33,18 @@ export class DYDX {
     this.token = new TokenHelper(this.contracts);
     this.shortToken = new ShortToken(this.margin, this.contracts);
     this.leveragedToken = new LeveragedToken(this.margin, this.contracts);
+    this.bucketLender = new BucketLender(this.contracts);
   }
 
-  public async initialize(provider, networkId) {
+  public async initialize(
+    provider: Provider,
+    networkId: number,
+  ) {
     this.currentProvider = provider;
     this.currentNetworkId = networkId;
     this.initialized = true;
 
     await this.contracts.setProvider(provider, networkId);
-    this.token.setProvider(provider, networkId);
     this.loanOffering.setProvider(provider);
   }
 }

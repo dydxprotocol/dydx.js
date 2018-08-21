@@ -1,10 +1,9 @@
-import { LoanOffering, SignedLoanOffering, Position } from '../types';
-import ExchangeWrapper from './exchange_wrappers/ExchangeWrapper';
 import BigNumber  from 'bignumber.js';
-import Contracts from '../lib/Contracts';
-import web3Utils from 'web3-utils';
 import bluebird from 'bluebird';
-import { callContractFunction } from '../lib/Helpers';
+import { LoanOffering, SignedLoanOffering, Position, ContractCallOptions } from '../types';
+import ExchangeWrapper from './exchange_wrappers/ExchangeWrapper';
+import Contracts from '../lib/Contracts';
+import { callContractFunction, getPositionId } from '../lib/Helpers';
 
 export default class Margin {
   private contracts: Contracts;
@@ -27,14 +26,14 @@ export default class Margin {
     depositInHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
-    const positionId = web3Utils.soliditySha3(
+    const positionId: string = getPositionId(
       trader,
       nonce,
     );
 
-    const addresses = [
+    const addresses: string[] = [
       owner,
       loanOffering.owedToken,
       loanOffering.heldToken,
@@ -48,7 +47,7 @@ export default class Margin {
       exchangeWrapper.getAddress(),
     ];
 
-    const values256 = [
+    const values256: BigNumber[] = [
       loanOffering.maxAmount,
       loanOffering.minAmount,
       loanOffering.minHeldToken,
@@ -61,14 +60,14 @@ export default class Margin {
       nonce,
     ];
 
-    const values32 = [
+    const values32: BigNumber[] = [
       loanOffering.callTimeLimit,
       loanOffering.maxDuration,
       loanOffering.interestRate.times(new BigNumber(10).pow(6)).floor(),
       loanOffering.interestPeriod,
     ];
 
-    const response = await callContractFunction(
+    const response: any = await callContractFunction(
       this.contracts.margin.openPosition,
       { ...options, from: trader },
       addresses,
@@ -97,14 +96,14 @@ export default class Margin {
     maxDuration: BigNumber,
     interestRate: BigNumber,
     interestPeriod: BigNumber,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
-    const positionId = web3Utils.soliditySha3(
+    const positionId: string = getPositionId(
       trader,
       nonce,
     );
 
-    const response = await callContractFunction(
+    const response: any = await callContractFunction(
       this.contracts.margin.openWithoutCounterparty,
       { ...options, from: trader },
       [
@@ -138,9 +137,9 @@ export default class Margin {
     depositInHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
-    const addresses = [
+    const addresses: string[] = [
       loanOffering.payer,
       loanOffering.taker,
       loanOffering.positionOwner,
@@ -150,7 +149,7 @@ export default class Margin {
       exchangeWrapper.getAddress(),
     ];
 
-    const values256 = [
+    const values256: BigNumber[] = [
       loanOffering.maxAmount,
       loanOffering.minAmount,
       loanOffering.minHeldToken,
@@ -161,7 +160,7 @@ export default class Margin {
       principal,
     ];
 
-    const values32 = [
+    const values32: BigNumber[] = [
       loanOffering.callTimeLimit,
       loanOffering.maxDuration,
     ];
@@ -183,7 +182,7 @@ export default class Margin {
     positionId: string,
     principalToAdd: BigNumber,
     sender: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     return callContractFunction(
       this.contracts.margin.increaseWithoutCounterparty,
@@ -201,7 +200,7 @@ export default class Margin {
     payoutInHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     return callContractFunction(
       this.contracts.margin.closePosition,
@@ -220,7 +219,7 @@ export default class Margin {
     closer: string,
     payoutRecipient: string,
     closeAmount: BigNumber,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     return callContractFunction(
       this.contracts.margin.closePositionDirectly,
@@ -236,7 +235,7 @@ export default class Margin {
     closer: string,
     payoutRecipient: string,
     closeAmount: BigNumber,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     return callContractFunction(
       this.contracts.margin.closeWithoutCounterparty,
@@ -251,7 +250,7 @@ export default class Margin {
     loanOffering: LoanOffering,
     cancelAmount: BigNumber,
     from: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     const { addresses, values256, values32 } = this.formatLoanOffering(loanOffering);
 
@@ -269,7 +268,7 @@ export default class Margin {
     positionId: string,
     requiredDeposit: BigNumber,
     from: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     return callContractFunction(
       this.contracts.margin.marginCall,
@@ -282,7 +281,7 @@ export default class Margin {
   public async cancelMarginCall(
     positionId: string,
     from: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     return callContractFunction(
       this.contracts.margin.cancelMarginCall,
@@ -295,7 +294,7 @@ export default class Margin {
     positionId: string,
     collateralRecipient: string,
     from: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     return callContractFunction(
       this.contracts.margin.forceRecoverCollateral,
@@ -309,7 +308,7 @@ export default class Margin {
     positionId: string,
     depositAmount: BigNumber,
     from: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     return callContractFunction(
       this.contracts.margin.forceRecoverCollateral,
@@ -323,7 +322,7 @@ export default class Margin {
     positionId: string,
     to: string,
     from: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     return callContractFunction(
       this.contracts.margin.transferLoan,
@@ -337,7 +336,7 @@ export default class Margin {
     positionId: string,
     to: string,
     from: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     return callContractFunction(
       this.contracts.margin.transferPosition,
@@ -497,16 +496,16 @@ export default class Margin {
       .margin.PositionClosed({ positionId: id }, { fromBlock: 0, toBlock: 'latest' });
     bluebird.promisifyAll(positionClosedFilter);
 
-    const getPositionClosedEvents = await positionClosedFilter.getAsync();
+    const positionClosedEvents = await positionClosedFilter.getAsync();
     const positionClosedBlocks = await Promise.all(
-      getPositionClosedEvents.map(
+      positionClosedEvents.map(
         event => this.contracts.web3.eth.getBlockAsync(event.blockNumber),
       ),
     );
 
     const positionEvents = positionClosedBlocks.map((elem: any, index) => ({
       timestamp: elem.timestamp,
-      args: getPositionClosedEvents[index].args,
+      args: positionClosedEvents[index].args,
     }));
     return positionEvents;
   }

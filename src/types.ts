@@ -65,3 +65,26 @@ export interface ZeroExOrder {
   salt: BigNumber;
   ecSignature: Signature;
 }
+
+export interface ContractFunction extends Function {
+  estimateGas: Function;
+}
+
+export interface Contract {
+  deployed: () => Promise<ContractInstance>;
+  at: (s: string) => Promise<ContractInstance>;
+  setProvider: (p: Provider) => any;
+  setNetwork: (n: number) => any;
+}
+
+export interface Provider {}
+
+export interface ContractInstance {}
+
+export interface ContractCallOptions {
+  from?: string;
+  value?: BigNumber;
+  gas?: BigNumber | number;
+  gasPrice?: BigNumber | number;
+  nonce?: number;
+}

@@ -3,7 +3,7 @@ import MarginToken from './MarginToken';
 import Margin from '../Margin';
 import Contracts from '../../lib/Contracts';
 import ExchangeWrapper from '../exchange_wrappers/ExchangeWrapper';
-import { Position, SignedLoanOffering } from '../../types';
+import { Position, SignedLoanOffering, ContractCallOptions } from '../../types';
 import { callContractFunction } from '../../lib/Helpers';
 
 export default class ShortToken extends MarginToken {
@@ -21,7 +21,7 @@ export default class ShortToken extends MarginToken {
     payInHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     const position: Position = await this.margin.getPosition(positionId);
     const loanOffering: SignedLoanOffering = this.prepareMintLoanOffering(position);
@@ -46,7 +46,7 @@ export default class ShortToken extends MarginToken {
     ethIsHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object = {},
+    options: ContractCallOptions = {},
   ): Promise<object> {
     const position: Position = await this.margin.getPosition(positionId);
     const loanOffering: SignedLoanOffering = this.prepareMintLoanOffering(position);
@@ -97,7 +97,7 @@ export default class ShortToken extends MarginToken {
     payoutInHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object,
+    options: ContractCallOptions = {},
   ): Promise<object> {
     return this.margin.closePosition(
       positionId,
@@ -118,7 +118,7 @@ export default class ShortToken extends MarginToken {
     ethIsHeldToken: boolean,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
-    options: object,
+    options: ContractCallOptions = {},
   ): Promise<object> {
     return this.margin.closePosition(
       positionId,
