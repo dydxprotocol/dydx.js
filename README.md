@@ -4,6 +4,9 @@
   <a href="https://circleci.com/gh/dydxprotocol/workflows/dydx.js/tree/master">
     <img src="https://circleci.com/gh/dydxprotocol/dydx.js/tree/master.svg?style=svg&circle-token=96657b90b74f5abf64508e80a9acb536d87dbd4a" />
   </a>
+  <a href='https://coveralls.io/github/dydxprotocol/dydx.js?branch=master'>
+    <img src='https://coveralls.io/repos/github/dydxprotocol/dydx.js/badge.svg?branch=master&amp;t=oTubHH' alt='Coverage Status' />
+  </a>
 </p>
 
 A TypeScript/Javascript library for interacting with the dYdX protocol.
