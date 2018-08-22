@@ -14,6 +14,37 @@ export default class ShortToken extends MarginToken {
     super(margin, contracts);
   }
 
+  public async create(
+    trader: string,
+    lenderContractAddress: string,
+    owedToken: string,
+    heldToken: string,
+    nonce: BigNumber,
+    deposit: BigNumber,
+    principal: BigNumber,
+    callTimeLimit: BigNumber,
+    maxDuration: BigNumber,
+    interestRate: BigNumber,
+    interestPeriod: BigNumber,
+    options: ContractCallOptions = {},
+  ): Promise<object> {
+    return this.margin.openWithoutCounterparty(
+      trader,
+      this.contracts.erc20ShortFactory.address,
+      lenderContractAddress,
+      owedToken,
+      heldToken,
+      nonce,
+      deposit,
+      principal,
+      callTimeLimit,
+      maxDuration,
+      interestRate,
+      interestPeriod,
+      options,
+    );
+  }
+
   public async mint(
     positionId: string,
     trader: string,

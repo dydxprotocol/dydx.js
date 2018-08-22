@@ -17,6 +17,21 @@ export default abstract class MarginToken {
     this.contracts = contracts;
   }
 
+  public abstract async create(
+    trader: string,
+    lenderContractAddress: string,
+    owedToken: string,
+    heldToken: string,
+    nonce: BigNumber,
+    deposit: BigNumber,
+    principal: BigNumber,
+    callTimeLimit: BigNumber,
+    maxDuration: BigNumber,
+    interestRate: BigNumber,
+    interestPeriod: BigNumber,
+    options: ContractCallOptions,
+  ): Promise<object>;
+
   public abstract async mint(
     positionId: string,
     trader: string,
