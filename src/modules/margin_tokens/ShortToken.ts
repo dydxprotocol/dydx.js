@@ -154,7 +154,7 @@ export default class ShortToken extends MarginToken {
     return this.margin.closePosition(
       positionId,
       closer,
-      this.contracts.wethPayoutRecipient,
+      this.contracts.wethPayoutRecipient.address,
       tokensToClose,
       ethIsHeldToken,
       exchangeWrapper,
