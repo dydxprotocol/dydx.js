@@ -5,6 +5,7 @@ import TokenHelper from './modules/TokenHelper';
 import ShortToken from './modules/margin_tokens/ShortToken';
 import LeveragedToken from './modules/margin_tokens/LeveragedToken';
 import BucketLender from './modules/lending/BucketLender';
+import MathHelpers from './modules/helpers/MathHelpers';
 import Contracts from './lib/Contracts';
 import { Provider } from './types';
 
@@ -17,6 +18,7 @@ export class DYDX {
   public shortToken: ShortToken;
   public leveragedToken: LeveragedToken;
   public bucketLender: BucketLender;
+  public math: MathHelpers;
 
   public currentProvider: Provider;
   public currentNetworkId: number;
@@ -34,6 +36,7 @@ export class DYDX {
     this.shortToken = new ShortToken(this.margin, this.contracts);
     this.leveragedToken = new LeveragedToken(this.margin, this.contracts);
     this.bucketLender = new BucketLender(this.contracts);
+    this.math = new MathHelpers();
   }
 
   public async initialize(
