@@ -6,6 +6,7 @@ import ShortToken from './modules/margin_tokens/ShortToken';
 import LeveragedToken from './modules/margin_tokens/LeveragedToken';
 import BucketLender from './modules/lending/BucketLender';
 import MathHelpers from './modules/helpers/MathHelpers';
+import DutchAuction from './modules/auction/DutchAuction';
 import Contracts from './lib/Contracts';
 import { Provider } from './types';
 
@@ -19,6 +20,7 @@ export class DYDX {
   public leveragedToken: LeveragedToken;
   public bucketLender: BucketLender;
   public math: MathHelpers;
+  public auction: DutchAuction;
 
   public currentProvider: Provider;
   public currentNetworkId: number;
@@ -28,15 +30,17 @@ export class DYDX {
     this.initialized = false;
 
     this.contracts = new Contracts();
+    this.math = new MathHelpers();
 
     this.loanOffering = new LoanHelper(this.contracts);
     this.margin = new Margin(this.contracts);
     this.zeroExExchangeWrapper = new ZeroExExchangeWrapper(this.contracts);
     this.token = new TokenHelper(this.contracts);
+    this.bucketLender = new BucketLender(this.contracts);
+
     this.shortToken = new ShortToken(this.margin, this.contracts);
     this.leveragedToken = new LeveragedToken(this.margin, this.contracts);
-    this.bucketLender = new BucketLender(this.contracts);
-    this.math = new MathHelpers();
+    this.auction = new DutchAuction(this.margin, this.contracts);
   }
 
   public async initialize(

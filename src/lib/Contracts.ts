@@ -14,6 +14,7 @@ import {
   EthWrapperForBucketLender as EthWrapperForBucketLenderContract,
   ERC20 as ERC20Contract,
   WETH9 as WETH9Contract,
+  DutchAuctionCloser as DutchAuctionCloserContract,
 } from '@dydxprotocol/protocol';
 import truffleContract from 'truffle-contract';
 import { setupContract } from './Helpers';
@@ -37,6 +38,7 @@ export default class Contracts {
   public EthWrapperForBucketLender: Contract = truffleContract(EthWrapperForBucketLenderContract);
   public ERC20: Contract = truffleContract(ERC20Contract);
   public WETH9: Contract = truffleContract(WETH9Contract);
+  public DutchAuctionCloser: Contract = truffleContract(DutchAuctionCloserContract);
 
   public margin;
   public tokenProxy;
@@ -75,6 +77,7 @@ export default class Contracts {
     setupContract(this.EthWrapperForBucketLender, provider, networkId);
     setupContract(this.ERC20, provider, networkId);
     setupContract(this.WETH9, provider, networkId);
+    setupContract(this.DutchAuctionCloser, provider, networkId);
 
     this.web3.setProvider(provider);
 
