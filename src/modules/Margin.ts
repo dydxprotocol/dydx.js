@@ -3,7 +3,10 @@ import bluebird from 'bluebird';
 import { LoanOffering, SignedLoanOffering, Position, ContractCallOptions } from '../types';
 import ExchangeWrapper from './exchange_wrappers/ExchangeWrapper';
 import Contracts from '../lib/Contracts';
-import { callContractFunction, getPositionId } from '../lib/Helpers';
+import {
+  callContractFunction,
+  getPositionId as getPositionIdHelper,
+} from '../lib/Helpers';
 
 export default class Margin {
   private contracts: Contracts;
@@ -28,7 +31,7 @@ export default class Margin {
     orderData: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    const positionId: string = getPositionId(
+    const positionId: string = this.getPositionId(
       trader,
       nonce,
     );
@@ -98,7 +101,7 @@ export default class Margin {
     interestPeriod: BigNumber,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    const positionId: string = getPositionId(
+    const positionId: string = this.getPositionId(
       trader,
       nonce,
     );
@@ -514,6 +517,13 @@ export default class Margin {
 
   public getAddress(): string {
     return this.contracts.margin.address;
+  }
+
+  public getPositionId(trader: string, nonce: BigNumber): string {
+    return getPositionIdHelper(
+          trader,
+          nonce,
+    );
   }
 
   // ============ Private Functions ============
