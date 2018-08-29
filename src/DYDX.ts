@@ -7,6 +7,7 @@ import LeveragedToken from './modules/margin_tokens/LeveragedToken';
 import BucketLender from './modules/lending/BucketLender';
 import MathHelpers from './modules/helpers/MathHelpers';
 import DutchAuction from './modules/auction/DutchAuction';
+import Interest from './modules/helpers/Interest';
 import Contracts from './lib/Contracts';
 import { Provider } from './types';
 
@@ -21,6 +22,7 @@ export class DYDX {
   public bucketLender: BucketLender;
   public math: MathHelpers;
   public auction: DutchAuction;
+  public interest: Interest;
 
   public currentProvider: Provider;
   public currentNetworkId: number;
@@ -31,6 +33,7 @@ export class DYDX {
 
     this.contracts = new Contracts();
     this.math = new MathHelpers();
+    this.interest = new Interest();
 
     this.loanOffering = new LoanHelper(this.contracts);
     this.margin = new Margin(this.contracts);
