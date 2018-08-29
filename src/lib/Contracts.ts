@@ -20,7 +20,7 @@ import truffleContract from 'truffle-contract';
 import { setupContract } from './Helpers';
 import Web3 from 'web3';
 import bluebird from 'bluebird';
-import { Contract, Provider } from '../types';
+import { ContractFunction, ContractCallOptions, Contract, Provider } from '../types';
 
 export default class Contracts {
   public Margin: Contract = truffleContract(MarginContract);
@@ -52,6 +52,11 @@ export default class Contracts {
   public wethPayoutRecipient;
   public bucketLenderFactory;
   public ethWrapperForBucketLender;
+  public weth9;
+
+  public auto_gas_multiplier: number = 1.5;
+
+  private blockGasLimit: number;
 
   constructor() {
     this.web3 = new Web3('');
@@ -93,6 +98,7 @@ export default class Contracts {
       wethPayoutRecipient,
       bucketLenderFactory,
       ethWrapperForBucketLender,
+      weth9,
     ] = await Promise.all([
       this.Margin.deployed(),
       this.TokenProxy.deployed(),
@@ -105,6 +111,7 @@ export default class Contracts {
       this.WethPayoutRecipient.deployed(),
       this.BucketLenderFactory.deployed(),
       this.EthWrapperForBucketLender.deployed(),
+      this.WETH9.deployed(),
     ]);
 
     this.margin = margin;
@@ -118,5 +125,24 @@ export default class Contracts {
     this.wethPayoutRecipient = wethPayoutRecipient;
     this.bucketLenderFactory = bucketLenderFactory;
     this.ethWrapperForBucketLender = ethWrapperForBucketLender;
+    this.weth9 = weth9;
+  }
+
+  public async callContractFunction(
+    func: ContractFunction,
+    options: ContractCallOptions,
+    ...args // tslint:disable-line: trailing-comma
+  ): Promise<object> {
+    if (!this.blockGasLimit) {
+      const block = await this.web3.eth.getBlock('latest');
+      this.blockGasLimit = block.gasLimit;
+    }
+
+    if (!options.gas) {
+      const gasEstimate: number = await func.estimateGas(...args, options);
+      const totalGas: number = Math.floor(gasEstimate * this.auto_gas_multiplier);
+      options.gas = totalGas < this.blockGasLimit ? totalGas : this.blockGasLimit;
+    }
+    return func(...args, options);
   }
 }

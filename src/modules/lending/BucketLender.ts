@@ -1,7 +1,7 @@
 import BigNumber  from 'bignumber.js';
 import bluebird from 'bluebird';
 import Contracts from '../../lib/Contracts';
-import { callContractFunction, getPositionId } from '../../lib/Helpers';
+import { getPositionId } from '../../lib/Helpers';
 import { Deposit } from '../../types/BucketLender';
 import { BIG_NUMBERS } from '../../lib/Constants';
 import { ContractCallOptions } from '../../types';
@@ -16,6 +16,7 @@ export default class BucketLender {
   }
 
   public async create(
+    owner: string,
     positionOpener: string,
     positionNonce: BigNumber,
     heldToken: string,
@@ -28,6 +29,7 @@ export default class BucketLender {
     minHeldTokenPerPrincipalNumerator: BigNumber,
     minHeldTokenPerPrincipalDenominator: BigNumber,
     marginCallers: string[],
+    from: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
     const trustedWithdrawers = [];
@@ -36,9 +38,9 @@ export default class BucketLender {
       trustedWithdrawers.push(this.contracts.ethWrapperForBucketLender.address);
     }
 
-    const response = await callContractFunction(
+    const response = await this.contracts.callContractFunction(
       this.contracts.bucketLenderFactory.createBucketLender,
-      options,
+      { ...options, from },
       getPositionId(positionOpener, positionNonce),
       heldToken,
       owedToken,
@@ -67,7 +69,7 @@ export default class BucketLender {
   ): Promise<object> {
     const bucketLender = await this.getBucketLender(bucketLenderAddress);
 
-    return callContractFunction(
+    return await this.contracts.callContractFunction(
       bucketLender,
       { ...options, from: depositor },
       beneficiary,
@@ -82,7 +84,7 @@ export default class BucketLender {
     amount: BigNumber,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.ethWrapperForBucketLender.depositEth,
       { ...options, from: depositor, value: amount },
       bucketLenderAddress,
@@ -99,7 +101,7 @@ export default class BucketLender {
   ): Promise<object> {
     const bucketLender = await this.getBucketLender(bucketLenderAddress);
 
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       bucketLender.withdraw,
       { ...options, from: withdrawer },
       buckets,
@@ -133,7 +135,7 @@ export default class BucketLender {
     maxWeights: BigNumber[],
     options: ContractCallOptions = {},
   ): Promise<object> {
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.ethWrapperForBucketLender.withdrawEth,
       { ...options, from: withdrawer },
       bucketLenderAddress,

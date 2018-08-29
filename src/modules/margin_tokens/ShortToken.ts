@@ -4,7 +4,6 @@ import Margin from '../Margin';
 import Contracts from '../../lib/Contracts';
 import ExchangeWrapper from '../exchange_wrappers/ExchangeWrapper';
 import { Position, SignedLoanOffering, ContractCallOptions } from '../../types';
-import { callContractFunction } from '../../lib/Helpers';
 
 export default class ShortToken extends MarginToken {
   constructor(
@@ -108,7 +107,7 @@ export default class ShortToken extends MarginToken {
       loanOffering.maxDuration,
     ];
 
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.payableMarginMinter.mintMarginTokens,
       { ...options, from: trader, value: ethToSend },
       positionId,

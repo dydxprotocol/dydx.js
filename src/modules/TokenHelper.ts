@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js';
 import Contracts from '../lib/Contracts';
 import { BIG_NUMBERS } from '../lib/Constants';
-import { callContractFunction } from '../lib/Helpers';
 
 export default class TokenHelper {
   private contracts: Contracts;
@@ -57,7 +56,7 @@ export default class TokenHelper {
   ): Promise<object> {
     const token = await this.getToken(tokenAddress);
 
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       token.approve,
       { ...options, from: ownerAddress },
       spenderAddress,
@@ -132,7 +131,7 @@ export default class TokenHelper {
   ): Promise<object> {
     const token = await this.getToken(tokenAddress);
 
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       token.transfer,
       { ...options, from: fromAddress },
       toAddress,
@@ -150,7 +149,7 @@ export default class TokenHelper {
   ): Promise<object> {
     const token = await this.getToken(tokenAddress);
 
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       token.transferFrom,
       { ...options, from: senderAddress },
       fromAddress,

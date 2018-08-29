@@ -3,10 +3,7 @@ import bluebird from 'bluebird';
 import { LoanOffering, SignedLoanOffering, Position, ContractCallOptions } from '../types';
 import ExchangeWrapper from './exchange_wrappers/ExchangeWrapper';
 import Contracts from '../lib/Contracts';
-import {
-  callContractFunction,
-  getPositionId as getPositionIdHelper,
-} from '../lib/Helpers';
+import { getPositionId as getPositionIdHelper } from '../lib/Helpers';
 
 export default class Margin {
   private contracts: Contracts;
@@ -70,7 +67,7 @@ export default class Margin {
       loanOffering.interestPeriod,
     ];
 
-    const response: any = await callContractFunction(
+    const response: any = await this.contracts.callContractFunction(
       this.contracts.margin.openPosition,
       { ...options, from: trader },
       addresses,
@@ -106,7 +103,7 @@ export default class Margin {
       nonce,
     );
 
-    const response: any = await callContractFunction(
+    const response: any = await this.contracts.callContractFunction(
       this.contracts.margin.openWithoutCounterparty,
       { ...options, from: trader },
       [
@@ -168,7 +165,7 @@ export default class Margin {
       loanOffering.maxDuration,
     ];
 
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.margin.increasePosition,
       { ...options, from: trader },
       positionId,
@@ -187,7 +184,7 @@ export default class Margin {
     sender: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.margin.increaseWithoutCounterparty,
       { ...options, from: sender },
       positionId,
@@ -205,7 +202,7 @@ export default class Margin {
     orderData: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.margin.closePosition,
       { ...options, from: closer },
       positionId,
@@ -224,7 +221,7 @@ export default class Margin {
     closeAmount: BigNumber,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.margin.closePositionDirectly,
       { ...options, from: closer },
       positionId,
@@ -240,7 +237,7 @@ export default class Margin {
     closeAmount: BigNumber,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.margin.closeWithoutCounterparty,
       { ...options, from: closer },
       positionId,
@@ -257,7 +254,7 @@ export default class Margin {
   ): Promise<object> {
     const { addresses, values256, values32 } = this.formatLoanOffering(loanOffering);
 
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.margin.cancelLoanOffering,
       { ...options, from },
       addresses,
@@ -273,7 +270,7 @@ export default class Margin {
     from: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.margin.marginCall,
       { ...options, from },
       positionId,
@@ -286,7 +283,7 @@ export default class Margin {
     from: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.margin.cancelMarginCall,
       { ...options, from },
       positionId,
@@ -299,7 +296,7 @@ export default class Margin {
     from: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.margin.forceRecoverCollateral,
       { ...options, from },
       positionId,
@@ -313,7 +310,7 @@ export default class Margin {
     from: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.margin.forceRecoverCollateral,
       { ...options, from },
       positionId,
@@ -327,7 +324,7 @@ export default class Margin {
     from: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.margin.transferLoan,
       { ...options, from },
       positionId,
@@ -341,7 +338,7 @@ export default class Margin {
     from: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    return callContractFunction(
+    return this.contracts.callContractFunction(
       this.contracts.margin.transferPosition,
       { ...options, from },
       positionId,
