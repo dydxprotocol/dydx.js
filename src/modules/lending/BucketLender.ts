@@ -38,10 +38,12 @@ export default class BucketLender {
       trustedWithdrawers.push(this.contracts.ethWrapperForBucketLender.address);
     }
 
-    const response = await this.contracts.callContractFunction(
+    const positionId = getPositionId(positionOpener, positionNonce);
+
+    const response:any = await this.contracts.callContractFunction(
       this.contracts.bucketLenderFactory.createBucketLender,
       { ...options, from },
-      getPositionId(positionOpener, positionNonce),
+      positionId,
       heldToken,
       owedToken,
       [
@@ -56,6 +58,11 @@ export default class BucketLender {
       marginCallers,
       trustedWithdrawers,
     );
+
+    const createdEvent = response
+      .logs.find(l => l.event === 'BucketLenderCreated' && l.args.positionId === positionId);
+
+    response.address = createdEvent.args.at;
 
     return response;
   }

@@ -1,9 +1,7 @@
 import { dydx } from './helpers/DYDX';
 import { deployERC20 } from './helpers/TokenHelper';
-import {
-  LenderArgs,
-  setupDYDX,
- } from './helpers/MarginHelper';
+import { LenderArgs, getBucketLenderCreatedEvent } from './helpers/BucketLenderHelper';
+import { setupDYDX } from './helpers/MarginHelper';
 import { resetEVM } from './helpers/SnapshotHelper';
 
 let accounts: string[] = null;
@@ -43,7 +41,10 @@ describe('#testBucketLender', () => {
       args.marginCallers,
       args.from,
     );
+    const positionId = dydx.margin.getPositionId(args.positionOpener, args.nonce);
 
-    expect(response.logs[0].event).toBe('BucketLenderCreated');
+    const positionCreatedEvent = await getBucketLenderCreatedEvent(positionId);
+
+    expect(response.address).toBe(positionCreatedEvent.args.at);
   });
 });
