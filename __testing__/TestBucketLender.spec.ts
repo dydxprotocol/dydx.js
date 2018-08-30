@@ -43,8 +43,8 @@ describe('#testBucketLender', () => {
     );
     const positionId = dydx.margin.getPositionId(args.positionOpener, args.nonce);
 
-    const positionCreatedEvent = await getBucketLenderCreatedEvent(positionId);
+    const createdEvent = await getBucketLenderCreatedEvent(positionId);
 
-    expect(response.address).toBe(positionCreatedEvent.args.at);
+    expect(response.address).toBe(createdEvent.args.at);
   });
 });

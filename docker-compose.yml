@@ -1,6 +1,6 @@
 version: '3'
 services:
   protocol:
-    image: dydxprotocol/protocol:v0.2.12
+    image: dydxprotocol/protocol:v0.2.13
     ports:
       - 8545:8545

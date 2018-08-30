@@ -32,7 +32,7 @@ export default class BucketLender {
     from: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    const trustedWithdrawers = [];
+    const trustedWithdrawers: string[] = [];
 
     if (owedToken.toLowerCase() === this.contracts.WETH9.address.toLowerCase()) {
       trustedWithdrawers.push(this.contracts.ethWrapperForBucketLender.address);
@@ -40,10 +40,11 @@ export default class BucketLender {
 
     const positionId = getPositionId(positionOpener, positionNonce);
 
-    const response:any = await this.contracts.callContractFunction(
+    const response: any = await this.contracts.callContractFunction(
       this.contracts.bucketLenderFactory.createBucketLender,
       { ...options, from },
       positionId,
+      owner,
       heldToken,
       owedToken,
       [
