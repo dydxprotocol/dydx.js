@@ -46,7 +46,7 @@ export default class DutchAuction {
   ): Promise<object> {
     return this.contracts.callContractFunction(
       this.contracts.auctionProxy.closePosition,
-      { from: bidder },
+      { ...options, from: bidder },
       positionId,
       minCloseAmount,
       this.contracts.DutchAuctionCloser.address,
