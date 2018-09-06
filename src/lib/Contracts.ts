@@ -17,6 +17,7 @@ import {
   DutchAuctionCloser as DutchAuctionCloserContract,
   ERC20Position as ERC20PositionContract,
   ERC20PositionWithdrawer as ERC20PositionWithdrawerContract,
+  AuctionProxy as AuctionProxyContract,
 } from '@dydxprotocol/protocol';
 import truffleContract from 'truffle-contract';
 import { setupContract } from './Helpers';
@@ -43,6 +44,7 @@ export default class Contracts {
   public DutchAuctionCloser: Contract = truffleContract(DutchAuctionCloserContract);
   public ERC20Position: Contract = truffleContract(ERC20PositionContract);
   public ERC20PositionWithdrawer: Contract = truffleContract(ERC20PositionWithdrawerContract);
+  public AuctionProxy: Contract = truffleContract(AuctionProxyContract);
 
   public margin;
   public tokenProxy;
@@ -58,6 +60,7 @@ export default class Contracts {
   public ethWrapperForBucketLender;
   public weth9;
   public erc20PositionWithdrawer;
+  public auctionProxy;
 
   public auto_gas_multiplier: number = 1.5;
 
@@ -90,6 +93,7 @@ export default class Contracts {
     setupContract(this.DutchAuctionCloser, provider, networkId);
     setupContract(this.ERC20Position, provider, networkId);
     setupContract(this.ERC20PositionWithdrawer, provider, networkId);
+    setupContract(this.AuctionProxy, provider, networkId);
 
     this.web3.setProvider(provider);
 
@@ -107,6 +111,7 @@ export default class Contracts {
       ethWrapperForBucketLender,
       weth9,
       erc20PositionWithdrawer,
+      auctionProxy,
     ] = await Promise.all([
       this.Margin.deployed(),
       this.TokenProxy.deployed(),
@@ -121,6 +126,7 @@ export default class Contracts {
       this.EthWrapperForBucketLender.deployed(),
       this.WETH9.deployed(),
       this.ERC20PositionWithdrawer.deployed(),
+      this.AuctionProxy.deployed(),
     ]);
 
     this.margin = margin;
@@ -136,6 +142,7 @@ export default class Contracts {
     this.ethWrapperForBucketLender = ethWrapperForBucketLender;
     this.weth9 = weth9;
     this.erc20PositionWithdrawer = erc20PositionWithdrawer;
+    this.auctionProxy = auctionProxy;
   }
 
   public async callContractFunction(

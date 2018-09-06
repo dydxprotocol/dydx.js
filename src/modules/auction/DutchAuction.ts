@@ -18,7 +18,7 @@ export default class DutchAuction {
 
   public async bid(
     positionId: string,
-    closer: string,
+    bidder: string,
     closeAmount: BigNumber,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
@@ -26,13 +26,32 @@ export default class DutchAuction {
   ): Promise<object> {
     return this.margin.closePosition(
       positionId,
-      closer,
+      bidder,
       this.contracts.DutchAuctionCloser.address,
       closeAmount,
       true,
       exchangeWrapper,
       orderData,
       options,
+    );
+  }
+
+  public async bidThroughProxy(
+    positionId: string,
+    bidder: string,
+    exchangeWrapper: ExchangeWrapper,
+    orderData: string,
+    minCloseAmount: BigNumber,
+    options: ContractCallOptions = {},
+  ): Promise<object> {
+    return this.contracts.callContractFunction(
+      this.contracts.auctionProxy.closePosition,
+      { from: bidder },
+      positionId,
+      minCloseAmount,
+      this.contracts.DutchAuctionCloser.address,
+      exchangeWrapper,
+      orderData,
     );
   }
 }
