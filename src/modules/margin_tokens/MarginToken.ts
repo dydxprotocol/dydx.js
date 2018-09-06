@@ -73,6 +73,35 @@ export default abstract class MarginToken {
     options: ContractCallOptions,
   ): Promise<object>;
 
+  public async withdraw(
+    marginTokenAddress: string,
+    withdrawer: string,
+  ): Promise<object> {
+    const marginToken = await this.getMarginToken(marginTokenAddress);
+
+    return this.contracts.callContractFunction(
+      marginToken.withdraw,
+      { from: withdrawer },
+      withdrawer,
+    );
+  }
+
+  public async withdrawETHPayout(
+    marginTokenAddress: string,
+    withdrawer: string,
+    exchangeWrapper: ExchangeWrapper,
+    orderData: string,
+  ): Promise<object> {
+    return this.contracts.callContractFunction(
+      this.contracts.erc20PositionWithdrawer.withdraw,
+      { from: withdrawer },
+      marginTokenAddress,
+      this.contracts.weth9.address,
+      exchangeWrapper,
+      orderData,
+    );
+  }
+
   protected prepareMintLoanOffering(position: Position): SignedLoanOffering {
     return {
       owedToken:              '', // Unused
@@ -90,12 +119,16 @@ export default abstract class MarginToken {
       lenderFee:              BIG_NUMBERS.ZERO,
       takerFee:               BIG_NUMBERS.ZERO,
       interestRate:           BIG_NUMBERS.ZERO, // Unused
-      interestPeriod:         BIG_NUMBERS.ZERO,  // Unused
+      interestPeriod:         BIG_NUMBERS.ZERO, // Unused
       expirationTimestamp:    BIG_NUMBERS.ONES_255,
       callTimeLimit:          BIG_NUMBERS.ONES_31,
       maxDuration:            BIG_NUMBERS.ONES_31,
       salt:                   BIG_NUMBERS.ZERO,
       signature:              '',
     };
+  }
+
+  protected async getMarginToken(marginTokenAddress: string): Promise<any> {
+    return this.contracts.ERC20Position.at(marginTokenAddress);
   }
 }

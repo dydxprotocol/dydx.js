@@ -1,5 +1,5 @@
 import LoanHelper from './modules/LoanHelper';
-import ZeroExExchangeWrapper from './modules/exchange_wrappers/ZeroExExchangeWrapper';
+import ZeroExV1ExchangeWrapper from './modules/exchange_wrappers/ZeroExV1ExchangeWrapper';
 import Margin from './modules/Margin';
 import TokenHelper from './modules/TokenHelper';
 import ShortToken from './modules/margin_tokens/ShortToken';
@@ -14,7 +14,7 @@ import { Provider } from './types';
 export class DYDX {
   public margin: Margin;
   public loanOffering: LoanHelper;
-  public zeroExExchangeWrapper: ZeroExExchangeWrapper;
+  public zeroExV1ExchangeWrapper: ZeroExV1ExchangeWrapper;
   public token: TokenHelper;
   public contracts: Contracts;
   public shortToken: ShortToken;
@@ -37,7 +37,7 @@ export class DYDX {
 
     this.loanOffering = new LoanHelper(this.contracts);
     this.margin = new Margin(this.contracts);
-    this.zeroExExchangeWrapper = new ZeroExExchangeWrapper(this.contracts);
+    this.zeroExV1ExchangeWrapper = new ZeroExV1ExchangeWrapper(this.contracts);
     this.token = new TokenHelper(this.contracts);
     this.bucketLender = new BucketLender(this.contracts);
 

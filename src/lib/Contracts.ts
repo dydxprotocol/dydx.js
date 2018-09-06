@@ -6,7 +6,7 @@ import {
   SharedLoanFactory as SharedLoanFactoryContract,
   TestToken as TestTokenContract,
   Vault as VaultContract,
-  ZeroExExchangeWrapper as ZeroExExchangeWrapperContract,
+  ZeroExV1ExchangeWrapper as ZeroExV1ExchangeWrapperContract,
   PayableMarginMinter as PayableMarginMinterContract,
   WethPayoutRecipient as WethPayoutRecipientContract,
   BucketLender as BucketLenderContract,
@@ -15,6 +15,8 @@ import {
   ERC20 as ERC20Contract,
   WETH9 as WETH9Contract,
   DutchAuctionCloser as DutchAuctionCloserContract,
+  ERC20Position as ERC20PositionContract,
+  ERC20PositionWithdrawer as ERC20PositionWithdrawerContract,
 } from '@dydxprotocol/protocol';
 import truffleContract from 'truffle-contract';
 import { setupContract } from './Helpers';
@@ -30,7 +32,7 @@ export default class Contracts {
   public SharedLoanFactory: Contract = truffleContract(SharedLoanFactoryContract);
   public Vault: Contract = truffleContract(VaultContract);
   public TestToken: Contract = truffleContract(TestTokenContract);
-  public ZeroExExchangeWrapper: Contract = truffleContract(ZeroExExchangeWrapperContract);
+  public ZeroExV1ExchangeWrapper: Contract = truffleContract(ZeroExV1ExchangeWrapperContract);
   public PayableMarginMinter: Contract = truffleContract(PayableMarginMinterContract);
   public WethPayoutRecipient: Contract = truffleContract(WethPayoutRecipientContract);
   public BucketLender: Contract = truffleContract(BucketLenderContract);
@@ -39,6 +41,8 @@ export default class Contracts {
   public ERC20: Contract = truffleContract(ERC20Contract);
   public WETH9: Contract = truffleContract(WETH9Contract);
   public DutchAuctionCloser: Contract = truffleContract(DutchAuctionCloserContract);
+  public ERC20Position: Contract = truffleContract(ERC20PositionContract);
+  public ERC20PositionWithdrawer: Contract = truffleContract(ERC20PositionWithdrawerContract);
 
   public margin;
   public tokenProxy;
@@ -46,13 +50,14 @@ export default class Contracts {
   public erc20LongFactory;
   public sharedLoanFactory;
   public vault;
-  public zeroExExchangeWrapper;
+  public zeroExV1ExchangeWrapper;
   public web3;
   public payableMarginMinter;
   public wethPayoutRecipient;
   public bucketLenderFactory;
   public ethWrapperForBucketLender;
   public weth9;
+  public erc20PositionWithdrawer;
 
   public auto_gas_multiplier: number = 1.5;
 
@@ -74,7 +79,7 @@ export default class Contracts {
     setupContract(this.SharedLoanFactory, provider, networkId);
     setupContract(this.Vault, provider, networkId);
     setupContract(this.TestToken, provider, networkId);
-    setupContract(this.ZeroExExchangeWrapper, provider, networkId);
+    setupContract(this.ZeroExV1ExchangeWrapper, provider, networkId);
     setupContract(this.PayableMarginMinter, provider, networkId);
     setupContract(this.WethPayoutRecipient, provider, networkId);
     setupContract(this.BucketLender, provider, networkId);
@@ -83,6 +88,8 @@ export default class Contracts {
     setupContract(this.ERC20, provider, networkId);
     setupContract(this.WETH9, provider, networkId);
     setupContract(this.DutchAuctionCloser, provider, networkId);
+    setupContract(this.ERC20Position, provider, networkId);
+    setupContract(this.ERC20PositionWithdrawer, provider, networkId);
 
     this.web3.setProvider(provider);
 
@@ -93,12 +100,13 @@ export default class Contracts {
       erc20LongFactory,
       sharedLoanFactory,
       vault,
-      zeroExExchangeWrapper,
+      zeroExV1ExchangeWrapper,
       payableMarginMinter,
       wethPayoutRecipient,
       bucketLenderFactory,
       ethWrapperForBucketLender,
       weth9,
+      erc20PositionWithdrawer,
     ] = await Promise.all([
       this.Margin.deployed(),
       this.TokenProxy.deployed(),
@@ -106,12 +114,13 @@ export default class Contracts {
       this.ERC20LongFactory.deployed(),
       this.SharedLoanFactory.deployed(),
       this.Vault.deployed(),
-      this.ZeroExExchangeWrapper.deployed(),
+      this.ZeroExV1ExchangeWrapper.deployed(),
       this.PayableMarginMinter.deployed(),
       this.WethPayoutRecipient.deployed(),
       this.BucketLenderFactory.deployed(),
       this.EthWrapperForBucketLender.deployed(),
       this.WETH9.deployed(),
+      this.ERC20PositionWithdrawer.deployed(),
     ]);
 
     this.margin = margin;
@@ -120,12 +129,13 @@ export default class Contracts {
     this.erc20LongFactory = erc20LongFactory;
     this.sharedLoanFactory = sharedLoanFactory;
     this.vault = vault;
-    this.zeroExExchangeWrapper = zeroExExchangeWrapper;
+    this.zeroExV1ExchangeWrapper = zeroExV1ExchangeWrapper;
     this.payableMarginMinter = payableMarginMinter;
     this.wethPayoutRecipient = wethPayoutRecipient;
     this.bucketLenderFactory = bucketLenderFactory;
     this.ethWrapperForBucketLender = ethWrapperForBucketLender;
     this.weth9 = weth9;
+    this.erc20PositionWithdrawer = erc20PositionWithdrawer;
   }
 
   public async callContractFunction(

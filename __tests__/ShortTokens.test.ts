@@ -25,7 +25,7 @@ describe('ShortToken', () => {
       const order: ZeroExOrder = seeds.orders.find(o => o.makerTokenAddress === position.heldToken);
       const trader: string = accounts[4];
       const tokensToMint = new BigNumber('2e18');
-      const orderData: string = dydx.zeroExExchangeWrapper.zeroExOrderToBytes(order);
+      const orderData: string = dydx.zeroExV1ExchangeWrapper.zeroExOrderToBytes(order);
 
       await dydx.shortToken.mintWithETH(
         position.id,
@@ -33,7 +33,7 @@ describe('ShortToken', () => {
         tokensToMint,
         new BigNumber('10e18'),
         false,
-        dydx.zeroExExchangeWrapper,
+        dydx.zeroExV1ExchangeWrapper,
         orderData,
       );
 

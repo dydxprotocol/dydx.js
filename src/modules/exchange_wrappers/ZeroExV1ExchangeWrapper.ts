@@ -3,7 +3,7 @@ import ExchangeWrapper from './ExchangeWrapper';
 import Contracts from '../../lib/Contracts';
 import { ZeroExOrder } from '../../types';
 
-export default class ZeroExExchangeWrapper extends ExchangeWrapper {
+export default class ZeroExV1ExchangeWrapper extends ExchangeWrapper {
   private contracts: Contracts;
 
   constructor(
@@ -14,7 +14,7 @@ export default class ZeroExExchangeWrapper extends ExchangeWrapper {
   }
 
   public getAddress() {
-    return this.contracts.zeroExExchangeWrapper.address;
+    return this.contracts.zeroExV1ExchangeWrapper.address;
   }
 
   public zeroExOrderToBytes(order: ZeroExOrder): string {
