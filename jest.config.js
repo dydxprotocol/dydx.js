@@ -3,8 +3,8 @@ module.exports = {
   "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
-    "testPathIgnorePatterns":["dist/.*"],
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testPathIgnorePatterns":["dist/.*", "__tests__/helpers"],
+    "testRegex": "(/__tests__/.*|(\\.|/)test)\\.(jsx?|tsx?)$",
     "moduleFileExtensions": [
       "ts",
       "tsx",
@@ -13,4 +13,5 @@ module.exports = {
       "json"
     ],
     "testURL":"http://localhost/",
+    "setupFiles": ["<rootDir>/__tests__/helpers/setup.ts"]
 };
