@@ -50,7 +50,7 @@ export default class DutchAuction {
       positionId,
       minCloseAmount,
       this.contracts.DutchAuctionCloser.address,
-      exchangeWrapper,
+      exchangeWrapper.getAddress(),
       orderData,
     );
   }
