@@ -16,8 +16,7 @@
     "types": ["node", "jest", "bluebird", "bignumber.js", "decimal.js", "luxon"],
   },
   "include": [
-    "src",
-    "__testing__"
+    "src"
   ],
   "compileOnSave": true
 }

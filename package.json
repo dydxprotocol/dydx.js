@@ -1,8 +1,8 @@
 {
   "name": "@dydxprotocol/dydx.js",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Javascript library for interacting with the dYdX Protocol",
-  "main": "dist/js/src/index.js",
+  "main": "dist/js/index.js",
   "types": "dist/types/index.d.ts",
   "files": [
     "dist/",
@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "test": "jest --runInBand",
-    "build": "tsc",
+    "build": "rm -rf dist/ && tsc",
     "lint": "tslint --project . -t verbose",
     "start": "node dist/js/index.js",
     "debug": "truffle debug",
