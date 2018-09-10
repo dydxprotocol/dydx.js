@@ -25,6 +25,7 @@ describe('#testBucketLender', () => {
       deployERC20(dydx, accounts),
     ]);
     const args = { ...LenderArgs, heldToken, owedToken };
+
     const response: any = await dydx.bucketLender.create(
       args.bucketOwner,
       args.positionOpener,
