@@ -27,7 +27,7 @@ export default class LeveragedToken extends MarginToken {
     interestPeriod: BigNumber,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    return this.margin.openWithoutCounterparty(
+    const response: any = await this.margin.openWithoutCounterparty(
       trader,
       this.contracts.erc20LongFactory.address,
       lenderContractAddress,
@@ -42,6 +42,10 @@ export default class LeveragedToken extends MarginToken {
       interestPeriod,
       options,
     );
+    const positionId = this.margin.getPositionId(trader, nonce);
+    const { owner } = await this.margin.getPosition(positionId);
+    response.tokenAddress = owner;
+    return response;
   }
 
   public async mint(

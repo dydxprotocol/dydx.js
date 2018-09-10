@@ -1,6 +1,7 @@
-import { dydx, initialize } from './helpers/DYDX';
+import { dydx } from './helpers/DYDX';
 import { seeds } from '@dydxprotocol/protocol';
 import BigNumber from 'bignumber.js';
+import { setup, setupDYDX } from './helpers/MarginHelper';
 import {
   ZeroExOrder,
   Position,
@@ -11,7 +12,7 @@ describe('ShortToken', () => {
   let accounts: string[] = null;
 
   beforeAll(async () => {
-    await initialize();
+    await setupDYDX();
     accounts = await dydx.contracts.web3.eth.getAccountsAsync();
   });
 
@@ -40,6 +41,26 @@ describe('ShortToken', () => {
       const tokenBalance = await dydx.token.getBalance(position.owner, trader);
 
       expect(tokenBalance.equals(tokensToMint)).toBeTruthy();
+    });
+
+    it('opens a tokenized short', async () => {
+      const openTx = await setup(accounts);
+      const createdShort = await dydx.shortToken.create(
+        openTx.trader,
+        openTx.loanOwner,
+        openTx.owedToken,
+        openTx.heldToken,
+        openTx.nonce,
+        openTx.deposit,
+        openTx.principal,
+        openTx.callTimeLimit,
+        openTx.maxDuration,
+        openTx.interestRate,
+        openTx.interestPeriod,
+      );
+      const positionId = dydx.margin.getPositionId(openTx.trader, openTx.nonce);
+      const { owner } = await dydx.margin.getPosition(positionId);
+      expect(createdShort.tokenAddress).toBe(owner);
     });
   });
 });
