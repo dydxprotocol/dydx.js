@@ -3,6 +3,7 @@ import MarginToken from './MarginToken';
 import Margin from '../Margin';
 import ExchangeWrapper from '../exchange_wrappers/ExchangeWrapper';
 import Contracts from '../../lib/Contracts';
+import { EVENTS } from '../../lib/Constants';
 import { ContractCallOptions } from '../../types';
 
 export default class LeveragedToken extends MarginToken {
@@ -42,9 +43,13 @@ export default class LeveragedToken extends MarginToken {
       interestPeriod,
       options,
     );
-    const positionId = this.margin.getPositionId(trader, nonce);
-    const { owner } = await this.margin.getPosition(positionId);
-    response.tokenAddress = owner;
+    const getTokenAddressEvent = response.logs.find(
+      log => (
+        log.event === EVENTS.POSITION_TRANSFERRED
+        && log.args.from === this.contracts.ERC20LongFactory.address
+      ),
+    );
+    response.tokenAddress = getTokenAddressEvent.args.to;
     return response;
   }
 

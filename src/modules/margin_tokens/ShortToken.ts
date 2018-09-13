@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import MarginToken from './MarginToken';
 import Margin from '../Margin';
 import Contracts from '../../lib/Contracts';
+import { EVENTS } from '../../lib/Constants';
 import ExchangeWrapper from '../exchange_wrappers/ExchangeWrapper';
 import { Position, SignedLoanOffering, ContractCallOptions } from '../../types';
 
@@ -42,9 +43,13 @@ export default class ShortToken extends MarginToken {
       interestPeriod,
       options,
     );
-    const positionId = this.margin.getPositionId(trader, nonce);
-    const { owner } = await this.margin.getPosition(positionId);
-    response.tokenAddress = owner;
+    const getTokenAddressEvent = response.logs.find(
+      log => (
+        log.event === EVENTS.POSITION_TRANSFERRED
+        && log.args.from === this.contracts.ERC20ShortFactory.address
+      ),
+    );
+    response.tokenAddress = getTokenAddressEvent.args.to;
     return response;
   }
 

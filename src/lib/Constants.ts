@@ -5,6 +5,10 @@ export const ADDRESSES = {
   ONE:  '0x0000000000000000000000000000000000000001',
 };
 
+export const EVENTS = {
+  POSITION_TRANSFERRED: 'PositionTransferred',
+};
+
 export const BIG_NUMBERS = {
   ZERO: new BigNumber(0),
   ONE_DAY_IN_SECONDS: new BigNumber(60 * 60 * 24),
