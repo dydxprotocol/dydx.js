@@ -151,7 +151,7 @@ export default class Contracts {
     ...args // tslint:disable-line: trailing-comma
   ): Promise<object> {
     if (!this.blockGasLimit) {
-      const block = await this.web3.eth.getBlock('latest');
+      const block = await this.web3.eth.getBlockAsync('latest');
       this.blockGasLimit = block.gasLimit;
     }
 
