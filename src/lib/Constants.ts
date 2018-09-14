@@ -7,6 +7,7 @@ export const ADDRESSES = {
 
 export const EVENTS = {
   POSITION_TRANSFERRED: 'PositionTransferred',
+  BUCKETLENDER_CREATED: 'BucketLenderCreated',
 };
 
 export const BIG_NUMBERS = {

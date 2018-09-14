@@ -20,3 +20,15 @@ export function getPositionId(
     nonce,
   );
 }
+
+export function convertInterestRateToProtocol(
+  interestRate: BigNumber,
+): BigNumber {
+  return interestRate.mul(new BigNumber('10e6')).floor();
+}
+
+export function convertInterestRateFromProtocol(
+  interestRate: BigNumber,
+): BigNumber {
+  return interestRate.div(new BigNumber('10e6')).floor();
+}

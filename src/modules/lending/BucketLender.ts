@@ -1,9 +1,9 @@
 import BigNumber  from 'bignumber.js';
 import bluebird from 'bluebird';
 import Contracts from '../../lib/Contracts';
-import { getPositionId } from '../../lib/Helpers';
+import { getPositionId, convertInterestRateToProtocol } from '../../lib/Helpers';
 import { Deposit } from '../../types/BucketLender';
-import { BIG_NUMBERS } from '../../lib/Constants';
+import { BIG_NUMBERS, EVENTS } from '../../lib/Constants';
 import { ContractCallOptions } from '../../types';
 
 export default class BucketLender {
@@ -49,7 +49,7 @@ export default class BucketLender {
       owedToken,
       [
         bucketTime,
-        positionInterestRate,
+        convertInterestRateToProtocol(positionInterestRate),
         positionInterestPeriod,
         positionMaximumDuration,
         positionCallTimeLimit,
@@ -61,7 +61,7 @@ export default class BucketLender {
     );
 
     const createdEvent = response
-      .logs.find(l => l.event === 'BucketLenderCreated' && l.args.positionId === positionId);
+      .logs.find(l => l.event === EVENTS.BUCKETLENDER_CREATED && l.args.positionId === positionId);
 
     response.address = createdEvent.args.at;
 

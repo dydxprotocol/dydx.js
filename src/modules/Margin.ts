@@ -3,7 +3,11 @@ import bluebird from 'bluebird';
 import { LoanOffering, SignedLoanOffering, Position, ContractCallOptions } from '../types';
 import ExchangeWrapper from './exchange_wrappers/ExchangeWrapper';
 import Contracts from '../lib/Contracts';
-import { getPositionId as getPositionIdHelper } from '../lib/Helpers';
+import {
+  getPositionId as getPositionIdHelper,
+  convertInterestRateToProtocol,
+  convertInterestRateFromProtocol,
+} from '../lib/Helpers';
 
 export default class Margin {
   private contracts: Contracts;
@@ -63,7 +67,7 @@ export default class Margin {
     const values32: BigNumber[] = [
       loanOffering.callTimeLimit,
       loanOffering.maxDuration,
-      loanOffering.interestRate.times(new BigNumber(10).pow(6)).floor(),
+      convertInterestRateToProtocol(loanOffering.interestRate),
       loanOffering.interestPeriod,
     ];
 
@@ -120,7 +124,7 @@ export default class Margin {
       [
         callTimeLimit,
         maxDuration,
-        interestRate.times(new BigNumber(10).pow(6)).floor(),
+        convertInterestRateToProtocol(interestRate),
         interestPeriod,
       ],
     );
@@ -374,7 +378,7 @@ export default class Margin {
       positionId,
     );
 
-    const adjustedInterestRate = interestRate.div(new BigNumber(10).pow(6));
+    const adjustedInterestRate = convertInterestRateFromProtocol(interestRate);
 
     return {
       owedToken,
