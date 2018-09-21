@@ -277,9 +277,9 @@ export default class BucketLender {
       },
     );
 
-    const getEvents: any = bluebird.promisify(filter.get);
+    bluebird.promisifyAll(filter);
 
-    return getEvents();
+    return filter.getAsync();
   }
 
   // ============ Private Functions ============
@@ -300,7 +300,7 @@ export default class BucketLender {
     );
 
     return depositEvents
-      .map(e => e.bucket.toString())
+      .map(e => e.args.bucket.toString())
       .filter((elem, pos, arr) => arr.indexOf(elem) === pos)
       .map(b => new BigNumber(b)); // Gets the unique bucket numbers
   }
