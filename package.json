@@ -1,6 +1,6 @@
 {
   "name": "@dydxprotocol/dydx.js",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "description": "Javascript library for interacting with the dYdX Protocol",
   "main": "dist/js/index.js",
   "types": "dist/types/index.d.ts",
@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/dydxexchange/dydx.js#readme",
   "dependencies": {
-    "@dydxprotocol/protocol": "0.2.18",
+    "@dydxprotocol/protocol": "0.2.19",
     "bignumber.js": "^4.1.0",
     "bluebird": "^3.5.2",
     "decimal.js": "^10.0.1",

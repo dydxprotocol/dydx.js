@@ -36,3 +36,5 @@ export async function getBucketLenderCreatedEvent(
   const [bucketLenderCreatedEvent] = await bucketLenderCreatedFilter.getAsync();
   return bucketLenderCreatedEvent;
 }
+
+export const isEthereumAddress = new RegExp(/^(0x){1}[0-9a-fA-F]{40}$/i);

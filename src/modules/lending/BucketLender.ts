@@ -15,6 +15,55 @@ export default class BucketLender {
     this.contracts = contracts;
   }
 
+  public createWithRecoveryDelay(
+    owner: string,
+    positionOpener: string,
+    positionNonce: BigNumber,
+    heldToken: string,
+    owedToken: string,
+    bucketTime: BigNumber,
+    positionInterestRate: BigNumber,
+    positionInterestPeriod: BigNumber,
+    positionMaximumDuration: BigNumber,
+    positionCallTimeLimit: BigNumber,
+    minHeldTokenPerPrincipalNumerator: BigNumber,
+    minHeldTokenPerPrincipalDenominator: BigNumber,
+    marginCallers: string[],
+    trustedWithdrawers: string[],
+    recoveryDelay: BigNumber,
+    from: string,
+    options: ContractCallOptions = {},
+  ): Promise<object> {
+    if (owedToken.toLowerCase() === this.contracts.WETH9.address.toLowerCase()) {
+      trustedWithdrawers.push(this.contracts.ethWrapperForBucketLender.address);
+    }
+    options.from = from;
+
+    const positionId = getPositionId(positionOpener, positionNonce);
+    const BucketLenderRecoveryDelay: any = this.contracts.BucketLenderRecoveryDelay;
+    return this.contracts.createNewContract(
+      BucketLenderRecoveryDelay,
+      { ...options },
+      this.contracts.margin.address,
+      positionId,
+      heldToken,
+      owedToken,
+      [
+        bucketTime,
+        convertInterestRateToProtocol(positionInterestRate),
+        positionInterestPeriod,
+        positionMaximumDuration,
+        positionCallTimeLimit,
+        minHeldTokenPerPrincipalNumerator,
+        minHeldTokenPerPrincipalDenominator,
+      ],
+      marginCallers,
+      trustedWithdrawers,
+      recoveryDelay,
+    );
+
+  }
+
   public async create(
     owner: string,
     positionOpener: string,

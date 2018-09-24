@@ -4,7 +4,8 @@ import Margin from '../Margin';
 import Contracts from '../../lib/Contracts';
 import { EVENTS } from '../../lib/Constants';
 import ExchangeWrapper from '../exchange_wrappers/ExchangeWrapper';
-import { Position, SignedLoanOffering, ContractCallOptions } from '../../types';
+import truffleContract from 'truffle-contract';
+import { Position, SignedLoanOffering, ContractCallOptions, Contract } from '../../types';
 
 export default class ShortToken extends MarginToken {
   constructor(
@@ -51,6 +52,51 @@ export default class ShortToken extends MarginToken {
     );
     response.tokenAddress = getTokenAddressEvent.args.to;
     return response;
+  }
+
+  public async createCappedShort(
+    trader: string,
+    lenderContractAddress: string,
+    owedToken: string,
+    heldToken: string,
+    nonce: BigNumber,
+    deposit: BigNumber,
+    principal: BigNumber,
+    callTimeLimit: BigNumber,
+    maxDuration: BigNumber,
+    interestRate: BigNumber,
+    interestPeriod: BigNumber,
+    trustedRecipients: string[],
+    trustedWithdrawers: string[],
+    trustedLateClosers: string[],
+    cap: BigNumber,
+    options: ContractCallOptions = {},
+  ): Promise<object> {
+    const positionId = this.margin.getPositionId(trader, nonce);
+    const { address: tokenAddress }  = await this.createCappedERC20ShortToken(
+      trader,
+      positionId,
+      trustedRecipients,
+      trustedWithdrawers,
+      trustedLateClosers,
+      cap,
+      options,
+    );
+    return this.margin.openWithoutCounterparty(
+      trader,
+      tokenAddress,
+      lenderContractAddress,
+      owedToken,
+      heldToken,
+      nonce,
+      deposit,
+      principal,
+      callTimeLimit,
+      maxDuration,
+      interestRate,
+      interestPeriod,
+      options,
+    );
   }
 
   public async mint(
@@ -168,6 +214,30 @@ export default class ShortToken extends MarginToken {
       exchangeWrapper,
       orderData,
       options,
+    );
+  }
+
+  private async createCappedERC20ShortToken(
+    initialTokenHolder: string,
+    positionId: string,
+    trustedRecipients: string[],
+    trustedWithdrawers: string[],
+    trustedLateClosers: string[],
+    cap: BigNumber,
+    options: ContractCallOptions = {},
+  ): Promise<Contract> {
+    const ERC20CappedShort: truffleContract = this.contracts.ERC20CappedShort;
+    options.from = initialTokenHolder;
+    return this.contracts.createNewContract(
+      ERC20CappedShort,
+      { ...options },
+      positionId,
+      this.contracts.margin.address,
+      initialTokenHolder,
+      trustedRecipients,
+      trustedWithdrawers,
+      trustedLateClosers,
+      cap,
     );
   }
 }

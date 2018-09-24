@@ -10,6 +10,7 @@ import {
   PayableMarginMinter as PayableMarginMinterContract,
   WethPayoutRecipient as WethPayoutRecipientContract,
   BucketLender as BucketLenderContract,
+  BucketLenderWithRecoveryDelay as BucketLenderWithRecoveryDelayContract,
   BucketLenderFactory as BucketLenderFactoryContract,
   EthWrapperForBucketLender as EthWrapperForBucketLenderContract,
   ERC20 as ERC20Contract,
@@ -17,6 +18,7 @@ import {
   DutchAuctionCloser as DutchAuctionCloserContract,
   ERC20Position as ERC20PositionContract,
   ERC20PositionWithdrawer as ERC20PositionWithdrawerContract,
+  ERC20CappedShort as ERC20CappedShortContract,
   AuctionProxy as AuctionProxyContract,
 } from '@dydxprotocol/protocol';
 import truffleContract from 'truffle-contract';
@@ -37,6 +39,8 @@ export default class Contracts {
   public PayableMarginMinter: Contract = truffleContract(PayableMarginMinterContract);
   public WethPayoutRecipient: Contract = truffleContract(WethPayoutRecipientContract);
   public BucketLender: Contract = truffleContract(BucketLenderContract);
+  public BucketLenderRecoveryDelay: Contract =
+    truffleContract(BucketLenderWithRecoveryDelayContract);
   public BucketLenderFactory: Contract = truffleContract(BucketLenderFactoryContract);
   public EthWrapperForBucketLender: Contract = truffleContract(EthWrapperForBucketLenderContract);
   public ERC20: Contract = truffleContract(ERC20Contract);
@@ -44,6 +48,7 @@ export default class Contracts {
   public DutchAuctionCloser: Contract = truffleContract(DutchAuctionCloserContract);
   public ERC20Position: Contract = truffleContract(ERC20PositionContract);
   public ERC20PositionWithdrawer: Contract = truffleContract(ERC20PositionWithdrawerContract);
+  public ERC20CappedShort: Contract = truffleContract(ERC20CappedShortContract);
   public AuctionProxy: Contract = truffleContract(AuctionProxyContract);
 
   public margin;
@@ -63,6 +68,8 @@ export default class Contracts {
   public auctionProxy;
 
   public auto_gas_multiplier: number = 1.5;
+
+  public contract_deploy_gas: number = 4000000;
 
   private blockGasLimit: number;
 
@@ -86,6 +93,7 @@ export default class Contracts {
     setupContract(this.PayableMarginMinter, provider, networkId);
     setupContract(this.WethPayoutRecipient, provider, networkId);
     setupContract(this.BucketLender, provider, networkId);
+    setupContract(this.BucketLenderRecoveryDelay, provider, networkId);
     setupContract(this.BucketLenderFactory, provider, networkId);
     setupContract(this.EthWrapperForBucketLender, provider, networkId);
     setupContract(this.ERC20, provider, networkId);
@@ -93,6 +101,7 @@ export default class Contracts {
     setupContract(this.DutchAuctionCloser, provider, networkId);
     setupContract(this.ERC20Position, provider, networkId);
     setupContract(this.ERC20PositionWithdrawer, provider, networkId);
+    setupContract(this.ERC20CappedShort, provider, networkId);
     setupContract(this.AuctionProxy, provider, networkId);
 
     this.web3.setProvider(provider);
@@ -145,15 +154,24 @@ export default class Contracts {
     this.auctionProxy = auctionProxy;
   }
 
+  public async createNewContract(
+    contract: truffleContract,
+    options: ContractCallOptions,
+    ...args
+  ): Promise<Contract> {
+    if (!this.blockGasLimit) await this.setGasLimit();
+    const totalGas = Math.floor(this.contract_deploy_gas * this.auto_gas_multiplier);
+    options.gas = totalGas < this.blockGasLimit
+      ? this.blockGasLimit : totalGas;
+    return contract.new(...args, options);
+  }
+
   public async callContractFunction(
     func: ContractFunction,
     options: ContractCallOptions,
     ...args // tslint:disable-line: trailing-comma
   ): Promise<object> {
-    if (!this.blockGasLimit) {
-      const block = await this.web3.eth.getBlockAsync('latest');
-      this.blockGasLimit = block.gasLimit;
-    }
+    if (!this.blockGasLimit) await this.setGasLimit();
 
     if (!options.gas) {
       const gasEstimate: number = await func.estimateGas(...args, options);
@@ -161,5 +179,10 @@ export default class Contracts {
       options.gas = totalGas < this.blockGasLimit ? totalGas : this.blockGasLimit;
     }
     return func(...args, options);
+  }
+
+  private async setGasLimit(): Promise<any> {
+    const block = await this.web3.eth.getBlockAsync('latest');
+    this.blockGasLimit = block.gasLimit;
   }
 }

@@ -1,8 +1,13 @@
 import { dydx } from './helpers/DYDX';
 import { deployERC20 } from './helpers/TokenHelper';
-import { LenderArgs, getBucketLenderCreatedEvent } from './helpers/BucketLenderHelper';
+import {
+  LenderArgs,
+  getBucketLenderCreatedEvent,
+  isEthereumAddress,
+} from './helpers/BucketLenderHelper';
 import { setupDYDX } from './helpers/MarginHelper';
 import { resetEVM } from './helpers/SnapshotHelper';
+import { BIG_NUMBERS } from '../src/lib/Constants';
 
 let accounts: string[] = null;
 
@@ -47,5 +52,41 @@ describe('#testBucketLender', () => {
     const createdEvent = await getBucketLenderCreatedEvent(positionId);
 
     expect(response.address).toBe(createdEvent.args.at);
+  });
+
+  it('Successfully deploys a bucket lender with Recovery Delay', async () => {
+    const [
+      heldToken,
+      owedToken,
+    ] = await Promise.all([
+      deployERC20(dydx, accounts),
+      deployERC20(dydx, accounts),
+    ]);
+    const args = {
+      ...LenderArgs,
+      heldToken,
+      owedToken,
+      trustedWithdrawers: [accounts[5], accounts[6]],
+      recoveryDelay: BIG_NUMBERS.ONE_DAY_IN_SECONDS,
+    };
+    const { address }: any = await dydx.bucketLender.createWithRecoveryDelay(
+      args.bucketOwner,
+      args.positionOpener,
+      args.nonce,
+      args.heldToken,
+      args.owedToken,
+      args.bucketTime,
+      args.interestRate,
+      args.interestPeriodSeconds,
+      args.maxDurationSeconds,
+      args.callTimeSeconds,
+      args.minHeldTokenPerPrincipalNumerator,
+      args.minHeldTokenPerPrincipalDenominator,
+      args.marginCallers,
+      args.trustedWithdrawers,
+      args.recoveryDelay,
+      args.from,
+    );
+    expect(isEthereumAddress.test(address)).toBeTruthy();
   });
 });
