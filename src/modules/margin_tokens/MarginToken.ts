@@ -97,7 +97,7 @@ export default abstract class MarginToken {
       { from: withdrawer },
       marginTokenAddress,
       this.contracts.weth9.address,
-      exchangeWrapper,
+      exchangeWrapper.getAddress(),
       orderData,
     );
   }
