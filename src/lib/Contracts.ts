@@ -160,9 +160,11 @@ export default class Contracts {
     ...args
   ): Promise<Contract> {
     if (!this.blockGasLimit) await this.setGasLimit();
-    const totalGas = Math.floor(this.contract_deploy_gas * this.auto_gas_multiplier);
-    options.gas = totalGas < this.blockGasLimit
-      ? this.blockGasLimit : totalGas;
+    if (!options.gas) {
+      const totalGas = Math.floor(this.contract_deploy_gas * this.auto_gas_multiplier);
+      options.gas = totalGas < this.blockGasLimit
+        ? this.blockGasLimit : totalGas;
+    }
     return contract.new(...args, options);
   }
 
