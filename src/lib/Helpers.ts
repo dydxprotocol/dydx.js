@@ -24,11 +24,11 @@ export function getPositionId(
 export function convertInterestRateToProtocol(
   interestRate: BigNumber,
 ): BigNumber {
-  return interestRate.mul(new BigNumber('10e6')).floor();
+  return interestRate.mul(new BigNumber('1e6')).floor();
 }
 
 export function convertInterestRateFromProtocol(
   interestRate: BigNumber,
 ): BigNumber {
-  return interestRate.div(new BigNumber('10e6')).floor();
+  return interestRate.div(new BigNumber('1e6'));
 }
