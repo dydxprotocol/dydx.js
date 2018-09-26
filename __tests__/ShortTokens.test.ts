@@ -65,7 +65,6 @@ describe('ShortToken', () => {
 
     it('opens an ERC20CappedShort', async () => {
       const openTx = await setup(accounts);
-      const trustedRecipients = [accounts[5]];
       const trustedWithdrawers = [accounts[6]];
       const trustedLateClosers = [accounts[7]];
       const cap = openTx.principal.mul(4);
@@ -81,7 +80,6 @@ describe('ShortToken', () => {
         openTx.maxDuration,
         openTx.interestRate,
         openTx.interestPeriod,
-        trustedRecipients,
         trustedWithdrawers,
         trustedLateClosers,
         cap,

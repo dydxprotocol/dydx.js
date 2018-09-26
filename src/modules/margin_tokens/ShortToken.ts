@@ -66,7 +66,6 @@ export default class ShortToken extends MarginToken {
     maxDuration: BigNumber,
     interestRate: BigNumber,
     interestPeriod: BigNumber,
-    trustedRecipients: string[],
     trustedWithdrawers: string[],
     trustedLateClosers: string[],
     cap: BigNumber,
@@ -76,7 +75,7 @@ export default class ShortToken extends MarginToken {
     const { address: tokenAddress }  = await this.createCappedERC20ShortToken(
       trader,
       positionId,
-      trustedRecipients,
+      [this.contracts.DutchAuctionCloser.address],
       trustedWithdrawers,
       trustedLateClosers,
       cap,
