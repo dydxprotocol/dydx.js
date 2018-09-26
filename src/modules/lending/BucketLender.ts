@@ -40,7 +40,7 @@ export default class BucketLender {
 
     const positionId = getPositionId(positionOpener, positionNonce);
     const BucketLenderRecoveryDelay: any = this.contracts.BucketLenderRecoveryDelay;
-    const bucketLender: any = await this.contracts.createNewContract(
+    const { address: bucketLenderAddress } = await this.contracts.createNewContract(
       BucketLenderRecoveryDelay,
       { ...options, from },
       this.contracts.margin.address,
@@ -60,14 +60,14 @@ export default class BucketLender {
       trustedWithdrawers,
       recoveryDelay,
     );
-
+    const bucketLender: any = this.getBucketLender(bucketLenderAddress);
     await this.contracts.callContractFunction(
       bucketLender.transferOwnership,
       { ...options, from },
       owner,
     );
 
-    return bucketLender;
+    return { address: bucketLenderAddress };
   }
 
   public async create(

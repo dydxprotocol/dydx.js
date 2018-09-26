@@ -172,7 +172,7 @@ export default class Contracts {
       options.gas = totalGas < this.blockGasLimit
         ? this.blockGasLimit : totalGas;
     }
-    return contract.new(...args, options);
+    return this.deploy(contract, options, ...args);
   }
 
   public async callContractFunction(
@@ -188,6 +188,28 @@ export default class Contracts {
       options.gas = totalGas < this.blockGasLimit ? totalGas : this.blockGasLimit;
     }
     return func(...args, options);
+  }
+
+  private async deploy(
+    contract: truffleContract,
+    options: ContractCallOptions,
+    ...args
+  ): Promise<any> {
+    const ethContract = this.web3.eth.contract(contract.abi);
+    return new Promise((resolve, reject) => {
+      ethContract.new(
+        ...args,
+        { ...options, data: contract.bytecode },
+        (err, contract) => {
+          if (err) {
+            reject(err);
+          } else {
+            if (contract.address) {
+              resolve({ address: contract.address });
+            }
+          }
+        });
+    });
   }
 
   private async setGasLimit(): Promise<any> {
