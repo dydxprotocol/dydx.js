@@ -15,7 +15,7 @@ export default class BucketLender {
     this.contracts = contracts;
   }
 
-  public createWithRecoveryDelay(
+  public async createWithRecoveryDelay(
     owner: string,
     positionOpener: string,
     positionNonce: BigNumber,
@@ -37,13 +37,12 @@ export default class BucketLender {
     if (owedToken.toLowerCase() === this.contracts.WETH9.address.toLowerCase()) {
       trustedWithdrawers.push(this.contracts.ethWrapperForBucketLender.address);
     }
-    options.from = from;
 
     const positionId = getPositionId(positionOpener, positionNonce);
     const BucketLenderRecoveryDelay: any = this.contracts.BucketLenderRecoveryDelay;
-    return this.contracts.createNewContract(
+    const bucketLender: any = await this.contracts.createNewContract(
       BucketLenderRecoveryDelay,
-      { ...options },
+      { ...options, from },
       this.contracts.margin.address,
       positionId,
       heldToken,
@@ -62,6 +61,13 @@ export default class BucketLender {
       recoveryDelay,
     );
 
+    await this.contracts.callContractFunction(
+      bucketLender.transferOwnership,
+      { ...options, from },
+      owner,
+    );
+
+    return bucketLender;
   }
 
   public async create(
