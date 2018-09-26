@@ -128,6 +128,19 @@ export default abstract class MarginToken {
     };
   }
 
+    // ============ Public Utility Functions ===========================
+
+  public async getTokenCap(tokenAddress: string): Promise<BigNumber> {
+    const token = await this.getCappedMarginToken(tokenAddress);
+    return token.tokenCap.call();
+  }
+
+    // =================== Protected Functions =========================
+
+  protected async getCappedMarginToken(cappedMarginTokenAddress: string): Promise<any> {
+    return this.contracts.ERC20CappedPosition.at(cappedMarginTokenAddress);
+  }
+
   protected async getMarginToken(marginTokenAddress: string): Promise<any> {
     return this.contracts.ERC20Position.at(marginTokenAddress);
   }

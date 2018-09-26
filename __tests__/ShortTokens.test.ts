@@ -96,6 +96,8 @@ describe('ShortToken', () => {
       expect(position.maxDuration.eq(openTx.maxDuration)).toBeTruthy();
       expect(position.interestPeriod.eq(openTx.interestPeriod)).toBeTruthy();
       expect(tokenBalance.eq(position.principal)).toBeTruthy();
+      const tokenCap = await dydx.shortToken.getTokenCap(position.owner);
+      expect(tokenCap.eq(cap)).toBeTruthy();
     });
   });
 });

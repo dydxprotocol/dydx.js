@@ -19,6 +19,8 @@ import {
   ERC20Position as ERC20PositionContract,
   ERC20PositionWithdrawer as ERC20PositionWithdrawerContract,
   ERC20CappedShort as ERC20CappedShortContract,
+  ERC20CappedLong as ERC20CappedLongContract,
+  ERC20CappedPosition as ERC20CappedPositionContract,
   AuctionProxy as AuctionProxyContract,
 } from '@dydxprotocol/protocol';
 import truffleContract from 'truffle-contract';
@@ -49,6 +51,8 @@ export default class Contracts {
   public ERC20Position: Contract = truffleContract(ERC20PositionContract);
   public ERC20PositionWithdrawer: Contract = truffleContract(ERC20PositionWithdrawerContract);
   public ERC20CappedShort: Contract = truffleContract(ERC20CappedShortContract);
+  public ERC20CappedLong: Contract = truffleContract(ERC20CappedLongContract);
+  public ERC20CappedPosition: Contract = truffleContract(ERC20CappedPositionContract);
   public AuctionProxy: Contract = truffleContract(AuctionProxyContract);
 
   public margin;
@@ -102,6 +106,8 @@ export default class Contracts {
     setupContract(this.ERC20Position, provider, networkId);
     setupContract(this.ERC20PositionWithdrawer, provider, networkId);
     setupContract(this.ERC20CappedShort, provider, networkId);
+    setupContract(this.ERC20CappedLong, provider, networkId);
+    setupContract(this.ERC20CappedPosition, provider, networkId);
     setupContract(this.AuctionProxy, provider, networkId);
 
     this.web3.setProvider(provider);
