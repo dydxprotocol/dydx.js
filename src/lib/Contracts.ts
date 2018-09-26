@@ -25,6 +25,7 @@ import {
 } from '@dydxprotocol/protocol';
 import truffleContract from 'truffle-contract';
 import { setupContract } from './Helpers';
+import { SUBTRACT_GAS_LIMIT } from './Constants';
 import Web3 from 'web3';
 import bluebird from 'bluebird';
 import { ContractFunction, ContractCallOptions, Contract, Provider } from '../types';
@@ -191,6 +192,6 @@ export default class Contracts {
 
   private async setGasLimit(): Promise<any> {
     const block = await this.web3.eth.getBlockAsync('latest');
-    this.blockGasLimit = block.gasLimit;
+    this.blockGasLimit = block.gasLimit - SUBTRACT_GAS_LIMIT;
   }
 }

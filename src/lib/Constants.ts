@@ -31,3 +31,5 @@ export const SIGNATURE_TYPE = {
   DEC: 2,
   HEX: 3,
 };
+
+export const SUBTRACT_GAS_LIMIT = 100000;
