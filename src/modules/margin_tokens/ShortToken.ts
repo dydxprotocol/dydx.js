@@ -71,7 +71,7 @@ export default class ShortToken extends MarginToken {
     options: ContractCallOptions = {},
   ): Promise<object> {
     const positionId = this.margin.getPositionId(trader, nonce);
-    const { address: tokenAddress }  = await this.createCappedERC20ShortToken(
+    const { address: tokenAddress }: Contract  = await this.createCappedERC20ShortToken(
       trader,
       positionId,
       [this.contracts.DutchAuctionCloser.address],
@@ -80,7 +80,7 @@ export default class ShortToken extends MarginToken {
       cap,
       options,
     );
-    return this.margin.openWithoutCounterparty(
+    const response: any = await this.margin.openWithoutCounterparty(
       trader,
       tokenAddress,
       lenderContractAddress,
@@ -95,6 +95,8 @@ export default class ShortToken extends MarginToken {
       interestPeriod,
       options,
     );
+    response.tokenAddress = tokenAddress;
+    return response;
   }
 
   public async mint(

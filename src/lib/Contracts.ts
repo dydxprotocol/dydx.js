@@ -197,19 +197,18 @@ export default class Contracts {
     contract: truffleContract,
     options: ContractCallOptions,
     ...args
-  ): Promise<any> {
+  ): Promise<Contract> {
     const ethContract = this.ethContract(contract.abi);
-    return new Promise((resolve, reject) => {
+    return new Promise<Contract>((resolve, reject) => {
       ethContract.new(
         ...args,
         { ...options, data: contract.bytecode },
         (err, contract) => {
           if (err) {
-            reject(err);
-          } else {
-            if (contract.address) {
-              resolve({ address: contract.address });
-            }
+            return reject(err);
+          }
+          if (contract.address) {
+            return resolve(<Contract>{ address: contract.address });
           }
         });
     });

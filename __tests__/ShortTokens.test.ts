@@ -45,7 +45,7 @@ describe('ShortToken', () => {
 
     it('opens an ERC20Short', async () => {
       const openTx = await setup(accounts);
-      const createdShort = await dydx.shortToken.create(
+      const createdShort: any = await dydx.shortToken.create(
         openTx.trader,
         openTx.loanOwner,
         openTx.owedToken,
@@ -65,10 +65,9 @@ describe('ShortToken', () => {
 
     it('opens an ERC20CappedShort', async () => {
       const openTx = await setup(accounts);
-      const trustedWithdrawers = [accounts[6]];
       const trustedLateClosers = [accounts[7]];
       const cap = openTx.principal.mul(4);
-      const { id: positionId } = await dydx.shortToken.createCappedShort(
+      const { id: positionId, tokenAddress }: any = await dydx.shortToken.createCappedShort(
         openTx.trader,
         openTx.loanOwner,
         openTx.owedToken,
@@ -93,6 +92,7 @@ describe('ShortToken', () => {
       expect(position.maxDuration.eq(openTx.maxDuration)).toBeTruthy();
       expect(position.interestPeriod.eq(openTx.interestPeriod)).toBeTruthy();
       expect(tokenBalance.eq(position.principal)).toBeTruthy();
+      expect(position.owner).toBe(tokenAddress);
       const tokenCap = await dydx.shortToken.getTokenCap(position.owner);
       expect(tokenCap.eq(cap)).toBeTruthy();
     });
