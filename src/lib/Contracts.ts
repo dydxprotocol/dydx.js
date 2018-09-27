@@ -74,6 +74,8 @@ export default class Contracts {
 
   public auto_gas_multiplier: number = 1.5;
 
+  public contract_deploy_gas: number = 4000000;
+
   private blockGasLimit: number;
 
   constructor() {
@@ -166,11 +168,9 @@ export default class Contracts {
   ): Promise<Contract> {
     if (!this.blockGasLimit) await this.setGasLimit();
     if (!options.gas) {
-      const ethContract = this.ethContract(contract.abi);
-      const createData = ethContract.new.getData(...args, { ...options, data: contract.bytecode });
-      const gasEstimate = this.web3.eth.estimateGas({ ...options, data: createData });
-      options.gas = gasEstimate < this.blockGasLimit
-        ? this.blockGasLimit : gasEstimate;
+      const totalGas = Math.floor(this.contract_deploy_gas * this.auto_gas_multiplier);
+      options.gas = totalGas < this.blockGasLimit
+        ? this.blockGasLimit : totalGas;
     }
     return this.deploy(contract, options, ...args);
   }
@@ -195,7 +195,7 @@ export default class Contracts {
     options: ContractCallOptions,
     ...args
   ): Promise<any> {
-    const ethContract = this.ethContract(contract.abi);
+    const ethContract = this.web3.eth.contract(contract.abi);
     return new Promise((resolve, reject) => {
       ethContract.new(
         ...args,
@@ -210,10 +210,6 @@ export default class Contracts {
           }
         });
     });
-  }
-
-  private ethContract(contractABI: any): any {
-    return this.web3.eth.contract(contractABI);
   }
 
   private async setGasLimit(): Promise<any> {

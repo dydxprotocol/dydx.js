@@ -76,7 +76,7 @@ export default class ShortToken extends MarginToken {
       trader,
       positionId,
       [this.contracts.DutchAuctionCloser.address],
-      [this.contracts.ERC20PositionWithdrawer.address],
+      trustedWithdrawers,
       trustedLateClosers,
       cap,
       options,
