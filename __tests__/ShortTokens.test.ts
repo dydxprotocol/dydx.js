@@ -80,7 +80,6 @@ describe('ShortToken', () => {
         openTx.maxDuration,
         openTx.interestRate,
         openTx.interestPeriod,
-        trustedWithdrawers,
         trustedLateClosers,
         cap,
       );
