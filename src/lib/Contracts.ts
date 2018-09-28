@@ -3,7 +3,6 @@ import {
   TokenProxy as TokenProxyContract,
   ERC20ShortFactory as ERC20ShortFactoryContract,
   ERC20LongFactory as ERC20LongFactoryContract,
-  SharedLoanFactory as SharedLoanFactoryContract,
   TestToken as TestTokenContract,
   Vault as VaultContract,
   ZeroExV1ExchangeWrapper as ZeroExV1ExchangeWrapperContract,
@@ -36,7 +35,6 @@ export default class Contracts {
   public TokenProxy: Contract = truffleContract(TokenProxyContract);
   public ERC20ShortFactory: Contract = truffleContract(ERC20ShortFactoryContract);
   public ERC20LongFactory: Contract = truffleContract(ERC20LongFactoryContract);
-  public SharedLoanFactory: Contract = truffleContract(SharedLoanFactoryContract);
   public Vault: Contract = truffleContract(VaultContract);
   public TestToken: Contract = truffleContract(TestTokenContract);
   public ZeroExV1ExchangeWrapper: Contract = truffleContract(ZeroExV1ExchangeWrapperContract);
@@ -62,7 +60,6 @@ export default class Contracts {
   public tokenProxy;
   public erc20ShortFactory;
   public erc20LongFactory;
-  public sharedLoanFactory;
   public vault;
   public zeroExV1ExchangeWrapper;
   public zeroExV2ExchangeWrapper;
@@ -92,7 +89,6 @@ export default class Contracts {
     setupContract(this.TokenProxy, provider, networkId);
     setupContract(this.ERC20ShortFactory, provider, networkId);
     setupContract(this.ERC20LongFactory, provider, networkId);
-    setupContract(this.SharedLoanFactory, provider, networkId);
     setupContract(this.Vault, provider, networkId);
     setupContract(this.TestToken, provider, networkId);
     setupContract(this.ZeroExV1ExchangeWrapper, provider, networkId);
@@ -120,7 +116,6 @@ export default class Contracts {
       tokenProxy,
       erc20ShortFactory,
       erc20LongFactory,
-      sharedLoanFactory,
       vault,
       zeroExV1ExchangeWrapper,
       zeroExV2ExchangeWrapper,
@@ -136,7 +131,6 @@ export default class Contracts {
       this.TokenProxy.deployed(),
       this.ERC20ShortFactory.deployed(),
       this.ERC20LongFactory.deployed(),
-      this.SharedLoanFactory.deployed(),
       this.Vault.deployed(),
       this.ZeroExV1ExchangeWrapper.deployed(),
       this.ZeroExV2ExchangeWrapper.deployed(),
@@ -153,7 +147,6 @@ export default class Contracts {
     this.tokenProxy = tokenProxy;
     this.erc20ShortFactory = erc20ShortFactory;
     this.erc20LongFactory = erc20LongFactory;
-    this.sharedLoanFactory = sharedLoanFactory;
     this.vault = vault;
     this.zeroExV1ExchangeWrapper = zeroExV1ExchangeWrapper;
     this.zeroExV2ExchangeWrapper = zeroExV2ExchangeWrapper;
