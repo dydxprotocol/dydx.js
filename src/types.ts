@@ -66,6 +66,23 @@ export interface ZeroExOrder {
   ecSignature: Signature;
 }
 
+export interface ZeroExV2Order {
+  exchangeAddress: string;
+  expirationTimeSeconds: BigNumber;
+  feeRecipientAddress: string;
+  makerAddress: string;
+  makerAssetAmount: BigNumber;
+  makerAssetData: string;
+  makerFee: BigNumber;
+  salt: BigNumber;
+  senderAddress: string;
+  signature: string;
+  takerAddress: string;
+  takerAssetAmount: BigNumber;
+  takerAssetData: string;
+  takerFee: BigNumber;
+}
+
 export interface ContractFunction extends Function {
   estimateGas: Function;
 }

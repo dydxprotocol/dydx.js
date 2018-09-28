@@ -7,6 +7,7 @@ import {
   TestToken as TestTokenContract,
   Vault as VaultContract,
   ZeroExV1ExchangeWrapper as ZeroExV1ExchangeWrapperContract,
+  ZeroExV2ExchangeWrapper as ZeroExV2ExchangeWrapperContract,
   PayableMarginMinter as PayableMarginMinterContract,
   WethPayoutRecipient as WethPayoutRecipientContract,
   BucketLender as BucketLenderContract,
@@ -39,6 +40,7 @@ export default class Contracts {
   public Vault: Contract = truffleContract(VaultContract);
   public TestToken: Contract = truffleContract(TestTokenContract);
   public ZeroExV1ExchangeWrapper: Contract = truffleContract(ZeroExV1ExchangeWrapperContract);
+  public ZeroExV2ExchangeWrapper: Contract = truffleContract(ZeroExV2ExchangeWrapperContract);
   public PayableMarginMinter: Contract = truffleContract(PayableMarginMinterContract);
   public WethPayoutRecipient: Contract = truffleContract(WethPayoutRecipientContract);
   public BucketLender: Contract = truffleContract(BucketLenderContract);
@@ -63,6 +65,7 @@ export default class Contracts {
   public sharedLoanFactory;
   public vault;
   public zeroExV1ExchangeWrapper;
+  public zeroExV2ExchangeWrapper;
   public web3;
   public payableMarginMinter;
   public wethPayoutRecipient;
@@ -93,6 +96,7 @@ export default class Contracts {
     setupContract(this.Vault, provider, networkId);
     setupContract(this.TestToken, provider, networkId);
     setupContract(this.ZeroExV1ExchangeWrapper, provider, networkId);
+    setupContract(this.ZeroExV2ExchangeWrapper, provider, networkId);
     setupContract(this.PayableMarginMinter, provider, networkId);
     setupContract(this.WethPayoutRecipient, provider, networkId);
     setupContract(this.BucketLender, provider, networkId);
@@ -119,6 +123,7 @@ export default class Contracts {
       sharedLoanFactory,
       vault,
       zeroExV1ExchangeWrapper,
+      zeroExV2ExchangeWrapper,
       payableMarginMinter,
       wethPayoutRecipient,
       bucketLenderFactory,
@@ -134,6 +139,7 @@ export default class Contracts {
       this.SharedLoanFactory.deployed(),
       this.Vault.deployed(),
       this.ZeroExV1ExchangeWrapper.deployed(),
+      this.ZeroExV2ExchangeWrapper.deployed(),
       this.PayableMarginMinter.deployed(),
       this.WethPayoutRecipient.deployed(),
       this.BucketLenderFactory.deployed(),
@@ -150,6 +156,7 @@ export default class Contracts {
     this.sharedLoanFactory = sharedLoanFactory;
     this.vault = vault;
     this.zeroExV1ExchangeWrapper = zeroExV1ExchangeWrapper;
+    this.zeroExV2ExchangeWrapper = zeroExV2ExchangeWrapper;
     this.payableMarginMinter = payableMarginMinter;
     this.wethPayoutRecipient = wethPayoutRecipient;
     this.bucketLenderFactory = bucketLenderFactory;
