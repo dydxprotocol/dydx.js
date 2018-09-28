@@ -10,7 +10,7 @@ import MathHelpers from './modules/helpers/MathHelpers';
 import DutchAuction from './modules/auction/DutchAuction';
 import Interest from './modules/helpers/Interest';
 import Contracts from './lib/Contracts';
-import { Provider } from './types';
+import { Provider, DYDXOptions } from './types';
 
 export class DYDX {
   public margin: Margin;
@@ -52,12 +52,12 @@ export class DYDX {
   public async initialize(
     provider: Provider,
     networkId: number,
+    options?: DYDXOptions,
   ) {
     this.currentProvider = provider;
     this.currentNetworkId = networkId;
     this.initialized = true;
-
-    await this.contracts.setProvider(provider, networkId);
+    await this.contracts.setProvider(provider, networkId, options);
     this.loanOffering.setProvider(provider);
   }
 }

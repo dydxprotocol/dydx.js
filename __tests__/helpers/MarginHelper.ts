@@ -145,7 +145,13 @@ export async function validate(openTx, txID, traderHeldTokenBalance, vaultHeldTo
   )).toBeTruthy();
 }
 
-export async function setupDYDX() {
-  await initialize();
+export async function setupDYDX(
+  synchronizationTimeout?: number,
+) {
+  await initialize(
+    new Web3.providers.HttpProvider(process.env.GANACHE_URL),
+    Number(process.env.TEST_NETWORK_ID),
+    { synchronizationTimeout },
+  );
   await setupTestContract();
 }

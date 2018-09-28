@@ -92,6 +92,7 @@ export interface Contract {
   at: (s: string) => Promise<ContractInstance>;
   setProvider: (p: Provider) => any;
   setNetwork: (n: number) => any;
+  synchronization_timeout?: number;
 }
 
 export interface Provider {}
@@ -104,4 +105,8 @@ export interface ContractCallOptions {
   gas?: BigNumber | number;
   gasPrice?: BigNumber | number;
   nonce?: number;
+}
+
+export interface DYDXOptions {
+  synchronizationTimeout?: number;
 }

@@ -28,7 +28,13 @@ import { setupContract } from './Helpers';
 import { SUBTRACT_GAS_LIMIT } from './Constants';
 import Web3 from 'web3';
 import bluebird from 'bluebird';
-import { ContractFunction, ContractCallOptions, Contract, Provider } from '../types';
+import {
+  ContractFunction,
+  ContractCallOptions,
+  Contract,
+  Provider,
+  DYDXOptions,
+ } from '../types';
 
 export default class Contracts {
   public Margin: Contract = truffleContract(MarginContract);
@@ -84,30 +90,31 @@ export default class Contracts {
   public async setProvider(
     provider: Provider,
     networkId: number,
+    options: DYDXOptions,
   ): Promise<void> {
-    setupContract(this.Margin, provider, networkId);
-    setupContract(this.TokenProxy, provider, networkId);
-    setupContract(this.ERC20ShortFactory, provider, networkId);
-    setupContract(this.ERC20LongFactory, provider, networkId);
-    setupContract(this.Vault, provider, networkId);
-    setupContract(this.TestToken, provider, networkId);
-    setupContract(this.ZeroExV1ExchangeWrapper, provider, networkId);
-    setupContract(this.ZeroExV2ExchangeWrapper, provider, networkId);
-    setupContract(this.PayableMarginMinter, provider, networkId);
-    setupContract(this.WethPayoutRecipient, provider, networkId);
-    setupContract(this.BucketLender, provider, networkId);
-    setupContract(this.BucketLenderRecoveryDelay, provider, networkId);
-    setupContract(this.BucketLenderFactory, provider, networkId);
-    setupContract(this.EthWrapperForBucketLender, provider, networkId);
-    setupContract(this.ERC20, provider, networkId);
-    setupContract(this.WETH9, provider, networkId);
-    setupContract(this.DutchAuctionCloser, provider, networkId);
-    setupContract(this.ERC20Position, provider, networkId);
-    setupContract(this.ERC20PositionWithdrawer, provider, networkId);
-    setupContract(this.ERC20CappedShort, provider, networkId);
-    setupContract(this.ERC20CappedLong, provider, networkId);
-    setupContract(this.ERC20CappedPosition, provider, networkId);
-    setupContract(this.AuctionProxy, provider, networkId);
+    setupContract(this.Margin, provider, networkId, options);
+    setupContract(this.TokenProxy, provider, networkId, options);
+    setupContract(this.ERC20ShortFactory, provider, networkId, options);
+    setupContract(this.ERC20LongFactory, provider, networkId, options);
+    setupContract(this.Vault, provider, networkId, options);
+    setupContract(this.TestToken, provider, networkId, options);
+    setupContract(this.ZeroExV1ExchangeWrapper, provider, networkId, options);
+    setupContract(this.ZeroExV2ExchangeWrapper, provider, networkId, options);
+    setupContract(this.PayableMarginMinter, provider, networkId, options);
+    setupContract(this.WethPayoutRecipient, provider, networkId, options);
+    setupContract(this.BucketLender, provider, networkId, options);
+    setupContract(this.BucketLenderRecoveryDelay, provider, networkId, options);
+    setupContract(this.BucketLenderFactory, provider, networkId, options);
+    setupContract(this.EthWrapperForBucketLender, provider, networkId, options);
+    setupContract(this.ERC20, provider, networkId, options);
+    setupContract(this.WETH9, provider, networkId, options);
+    setupContract(this.DutchAuctionCloser, provider, networkId, options);
+    setupContract(this.ERC20Position, provider, networkId, options);
+    setupContract(this.ERC20PositionWithdrawer, provider, networkId, options);
+    setupContract(this.ERC20CappedShort, provider, networkId, options);
+    setupContract(this.ERC20CappedLong, provider, networkId, options);
+    setupContract(this.ERC20CappedPosition, provider, networkId, options);
+    setupContract(this.AuctionProxy, provider, networkId, options);
 
     this.web3.setProvider(provider);
 
