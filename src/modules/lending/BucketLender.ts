@@ -232,7 +232,7 @@ export default class BucketLender {
     to: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    const bucketLender: any = this.getBucketLender(bucketLenderAddress);
+    const bucketLender: any = await this.getBucketLender(bucketLenderAddress);
     return this.contracts.callContractFunction(
       bucketLender.transferOwnership,
       { ...options, from },
