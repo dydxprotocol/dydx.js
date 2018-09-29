@@ -60,11 +60,12 @@ export default class BucketLender {
       trustedWithdrawers,
       recoveryDelay,
     );
-    const bucketLender: any = this.getBucketLender(bucketLenderAddress);
-    await this.contracts.callContractFunction(
-      bucketLender.transferOwnership,
-      { ...options, from },
+
+    await this.transferOwnership(
+      bucketLenderAddress,
+      from,
       owner,
+      options,
     );
 
     return { address: bucketLenderAddress };
@@ -225,6 +226,20 @@ export default class BucketLender {
     );
   }
 
+  public async transferOwnership(
+    bucketLenderAddress: string,
+    from: string,
+    to: string,
+    options: ContractCallOptions = {},
+  ): Promise<object> {
+    const bucketLender: any = this.getBucketLender(bucketLenderAddress);
+    return this.contracts.callContractFunction(
+      bucketLender.transferOwnership,
+      { ...options, from },
+      to,
+    );
+  }
+
   // ============ Public Constant Contract Functions ============
 
   public async getTotalPrincipal(
@@ -310,6 +325,14 @@ export default class BucketLender {
     const bucketLender = await this.getBucketLender(bucketLenderAddress);
 
     return bucketLender.MAX_DURATION.call();
+  }
+
+  public async getOwner(
+    bucketLenderAddress: string,
+  ): Promise<BigNumber> {
+    const bucketLender = await this.getBucketLender(bucketLenderAddress);
+
+    return bucketLender.owner.call();
   }
 
   // ============ Events ============
