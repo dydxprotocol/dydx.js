@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 
 export interface LoanOffering {
   owedToken:              string;
@@ -109,4 +110,9 @@ export interface ContractCallOptions {
 
 export interface DYDXOptions {
   synchronizationTimeout?: number;
+}
+
+export interface Fraction128 {
+  num: BN;
+  den: BN;
 }

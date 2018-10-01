@@ -88,8 +88,7 @@ describe('#testBucketLender', () => {
       args.from,
     );
     expect(isEthereumAddress.test(address)).toBeTruthy();
-    const BucketLender = dydx.contracts.BucketLenderRecoveryDelay.at(address);
-    const owner = await BucketLender.owner.call();
+    const owner = await dydx.bucketLender.getOwner(address);
     expect(owner).toBe(args.bucketOwner);
   });
 });

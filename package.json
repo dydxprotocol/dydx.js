@@ -1,6 +1,6 @@
 {
   "name": "@dydxprotocol/dydx.js",
-  "version": "0.4.9",
+  "version": "0.5.0",
   "description": "Javascript library for interacting with the dYdX Protocol",
   "main": "dist/js/index.js",
   "types": "dist/types/index.d.ts",
@@ -30,6 +30,7 @@
     "@dydxprotocol/protocol": "1.0.1",
     "bignumber.js": "^4.1.0",
     "bluebird": "^3.5.2",
+    "bn.js": "^4.11.8",
     "decimal.js": "^10.0.1",
     "ethereumjs-util": "^5.2.0",
     "ethjs": "^0.4.0",

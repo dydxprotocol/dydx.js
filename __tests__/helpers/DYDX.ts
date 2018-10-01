@@ -1,6 +1,5 @@
 import { DYDX } from '../../src/DYDX';
 import { Provider, DYDXOptions } from '../../src/types';
-import Web3 from 'web3';
 
 export const dydx = new DYDX();
 
