@@ -1,18 +1,32 @@
 import BigNumber  from 'bignumber.js';
 import bluebird from 'bluebird';
 import Contracts from '../../lib/Contracts';
+import Margin from '../Margin';
 import { getPositionId, convertInterestRateToProtocol } from '../../lib/Helpers';
 import { Deposit } from '../../types/BucketLender';
 import { BIG_NUMBERS, EVENTS } from '../../lib/Constants';
-import { ContractCallOptions } from '../../types';
+import { ContractCallOptions, BucketLenderSummary } from '../../types';
+import Interest from '../helpers/Interest';
+import MathHelpers from '../helpers/MathHelpers';
+import { DateTime } from 'luxon';
 
 export default class BucketLender {
+
+  private margin: Margin;
   private contracts: Contracts;
 
+  private math: MathHelpers;
+  private interest: Interest;
+
   constructor(
+    margin: Margin,
     contracts: Contracts,
   ) {
+    this.margin = margin;
     this.contracts = contracts;
+
+    this.math = new MathHelpers();
+    this.interest = new Interest();
   }
 
   public async createWithRecoveryDelay(
@@ -133,8 +147,8 @@ export default class BucketLender {
   ): Promise<object> {
     const bucketLender = await this.getBucketLender(bucketLenderAddress);
 
-    return await this.contracts.callContractFunction(
-      bucketLender,
+    return this.contracts.callContractFunction(
+      bucketLender.deposit,
       { ...options, from: depositor },
       beneficiary,
       amount,
@@ -242,6 +256,100 @@ export default class BucketLender {
 
   // ============ Public Constant Contract Functions ============
 
+  public async getLenderSummary(
+    bucketLenderAddress: string,
+    lender: string,
+  ): Promise<BucketLenderSummary> {
+    const positionId = await this.getBucketLenderPositionId(bucketLenderAddress);
+
+    const [
+      position,
+      buckets,
+      criticalBucket,
+      currentBucket,
+    ] = await Promise.all([
+      this.margin.getPosition(positionId),
+      this.getDepositedBuckets(bucketLenderAddress, lender),
+      this.getCriticalBucket(bucketLenderAddress),
+      this.getCurrentBucket(bucketLenderAddress),
+    ]);
+
+    const positionOwedAmount = this.interest.getOwedAmount(
+      position.startTimestamp, // startEpoch
+      new BigNumber(DateTime.local().toMillis()).div(1000).floor(), // endEpoch
+      position.principal,
+      position.interestRate,
+      position.interestPeriod,
+    );
+
+    const results = await Promise.all(
+      buckets.map(async (bucket) => {
+        let withdrawable = new BigNumber(0);
+        let locked = new BigNumber(0);
+
+        // get bucket info
+        const [
+          bucketAvailable,
+          bucketPrincipal,
+          bucketWeight,
+          accountWeight,
+        ] = await Promise.all([
+          this.getAvailableForBucket(bucketLenderAddress, bucket),
+          this.getPrincipalForBucket(bucketLenderAddress, bucket),
+          this.getWeightForBucket(bucketLenderAddress, bucket),
+          this.getWeightForBucketForAccount(bucketLenderAddress, bucket, lender),
+        ]);
+
+        // calculate the amount owed back to the bucket at this point in time
+        const principalPlusInterest = this.math.partialAmount(
+          positionOwedAmount,
+          position.principal,
+          bucketPrincipal,
+          true,
+        );
+        const totalBucketOwed = bucketAvailable.plus(principalPlusInterest);
+
+        // calculate the amount owed back to the user at this point in time
+        const personalOwed = this.math.partialAmount(
+          accountWeight,
+          bucketWeight,
+          totalBucketOwed,
+        );
+
+        // not being lent (or position is not open)
+        if (bucket.gt(criticalBucket) || position.startTimestamp.isZero()) {
+          withdrawable = personalOwed;
+
+        // being fully lent
+        } else if (bucket.lt(criticalBucket)) {
+          locked = personalOwed;
+
+        // being partially lent (locked)
+        } else if (criticalBucket.eq(currentBucket)) {
+          locked = personalOwed;
+
+        // being partially lent (unlocked)
+        } else {
+          const userWithdrawable =
+            bucketAvailable.lt(personalOwed) ? bucketAvailable : personalOwed;
+          withdrawable = userWithdrawable;
+          locked = personalOwed.minus(userWithdrawable);
+        }
+
+        return { withdrawable, locked };
+      }),
+    );
+
+    let withdrawable = new BigNumber(0);
+    let locked = new BigNumber(0);
+    results.forEach((result) => {
+      withdrawable = withdrawable.plus(result.withdrawable);
+      locked = locked.plus(result.locked);
+    });
+
+    return { withdrawable, locked };
+  }
+
   public async getTotalPrincipal(
     bucketLenderAddress: string,
   ): Promise<BigNumber> {
@@ -284,6 +392,14 @@ export default class BucketLender {
     return bucketLender.criticalBucket.call();
   }
 
+  public async getCurrentBucket(
+    bucketLenderAddress: string,
+  ): Promise<BigNumber> {
+    const bucketLender = await this.getBucketLender(bucketLenderAddress);
+
+    return bucketLender.getCurrentBucket.call();
+  }
+
   public async getWeightForBucket(
     bucketLenderAddress: string,
     bucketNumber: BigNumber,
@@ -301,6 +417,14 @@ export default class BucketLender {
     const bucketLender = await this.getBucketLender(bucketLenderAddress);
 
     return bucketLender.weightForBucketForAccount.call(bucketNumber, account);
+  }
+
+  public async getBucketLenderPositionId(
+    bucketLenderAddress: string,
+  ): Promise<string> {
+    const bucketLender = await this.getBucketLender(bucketLenderAddress);
+
+    return bucketLender.POSITION_ID.call();
   }
 
   public async getBucketTime(

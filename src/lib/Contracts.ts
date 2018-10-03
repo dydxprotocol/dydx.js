@@ -5,6 +5,7 @@ import {
   ERC20LongFactory as ERC20LongFactoryContract,
   TestToken as TestTokenContract,
   Vault as VaultContract,
+  OpenDirectlyExchangeWrapper as OpenDirectlyExchangeWrapperContract,
   ZeroExV1ExchangeWrapper as ZeroExV1ExchangeWrapperContract,
   ZeroExV2ExchangeWrapper as ZeroExV2ExchangeWrapperContract,
   PayableMarginMinter as PayableMarginMinterContract,
@@ -43,6 +44,8 @@ export default class Contracts {
   public ERC20LongFactory: Contract = truffleContract(ERC20LongFactoryContract);
   public Vault: Contract = truffleContract(VaultContract);
   public TestToken: Contract = truffleContract(TestTokenContract);
+  // tslint:disable-next-line max-line-length
+  public OpenDirectlyExchangeWrapper: Contract = truffleContract(OpenDirectlyExchangeWrapperContract);
   public ZeroExV1ExchangeWrapper: Contract = truffleContract(ZeroExV1ExchangeWrapperContract);
   public ZeroExV2ExchangeWrapper: Contract = truffleContract(ZeroExV2ExchangeWrapperContract);
   public PayableMarginMinter: Contract = truffleContract(PayableMarginMinterContract);
@@ -67,6 +70,7 @@ export default class Contracts {
   public erc20ShortFactory;
   public erc20LongFactory;
   public vault;
+  public openDirectlyExchangeWrapper;
   public zeroExV1ExchangeWrapper;
   public zeroExV2ExchangeWrapper;
   public web3;
@@ -98,6 +102,7 @@ export default class Contracts {
     setupContract(this.ERC20LongFactory, provider, networkId, options);
     setupContract(this.Vault, provider, networkId, options);
     setupContract(this.TestToken, provider, networkId, options);
+    setupContract(this.OpenDirectlyExchangeWrapper, provider, networkId, options);
     setupContract(this.ZeroExV1ExchangeWrapper, provider, networkId, options);
     setupContract(this.ZeroExV2ExchangeWrapper, provider, networkId, options);
     setupContract(this.PayableMarginMinter, provider, networkId, options);
@@ -124,6 +129,7 @@ export default class Contracts {
       erc20ShortFactory,
       erc20LongFactory,
       vault,
+      openDirectlyExchangeWrapper,
       zeroExV1ExchangeWrapper,
       zeroExV2ExchangeWrapper,
       payableMarginMinter,
@@ -139,6 +145,7 @@ export default class Contracts {
       this.ERC20ShortFactory.deployed(),
       this.ERC20LongFactory.deployed(),
       this.Vault.deployed(),
+      this.OpenDirectlyExchangeWrapper.deployed(),
       this.ZeroExV1ExchangeWrapper.deployed(),
       this.ZeroExV2ExchangeWrapper.deployed(),
       this.PayableMarginMinter.deployed(),
@@ -155,6 +162,7 @@ export default class Contracts {
     this.erc20ShortFactory = erc20ShortFactory;
     this.erc20LongFactory = erc20LongFactory;
     this.vault = vault;
+    this.openDirectlyExchangeWrapper = openDirectlyExchangeWrapper;
     this.zeroExV1ExchangeWrapper = zeroExV1ExchangeWrapper;
     this.zeroExV2ExchangeWrapper = zeroExV2ExchangeWrapper;
     this.payableMarginMinter = payableMarginMinter;

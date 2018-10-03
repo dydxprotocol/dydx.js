@@ -116,3 +116,8 @@ export interface Fraction128 {
   num: BN;
   den: BN;
 }
+
+export interface BucketLenderSummary {
+  withdrawable: BigNumber;
+  locked: BigNumber;
+}

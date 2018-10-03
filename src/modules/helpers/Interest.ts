@@ -10,7 +10,7 @@ import {
   fractionCopy,
 } from '../../lib/Fraction';
 import { Fraction128 } from '../../types';
-import { partialAmountRoundedUpBN, bigNumberToBN } from './MathHelpersBN';
+import MathHelpersBN from './MathHelpersBN';
 
 // ============ CONSTANTS ============
 
@@ -22,6 +22,14 @@ const MAXIMUM_EXPONENT = 80;
 const E_TO_MAXIMUM_EXPONENT = new BN('55406223843935100525711733958316613');
 
 export default class Interest {
+
+  private mathBN: MathHelpersBN;
+
+  // ============ CONSTRUCTOR ============
+
+  constructor() {
+    this.mathBN = new MathHelpersBN();
+  }
 
   // ============ PUBLIC FUNCTIONS ============
 
@@ -48,9 +56,9 @@ export default class Interest {
     const secondsOfInterest = numPeriods.times(interestPeriod);
 
     const resultAsBN = this.getCompoundedInterest(
-      bigNumberToBN(principal),
-      bigNumberToBN(interestRate.times(100).times(1000000)),
-      bigNumberToBN(secondsOfInterest),
+      this.mathBN.bigNumberToBN(principal),
+      this.mathBN.bigNumberToBN(interestRate.times(100).times(1000000)),
+      this.mathBN.bigNumberToBN(secondsOfInterest),
     );
 
     return new BigNumber(resultAsBN.toString());
@@ -100,7 +108,7 @@ export default class Interest {
     // e^X for positive X should be greater-than or equal to 1
     assert(eToRT.num.gte(eToRT.den));
 
-    return partialAmountRoundedUpBN(eToRT.num, eToRT.den, principal);
+    return this.mathBN.partialAmountBN(eToRT.num, eToRT.den, principal, true);
   }
 
   protected exp(

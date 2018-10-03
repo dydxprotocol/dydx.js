@@ -40,6 +40,7 @@
     "web3-utils": "^1.0.0-beta.36"
   },
   "devDependencies": {
+    "@digix/tempo": "^0.2.0",
     "@types/bignumber.js": "^5.0.0",
     "@types/bluebird": "^3.5.24",
     "@types/decimal.js": "^7.4.0",
