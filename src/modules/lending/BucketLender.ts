@@ -310,11 +310,13 @@ export default class BucketLender {
         const totalBucketOwed = bucketAvailable.plus(principalPlusInterest);
 
         // calculate the amount owed back to the user at this point in time
-        const personalOwed = this.math.partialAmount(
-          accountWeight,
-          bucketWeight,
-          totalBucketOwed,
-        );
+        const personalOwed = bucketWeight.isZero()
+          ? new BigNumber(0)
+          : this.math.partialAmount(
+              accountWeight,
+              bucketWeight,
+              totalBucketOwed,
+            );
 
         // not being lent (or position is not open)
         if (bucket.gt(criticalBucket) || position.startTimestamp.isZero()) {
