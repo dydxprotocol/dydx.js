@@ -161,7 +161,7 @@ describe('#testBucketLender', () => {
     await callOpenWithoutCounterparty(openTx);
 
     // wait for another bucket
-    await wait(1);
+    await wait(10);
 
     // deposit in bucket 1
     await doDeposit(bucketLenderAddress, lender, lendAmount, owedToken);
@@ -169,7 +169,7 @@ describe('#testBucketLender', () => {
     expect(allLent.withdrawable).toEqual(lendAmount.times(2));
 
     // validate lent amounts after interest has accrued
-    await wait(openTx.interestPeriod);
+    await wait(openTx.interestPeriod.times(100));
     allLent = await dydx.bucketLender.getLenderSummary(bucketLenderAddress, lender);
     expect(allLent.withdrawable).toEqual(lendAmount.times(2));
     expect(allLent.locked.isZero()).toBeFalsy();

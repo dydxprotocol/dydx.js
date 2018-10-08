@@ -1,5 +1,6 @@
 import BigNumber  from 'bignumber.js';
 import web3Utils from 'web3-utils';
+import { DateTime } from 'luxon';
 import { Contract, Provider, DYDXOptions } from '../types';
 
 export function setupContract(
@@ -35,4 +36,9 @@ export function convertInterestRateFromProtocol(
   interestRate: BigNumber,
 ): BigNumber {
   return interestRate.div(new BigNumber('1e6'));
+}
+
+export function getCurrentEpochSeconds(
+): BigNumber {
+  return new BigNumber(DateTime.local().toMillis()).div(1000).floor();
 }

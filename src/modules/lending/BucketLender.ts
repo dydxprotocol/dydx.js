@@ -2,13 +2,16 @@ import BigNumber  from 'bignumber.js';
 import bluebird from 'bluebird';
 import Contracts from '../../lib/Contracts';
 import Margin from '../Margin';
-import { getPositionId, convertInterestRateToProtocol } from '../../lib/Helpers';
+import {
+  getPositionId,
+  convertInterestRateToProtocol,
+  getCurrentEpochSeconds,
+} from '../../lib/Helpers';
 import { Deposit } from '../../types/BucketLender';
 import { BIG_NUMBERS, EVENTS } from '../../lib/Constants';
 import { ContractCallOptions, BucketLenderSummary } from '../../types';
 import Interest from '../helpers/Interest';
 import MathHelpers from '../helpers/MathHelpers';
-import { DateTime } from 'luxon';
 
 export default class BucketLender {
 
@@ -274,11 +277,14 @@ export default class BucketLender {
       this.getCurrentBucket(bucketLenderAddress),
     ]);
 
+    // TODO: remove this when we remove interestRate as '12' for 12%
+    const interestRate = position.interestRate.div(100);
+
     const positionOwedAmount = this.interest.getOwedAmount(
       position.startTimestamp, // startEpoch
-      new BigNumber(DateTime.local().toMillis()).div(1000).floor(), // endEpoch
+      getCurrentEpochSeconds(),
       position.principal,
-      position.interestRate,
+      interestRate,
       position.interestPeriod,
     );
 

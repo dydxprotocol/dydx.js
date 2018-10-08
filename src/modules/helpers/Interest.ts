@@ -54,10 +54,11 @@ export default class Interest {
     const diffEpoch = endEpoch.minus(startEpoch);
     const numPeriods = diffEpoch.minus(1).div(interestPeriod).floor().plus(1);
     const secondsOfInterest = numPeriods.times(interestPeriod);
+    const protocolInterestRate = interestRate.times('1e8');
 
     const resultAsBN = this.getCompoundedInterest(
       this.mathBN.bigNumberToBN(principal),
-      this.mathBN.bigNumberToBN(interestRate.times(100).times(1000000)),
+      this.mathBN.bigNumberToBN(protocolInterestRate),
       this.mathBN.bigNumberToBN(secondsOfInterest),
     );
 
