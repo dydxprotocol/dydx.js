@@ -4,6 +4,7 @@ import Contracts from '../../lib/Contracts';
 import Margin from '../Margin';
 import {
   getPositionId,
+  convertInterestRateFromProtocol,
   convertInterestRateToProtocol,
   getCurrentEpochSeconds,
 } from '../../lib/Helpers';
@@ -277,14 +278,11 @@ export default class BucketLender {
       this.getCurrentBucket(bucketLenderAddress),
     ]);
 
-    // TODO: remove this when we remove interestRate as '12' for 12%
-    const interestRate = position.interestRate.div(100);
-
     const positionOwedAmount = this.interest.getOwedAmount(
       position.startTimestamp, // startEpoch
       getCurrentEpochSeconds(),
       position.principal,
-      interestRate,
+      position.interestRate,
       position.interestPeriod,
     );
 
@@ -448,7 +446,8 @@ export default class BucketLender {
   ): Promise<BigNumber> {
     const bucketLender = await this.getBucketLender(bucketLenderAddress);
 
-    return bucketLender.INTEREST_RATE.call();
+    const protocolInterestRate = bucketLender.INTEREST_RATE.call();
+    return convertInterestRateFromProtocol(protocolInterestRate);
   }
 
   public async getMaxDuration(

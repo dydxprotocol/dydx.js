@@ -8,7 +8,7 @@ export const LenderArgs = {
   ownerAddress: '0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1',
   bucketOwner: '0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1',
   from: '0xffcf8fdee72ac11b5c542428b35eef5769c409f0',
-  interestRate: new BigNumber(5),
+  interestRate: new BigNumber(0.05),
   interestPeriodSeconds: new BigNumber(10),
   callTimeSeconds: new BigNumber(100),
   maxDurationSeconds: new BigNumber(100909),

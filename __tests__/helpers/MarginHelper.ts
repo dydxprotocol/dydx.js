@@ -80,7 +80,7 @@ export async function setup(accounts) {
   const callTimeLimit = BIG_NUMBERS.ONE_DAY_IN_SECONDS;
   const maxDuration = BIG_NUMBERS.ONE_YEAR_IN_SECONDS;
 
-  const interestRate = new BigNumber('7');
+  const interestRate = new BigNumber(0.07);
   const interestPeriod = BIG_NUMBERS.ONE_DAY_IN_SECONDS;
 
   await issueAndSetAllowance(
