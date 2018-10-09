@@ -109,4 +109,24 @@ export default class LeveragedToken extends MarginToken {
 
     return {};
   }
+
+  public async createCappedLong(
+    trader: string,
+    lenderContractAddress: string,
+    owedToken: string,
+    heldToken: string,
+    nonce: BigNumber,
+    deposit: BigNumber,
+    principal: BigNumber,
+    callTimeLimit: BigNumber,
+    maxDuration: BigNumber,
+    interestRate: BigNumber,
+    interestPeriod: BigNumber,
+    trustedLateClosers: string[],
+    cap: BigNumber,
+    options: ContractCallOptions = {},
+  ): Promise<object> {
+    // TODO
+    return {};
+  }
 }
