@@ -7,7 +7,7 @@ import {
   fractionMul,
   fractionCopy,
   fractionBound,
-} from '../src/lib/Fraction';
+} from '../../src/lib/Fraction';
 
 const bn = new BN('340282366920938463463374607431768211455');
 
@@ -15,7 +15,7 @@ function throwify(otherFunction) {
   function throwFunction(...allArgs) {
     let threw = false;
     try {
-      otherFunction.apply(null, arguments)
+      otherFunction.apply(null, arguments);
     } catch (e) {
       threw = true;
     }
@@ -36,7 +36,7 @@ describe('Fraction', () => {
     function copy(num, den) {
       const result = fractionCopy({
         num: new BN(num),
-        den: new BN(den)
+        den: new BN(den),
       });
       expectBN(result.num, num);
       expectBN(result.den, den);
@@ -94,7 +94,7 @@ describe('Fraction', () => {
 
   describe('#add', () => {
     it('succeeds for addition overflow', async () => {
-      const one = {num: bn, den: bn};
+      const one = { num: bn, den: bn };
       const result = fractionAdd(one, one);
       expectBN(result.num, result.den.muln(2));
     });
@@ -106,9 +106,9 @@ describe('Fraction', () => {
       const result = fractionSub1Over(
         {
           num: new BN(num),
-          den: new BN(den)
+          den: new BN(den),
         },
-        new BN(d)
+        new BN(d),
       );
       expectBN(result.num, numRes);
       expectBN(result.den, denRes);
@@ -137,9 +137,9 @@ describe('Fraction', () => {
       const result = fractionDiv(
         {
           num: new BN(num),
-          den: new BN(den)
+          den: new BN(den),
         },
-        new BN(d)
+        new BN(d),
       );
       expectBN(result.num, numRes);
       expectBN(result.den, denRes);
@@ -170,12 +170,12 @@ describe('Fraction', () => {
       const result = fractionMul(
         {
           num: new BN(num1),
-          den: new BN(den1)
+          den: new BN(den1),
         },
         {
           num: new BN(num2),
-          den: new BN(den2)
-        }
+          den: new BN(den2),
+        },
       );
       expectBN(result.num, numRes);
       expectBN(result.den, denRes);

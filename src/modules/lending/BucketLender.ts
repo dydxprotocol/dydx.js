@@ -10,7 +10,11 @@ import {
 } from '../../lib/Helpers';
 import { Deposit } from '../../types/BucketLender';
 import { BIG_NUMBERS, EVENTS } from '../../lib/Constants';
-import { ContractCallOptions, BucketLenderSummary } from '../../types';
+import {
+  ContractCallOptions,
+  BucketLenderSummary,
+  LenderSummaryOptions,
+} from '../../types';
 import Interest from '../helpers/Interest';
 import MathHelpers from '../helpers/MathHelpers';
 
@@ -263,8 +267,10 @@ export default class BucketLender {
   public async getLenderSummary(
     bucketLenderAddress: string,
     lender: string,
+    options: LenderSummaryOptions = {},
   ): Promise<BucketLenderSummary> {
     const positionId = await this.getBucketLenderPositionId(bucketLenderAddress);
+    const currentTimestamp = options.currentTimestamp || getCurrentEpochSeconds();
 
     const [
       position,
@@ -280,7 +286,7 @@ export default class BucketLender {
 
     const positionOwedAmount = this.interest.getOwedAmount(
       position.startTimestamp, // startEpoch
-      getCurrentEpochSeconds(),
+      currentTimestamp,
       position.principal,
       position.interestRate,
       position.interestPeriod,

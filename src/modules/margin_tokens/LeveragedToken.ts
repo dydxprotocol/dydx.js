@@ -4,7 +4,12 @@ import Margin from '../Margin';
 import ExchangeWrapper from '../exchange_wrappers/ExchangeWrapper';
 import Contracts from '../../lib/Contracts';
 import { EVENTS } from '../../lib/Constants';
-import { ContractCallOptions } from '../../types';
+import {
+  ContractCallOptions,
+  Contract,
+  SignedLoanOffering,
+  Position,
+} from '../../types';
 
 export default class LeveragedToken extends MarginToken {
   constructor(
@@ -12,6 +17,51 @@ export default class LeveragedToken extends MarginToken {
     contracts: Contracts,
   ) {
     super(margin, contracts);
+  }
+
+  public async createCappedLong(
+    trader: string,
+    lenderContractAddress: string,
+    owedToken: string,
+    heldToken: string,
+    nonce: BigNumber,
+    deposit: BigNumber,
+    principal: BigNumber,
+    callTimeLimit: BigNumber,
+    maxDuration: BigNumber,
+    interestRate: BigNumber,
+    interestPeriod: BigNumber,
+    trustedLateClosers: string[],
+    cap: BigNumber,
+    options: ContractCallOptions = {},
+  ): Promise<object> {
+    const positionId = this.margin.getPositionId(trader, nonce);
+    const { address: tokenAddress }: Contract = await this.createCappedERC20LongToken(
+      trader,
+      positionId,
+      [this.contracts.DutchAuctionCloser.address],
+      [this.contracts.ERC20PositionWithdrawer.address],
+      trustedLateClosers,
+      cap,
+      options,
+    );
+    const response: any = await this.margin.openWithoutCounterparty(
+      trader,
+      tokenAddress,
+      lenderContractAddress,
+      owedToken,
+      heldToken,
+      nonce,
+      deposit,
+      principal,
+      callTimeLimit,
+      maxDuration,
+      interestRate,
+      interestPeriod,
+      options,
+    );
+    response.tokenAddress = tokenAddress;
+    return response;
   }
 
   public async create(
@@ -62,9 +112,19 @@ export default class LeveragedToken extends MarginToken {
     orderData: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    // TODO
+    const position: Position = await this.margin.getPosition(positionId);
+    const loanOffering: SignedLoanOffering = this.prepareMintLoanOffering(position);
 
-    return {};
+    return this.margin.increasePosition(
+      positionId,
+      loanOffering,
+      trader,
+      tokensToMint,
+      payInHeldToken,
+      exchangeWrapper,
+      orderData,
+      options,
+    );
   }
 
   public async mintWithETH(
@@ -77,9 +137,46 @@ export default class LeveragedToken extends MarginToken {
     orderData: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    // TODO
+    const position: Position = await this.margin.getPosition(positionId);
+    const loanOffering: SignedLoanOffering = this.prepareMintLoanOffering(position);
 
-    return {};
+    const addresses = [
+      loanOffering.payer,
+      loanOffering.taker,
+      loanOffering.positionOwner,
+      loanOffering.feeRecipient,
+      loanOffering.lenderFeeTokenAddress,
+      loanOffering.takerFeeTokenAddress,
+      exchangeWrapper.getAddress(),
+    ];
+
+    const values256 = [
+      loanOffering.maxAmount,
+      loanOffering.minAmount,
+      loanOffering.minHeldToken,
+      loanOffering.lenderFee,
+      loanOffering.takerFee,
+      loanOffering.expirationTimestamp,
+      loanOffering.salt,
+      tokensToMint,
+    ];
+
+    const values32 = [
+      loanOffering.callTimeLimit,
+      loanOffering.maxDuration,
+    ];
+
+    return this.contracts.callContractFunction(
+      this.contracts.payableMarginMinter.mintMarginTokens,
+      { ...options, from: trader, value: ethToSend },
+      positionId,
+      addresses,
+      values256,
+      values32,
+      ethIsHeldToken,
+      loanOffering.signature,
+      orderData,
+    );
   }
 
   public async close(
@@ -91,9 +188,16 @@ export default class LeveragedToken extends MarginToken {
     orderData: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    // TODO
-
-    return {};
+    return this.margin.closePosition(
+      positionId,
+      closer,
+      closer,
+      tokensToClose,
+      payoutInHeldToken,
+      exchangeWrapper,
+      orderData,
+      options,
+    );
   }
 
   public async closeWithETHPayout(
@@ -105,28 +209,39 @@ export default class LeveragedToken extends MarginToken {
     orderData: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    // TODO
-
-    return {};
+    return this.margin.closePosition(
+      positionId,
+      closer,
+      this.contracts.wethPayoutRecipient.address,
+      tokensToClose,
+      ethIsHeldToken,
+      exchangeWrapper,
+      orderData,
+      options,
+    );
   }
 
-  public async createCappedLong(
-    trader: string,
-    lenderContractAddress: string,
-    owedToken: string,
-    heldToken: string,
-    nonce: BigNumber,
-    deposit: BigNumber,
-    principal: BigNumber,
-    callTimeLimit: BigNumber,
-    maxDuration: BigNumber,
-    interestRate: BigNumber,
-    interestPeriod: BigNumber,
+  private async createCappedERC20LongToken(
+    initialTokenHolder: string,
+    positionId: string,
+    trustedRecipients: string[],
+    trustedWithdrawers: string[],
     trustedLateClosers: string[],
     cap: BigNumber,
     options: ContractCallOptions = {},
-  ): Promise<object> {
-    // TODO
-    return {};
+  ): Promise<Contract> {
+    const ERC20CappedLong: any = this.contracts.ERC20CappedLong;
+    options.from = initialTokenHolder;
+    return this.contracts.createNewContract(
+      ERC20CappedLong,
+      { ...options },
+      positionId,
+      this.contracts.margin.address,
+      initialTokenHolder,
+      trustedRecipients,
+      trustedWithdrawers,
+      trustedLateClosers,
+      cap,
+    );
   }
 }

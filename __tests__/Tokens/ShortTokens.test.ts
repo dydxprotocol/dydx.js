@@ -1,12 +1,12 @@
-import { dydx } from './helpers/DYDX';
+import { dydx } from '../helpers/DYDX';
 import { seeds } from '@dydxprotocol/protocol';
 import BigNumber from 'bignumber.js';
-import { setup, setupDYDX } from './helpers/MarginHelper';
+import { setup, setupDYDX } from '../helpers/MarginHelper';
 import {
   ZeroExOrder,
   Position,
-} from '../src/types';
-import { resetEVM } from './helpers/SnapshotHelper';
+} from '../../src/types';
+import { resetEVM } from '../helpers/SnapshotHelper';
 
 describe('ShortToken', () => {
   let accounts: string[] = null;

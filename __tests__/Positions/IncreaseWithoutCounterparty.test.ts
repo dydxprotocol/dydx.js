@@ -1,13 +1,13 @@
-import { dydx } from './helpers/DYDX';
+import { dydx } from '../helpers/DYDX';
 import {
   issueAndSetAllowance,
   callOpenWithoutCounterparty,
   getBalances,
   setup,
   setupDYDX,
-} from './helpers/MarginHelper';
+} from '../helpers/MarginHelper';
 import BigNumber from 'bignumber.js';
-import { resetEVM } from './helpers/SnapshotHelper';
+import { resetEVM } from '../helpers/SnapshotHelper';
 
 let accounts = null;
 

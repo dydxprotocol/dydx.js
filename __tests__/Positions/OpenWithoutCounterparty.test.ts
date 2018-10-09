@@ -1,13 +1,13 @@
-import { dydx } from './helpers/DYDX';
-import { BIG_NUMBERS, ADDRESSES } from '../src/lib/Constants';
+import { dydx } from '../helpers/DYDX';
+import { BIG_NUMBERS, ADDRESSES } from '../../src/lib/Constants';
 import {
   callOpenWithoutCounterparty,
   getBalances,
   setup,
   validate,
   setupDYDX,
-} from './helpers/MarginHelper';
-import { resetEVM } from './helpers/SnapshotHelper';
+} from '../helpers/MarginHelper';
+import { resetEVM } from '../helpers/SnapshotHelper';
 
 let accounts = null;
 

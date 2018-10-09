@@ -108,6 +108,10 @@ export interface ContractCallOptions {
   nonce?: number;
 }
 
+export interface LenderSummaryOptions {
+  currentTimestamp?: BigNumber;
+}
+
 export interface DYDXOptions {
   synchronizationTimeout?: number;
 }

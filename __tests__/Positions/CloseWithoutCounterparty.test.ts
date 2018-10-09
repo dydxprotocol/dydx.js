@@ -1,11 +1,11 @@
-import { dydx } from './helpers/DYDX';
+import { dydx } from '../helpers/DYDX';
 import {
   callOpenWithoutCounterparty,
   issueAndSetAllowance,
   setup,
   setupDYDX,
-} from './helpers/MarginHelper';
-import { resetEVM } from './helpers/SnapshotHelper';
+} from '../helpers/MarginHelper';
+import { resetEVM } from '../helpers/SnapshotHelper';
 
 let accounts = null;
 

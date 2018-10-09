@@ -4,7 +4,6 @@ import Margin from '../Margin';
 import Contracts from '../../lib/Contracts';
 import { EVENTS } from '../../lib/Constants';
 import ExchangeWrapper from '../exchange_wrappers/ExchangeWrapper';
-import truffleContract from 'truffle-contract';
 import { Position, SignedLoanOffering, ContractCallOptions, Contract } from '../../types';
 
 export default class ShortToken extends MarginToken {
@@ -226,7 +225,7 @@ export default class ShortToken extends MarginToken {
     cap: BigNumber,
     options: ContractCallOptions = {},
   ): Promise<Contract> {
-    const ERC20CappedShort: truffleContract = this.contracts.ERC20CappedShort;
+    const ERC20CappedShort: any = this.contracts.ERC20CappedShort;
     options.from = initialTokenHolder;
     return this.contracts.createNewContract(
       ERC20CappedShort,

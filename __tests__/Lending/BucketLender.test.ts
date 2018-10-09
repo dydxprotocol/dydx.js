@@ -1,21 +1,21 @@
 import BigNumber from 'bignumber.js';
-import { dydx } from './helpers/DYDX';
+import { dydx } from '../helpers/DYDX';
 const { wait } = require('@digix/tempo')(dydx.contracts.web3);
 
-import { resetEVM } from './helpers/SnapshotHelper';
-import { deployERC20 } from './helpers/TokenHelper';
+import { resetEVM } from '../helpers/SnapshotHelper';
+import { deployERC20 } from '../helpers/TokenHelper';
 import {
   LenderArgs,
   getBucketLenderCreatedEvent,
   isEthereumAddress,
-} from './helpers/BucketLenderHelper';
+} from '../helpers/BucketLenderHelper';
 import {
   callOpenWithoutCounterparty,
   issueAndSetAllowance,
   setup,
   setupDYDX,
-} from './helpers/MarginHelper';
-import { BIG_NUMBERS } from '../src/lib/Constants';
+} from '../helpers/MarginHelper';
+import { BIG_NUMBERS, EVENTS } from '../../src/lib/Constants';
 
 let accounts: string[] = null;
 
@@ -57,9 +57,10 @@ describe('#testBucketLender', () => {
     );
     const positionId = dydx.margin.getPositionId(args.positionOpener, args.nonce);
 
+    const createdEventFromResponse = response
+      .logs.find(l => l.event === EVENTS.BUCKETLENDER_CREATED && l.args.positionId === positionId);
     const createdEvent = await getBucketLenderCreatedEvent(positionId);
-
-    expect(response.address).toEqual(createdEvent.args.at);
+    expect(createdEventFromResponse.args.at).toEqual(createdEvent.args.at);
   });
 
   it('Successfully deploys a bucket lender with Recovery Delay', async () => {
@@ -130,7 +131,7 @@ describe('#testBucketLender', () => {
 
     // set constants
     const bucketLenderAddress = response.address;
-    const lendAmount = new BigNumber("1e18");
+    const lendAmount = new BigNumber('1e18');
     const lender = accounts[1];
 
     // deposit in bucket 0
@@ -165,16 +166,16 @@ describe('#testBucketLender', () => {
 
     // deposit in bucket 1
     await doDeposit(bucketLenderAddress, lender, lendAmount, owedToken);
-    allLent = await dydx.bucketLender.getLenderSummary(bucketLenderAddress, lender);
+    const positionId = dydx.margin.getPositionId(openTx.trader, openTx.nonce);
+    const getPosition = await dydx.margin.getPosition(positionId);
+    const currentTimestamp = getPosition.startTimestamp.add(5);
+    allLent = await dydx.bucketLender.getLenderSummary(
+      bucketLenderAddress,
+      lender,
+      { currentTimestamp },
+    );
     expect(allLent.withdrawable).toEqual(lendAmount.times(2));
-
-    // validate lent amounts after interest has accrued
-    await wait(openTx.interestPeriod);
-    allLent = await dydx.bucketLender.getLenderSummary(bucketLenderAddress, lender);
-    expect(allLent.withdrawable).toEqual(lendAmount.times(2));
-
-    // TODO: make not flaky. The test uses the current epoch time rather than the blockchain time
-    // expect(allLent.locked.isZero()).toBeFalsy();
+    expect(allLent.locked.isZero()).toBeFalsy();
   });
 });
 
