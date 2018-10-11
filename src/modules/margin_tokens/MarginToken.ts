@@ -76,12 +76,13 @@ export default abstract class MarginToken {
   public async withdraw(
     marginTokenAddress: string,
     withdrawer: string,
+    options: ContractCallOptions,
   ): Promise<object> {
     const marginToken = await this.getMarginToken(marginTokenAddress);
 
     return this.contracts.callContractFunction(
       marginToken.withdraw,
-      { from: withdrawer },
+      { ...options, from: withdrawer },
       withdrawer,
     );
   }
@@ -91,10 +92,11 @@ export default abstract class MarginToken {
     withdrawer: string,
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
+    options: ContractCallOptions,
   ): Promise<object> {
     return this.contracts.callContractFunction(
       this.contracts.erc20PositionWithdrawer.withdraw,
-      { from: withdrawer },
+      { ...options, from: withdrawer },
       marginTokenAddress,
       this.contracts.weth9.address,
       exchangeWrapper.getAddress(),
