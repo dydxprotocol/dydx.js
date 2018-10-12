@@ -3,7 +3,9 @@ import Web3 from 'web3';
 import { dydx, initialize } from './DYDX';
 import { deployERC20 } from './TokenHelper';
 import { BIG_NUMBERS } from '../../src/lib/Constants';
+import { ZeroExOrder } from '../../src/types';
 import web3Utils from 'web3-utils';
+import { DateTime } from 'luxon';
 
 export let testTokenContract = null;
 
@@ -74,7 +76,7 @@ export async function setup(accounts) {
   const owedToken = await deployERC20(dydx, accounts);
 
   const deposit   = new BigNumber('10000000000000');
-  const principal = new BigNumber('200000000000000');
+  const principal = new BigNumber('200000000000001');
   const nonce = new BigNumber(Math.floor(Math.random() * 100000000));
 
   const callTimeLimit = BIG_NUMBERS.ONE_DAY_IN_SECONDS;
@@ -143,6 +145,113 @@ export async function validate(openTx, txID, traderHeldTokenBalance, vaultHeldTo
   expect(traderHeldToken.equals(
     traderHeldTokenBalance.minus(openTx.deposit),
   )).toBeTruthy();
+}
+
+export async function mintLongWithETH(
+  positionId: string,
+  trader: string,
+  tokensToMint: BigNumber,
+  order: ZeroExOrder,
+): Promise <any> {
+  const {
+    ethToSend,
+    orderData,
+  } = await getLongIncreaseParams(tokensToMint, positionId, order);
+  return dydx.leveragedToken.mintWithETH(
+    positionId,
+    trader,
+    tokensToMint,
+    ethToSend,
+    true,
+    dydx.zeroExV1ExchangeWrapper,
+    orderData,
+  );
+}
+
+export async function mintLongInHeldToken(
+  positionId: string,
+  trader: string,
+  tokensToMint: BigNumber,
+  order: ZeroExOrder,
+): Promise <any> {
+  const orderData: string = ZeroExToBytes(order);
+  return dydx.leveragedToken.mint(
+    positionId,
+    trader,
+    tokensToMint,
+    true,
+    dydx.zeroExV1ExchangeWrapper,
+    orderData,
+  );
+}
+
+async function getLongIncreaseParams(
+  tokensToMint: BigNumber,
+  positionId: string,
+  order: ZeroExOrder,
+): Promise<any> {
+  const position = await dydx.margin.getPosition(positionId);
+  const currentTime = currentTimeInSeconds();
+  const borrowedAmount: BigNumber = dydx.interest.getOwedAmount(
+    position.startTimestamp,
+    currentTime,
+    position.principal,
+    position.interestRate,
+    position.interestPeriod,
+  );
+  const owedAmount: BigNumber = borrowedAmount.sub(position.principal);
+  const positionBalance = await dydx.margin.getPositionBalance(position.id);
+  const heldTokenPrice: BigNumber = order.takerTokenAmount.div(order.makerTokenAmount);
+  const positionPayout: BigNumber = calculatePositionPayout(
+    owedAmount,
+    positionBalance,
+    heldTokenPrice,
+    new BigNumber(1),
+  );
+  const ethToSend = dydx.math.divRoundedUp(
+    positionPayout.sub(borrowedAmount),
+    heldTokenPrice,
+  ).mul(tokensToMint.div(positionBalance)).mul(new BigNumber(1.01)).floor();
+  const orderData: string = ZeroExToBytes(order);
+  return {
+    orderData,
+    ethToSend,
+  };
+}
+
+export async function getBalanceParams(
+  trader: string,
+  positionId: string,
+): Promise<any> {
+  const position = await dydx.margin.getPosition(positionId);
+  const collateral = await dydx.margin.getPositionBalance(positionId);
+  const traderETHBalance = await dydx.contracts.web3.eth.getBalanceAsync(trader);
+  const traderTokenBalance = await dydx.token.getBalance(position.owner, trader);
+  const positionTokenSupply = await dydx.token.getTotalSupply(position.owner);
+  return {
+    collateral,
+    traderETHBalance,
+    traderTokenBalance,
+    positionTokenSupply,
+    principal: position.principal,
+  };
+}
+
+export function ZeroExToBytes(order: ZeroExOrder): string {
+  return dydx.zeroExV1ExchangeWrapper.zeroExOrderToBytes(order);
+}
+
+export function calculatePositionPayout(
+  owedAmount: BigNumber,
+  positionBalance: BigNumber,
+  heldTokenPrice: BigNumber,
+  owedTokenPrice: BigNumber,
+): BigNumber {
+  return (heldTokenPrice.mul(positionBalance)).sub(owedTokenPrice.mul(owedAmount));
+}
+
+export function currentTimeInSeconds(): BigNumber {
+  return new BigNumber(Math.floor(DateTime.local().toMillis() / 1000));
 }
 
 export async function setupDYDX(

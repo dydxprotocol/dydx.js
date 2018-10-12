@@ -493,6 +493,21 @@ export default class Margin {
     return this.contracts.margin.isLoanApproved.call(loanHash);
   }
 
+  public async getAllPositionOpenedEvents(positionId: string): Promise<any[]> {
+    const marginInstance = this.contracts.margin;
+    const filter = marginInstance.PositionOpened(
+      { positionId },
+      {
+        fromBlock: 0,
+        toBlock: 'latest',
+      },
+    );
+
+    bluebird.promisifyAll(filter);
+    const events: any[] = await filter.getAsync();
+    return events;
+  }
+
   public async getAllPositionClosedEvents(
     id: string,
   ): Promise<any[]> {

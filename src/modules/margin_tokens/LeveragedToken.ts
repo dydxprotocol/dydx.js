@@ -1,9 +1,11 @@
 import BigNumber from 'bignumber.js';
 import MarginToken from './MarginToken';
 import Margin from '../Margin';
+import MathHelpers from '../helpers/MathHelpers';
 import ExchangeWrapper from '../exchange_wrappers/ExchangeWrapper';
 import Contracts from '../../lib/Contracts';
 import { EVENTS } from '../../lib/Constants';
+
 import {
   ContractCallOptions,
   Contract,
@@ -12,11 +14,15 @@ import {
 } from '../../types';
 
 export default class LeveragedToken extends MarginToken {
+  private math: MathHelpers;
+
   constructor(
     margin: Margin,
     contracts: Contracts,
+    math: MathHelpers,
   ) {
     super(margin, contracts);
+    this.math = math;
   }
 
   public async createCappedLong(
@@ -114,12 +120,13 @@ export default class LeveragedToken extends MarginToken {
   ): Promise<object> {
     const position: Position = await this.margin.getPosition(positionId);
     const loanOffering: SignedLoanOffering = this.prepareMintLoanOffering(position);
+    const principalToAdd: BigNumber = await this.calculatePrincipal(positionId, tokensToMint);
 
     return this.margin.increasePosition(
       positionId,
       loanOffering,
       trader,
-      tokensToMint,
+      principalToAdd,
       payInHeldToken,
       exchangeWrapper,
       orderData,
@@ -139,6 +146,7 @@ export default class LeveragedToken extends MarginToken {
   ): Promise<object> {
     const position: Position = await this.margin.getPosition(positionId);
     const loanOffering: SignedLoanOffering = this.prepareMintLoanOffering(position);
+    const principalToAdd: BigNumber = await this.calculatePrincipal(positionId, tokensToMint);
 
     const addresses = [
       loanOffering.payer,
@@ -158,7 +166,7 @@ export default class LeveragedToken extends MarginToken {
       loanOffering.takerFee,
       loanOffering.expirationTimestamp,
       loanOffering.salt,
-      tokensToMint,
+      principalToAdd,
     ];
 
     const values32 = [
@@ -188,11 +196,12 @@ export default class LeveragedToken extends MarginToken {
     orderData: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
+    const principalToClose = await this.calculatePrincipal(positionId, tokensToClose);
     return this.margin.closePosition(
       positionId,
       closer,
       closer,
-      tokensToClose,
+      principalToClose,
       payoutInHeldToken,
       exchangeWrapper,
       orderData,
@@ -209,15 +218,29 @@ export default class LeveragedToken extends MarginToken {
     orderData: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
+    const principalToClose = await this.calculatePrincipal(positionId, tokensToClose);
     return this.margin.closePosition(
       positionId,
       closer,
       this.contracts.wethPayoutRecipient.address,
-      tokensToClose,
+      principalToClose,
       ethIsHeldToken,
       exchangeWrapper,
       orderData,
       options,
+    );
+  }
+
+  private async calculatePrincipal(
+    positionId: string,
+    tokens: BigNumber,
+  ): Promise<BigNumber> {
+    const position: Position = await this.margin.getPosition(positionId);
+    const collateral: BigNumber = await this.margin.getPositionBalance(positionId);
+    return this.math.partialAmount(
+      position.principal,
+      collateral,
+      tokens,
     );
   }
 

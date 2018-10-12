@@ -48,7 +48,7 @@ export class DYDX {
 
     this.bucketLender = new BucketLender(this.margin, this.contracts);
     this.shortToken = new ShortToken(this.margin, this.contracts);
-    this.leveragedToken = new LeveragedToken(this.margin, this.contracts);
+    this.leveragedToken = new LeveragedToken(this.margin, this.contracts, this.math);
     this.auction = new DutchAuction(this.margin, this.contracts);
   }
 

@@ -22,7 +22,9 @@ describe('ShortToken', () => {
 
   describe('#mintWithETH', () => {
     it('successfully mints short tokens using ETH', async () => {
-      const position: Position = seeds.positions.find(p => p.isTokenized);
+      const position: Position = seeds.positions.find(
+        p => p.isTokenized && p.owedToken === dydx.contracts.WETH9.address,
+      );
       const order: ZeroExOrder = seeds.orders.find(o => o.makerTokenAddress === position.heldToken);
       const trader: string = accounts[4];
       const tokensToMint = new BigNumber('2e18');
