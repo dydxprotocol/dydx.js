@@ -2,10 +2,19 @@
 
 <p align="center">
   <a href="https://circleci.com/gh/dydxprotocol/workflows/dydx.js/tree/master">
-    <img src="https://circleci.com/gh/dydxprotocol/dydx.js/tree/master.svg?style=svg&circle-token=96657b90b74f5abf64508e80a9acb536d87dbd4a" />
+    <img src="https://img.shields.io/circleci/project/github/dydxprotocol/dydx.js.svg" alt='CI' />
   </a>
   <a href='https://coveralls.io/github/dydxprotocol/dydx.js?branch=master'>
     <img src='https://coveralls.io/repos/github/dydxprotocol/dydx.js/badge.svg?branch=master&amp;t=oTubHH' alt='Coverage Status' />
+  </a>
+  <a href='https://github.com/dydxprotocol/dydx.js/blob/master/LICENSE'>
+    <img src='https://img.shields.io/github/license/dydxprotocol/dydx.js.svg?longCache=true' alt='License' />
+  </a>
+  <a href='https://www.npmjs.com/package/@dydxprotocol/dydx.js'>
+    <img src='https://img.shields.io/npm/v/@dydxprotocol/dydx.js.svg' alt='NPM' />
+  </a>
+  <a href='https://slack.dydx.exchange/'>
+    <img src='https://img.shields.io/badge/chat-on%20slack-brightgreen.svg?longCache=true' alt='Slack' />
   </a>
 </p>
 
