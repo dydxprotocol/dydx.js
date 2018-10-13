@@ -18,7 +18,7 @@
   </a>
 </p>
 
-A TypeScript/Javascript library for interacting with the dYdX protocol.
+A TypeScript library for interacting with the dYdX protocol.
 
 ## Usage
 
