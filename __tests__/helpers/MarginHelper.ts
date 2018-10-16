@@ -174,7 +174,7 @@ export async function mintLongInHeldToken(
   tokensToMint: BigNumber,
   order: ZeroExOrder,
 ): Promise <any> {
-  const orderData: string = ZeroExToBytes(order);
+  const orderData: string = zeroExToBytes(order);
   return dydx.leveragedToken.mint(
     positionId,
     trader,
@@ -212,7 +212,7 @@ async function getLongIncreaseParams(
     positionPayout.sub(borrowedAmount),
     heldTokenPrice,
   ).mul(tokensToMint.div(positionBalance)).mul(new BigNumber(1.01)).floor();
-  const orderData: string = ZeroExToBytes(order);
+  const orderData: string = zeroExToBytes(order);
   return {
     orderData,
     ethToSend,
@@ -237,7 +237,7 @@ export async function getBalanceParams(
   };
 }
 
-export function ZeroExToBytes(order: ZeroExOrder): string {
+export function zeroExToBytes(order: ZeroExOrder): string {
   return dydx.zeroExV1ExchangeWrapper.zeroExOrderToBytes(order);
 }
 

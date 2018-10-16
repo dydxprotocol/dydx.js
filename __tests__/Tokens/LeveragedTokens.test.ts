@@ -7,7 +7,7 @@ import {
   mintLongWithETH,
   mintLongInHeldToken,
   getBalanceParams,
-  ZeroExToBytes,
+  zeroExToBytes,
 } from '../helpers/MarginHelper';
 import {
   ZeroExOrder,
@@ -157,7 +157,7 @@ describe('LeveragedToken', () => {
       const orderToClose: ZeroExOrder = seeds.orders.find(
         o => o.makerTokenAddress === position.owedToken,
       );
-      const orderDataClose = ZeroExToBytes(orderToClose);
+      const orderDataClose = zeroExToBytes(orderToClose);
       const beforeBalClose = await getBalanceParams(trader, position.id);
       await dydx.leveragedToken.close(
         position.id,
@@ -192,7 +192,7 @@ describe('LeveragedToken', () => {
       const orderToClose: ZeroExOrder = seeds.orders.find(
         o => o.makerTokenAddress === position.owedToken,
       );
-      const orderDataClose = ZeroExToBytes(orderToClose);
+      const orderDataClose = zeroExToBytes(orderToClose);
       const beforeBalClose = await getBalanceParams(trader, position.id);
       const traderDAIBalance = await dydx.token.getBalance(position.owedToken, trader);
       expect(traderDAIBalance.eq(new BigNumber(0))).toBeTruthy();
@@ -231,7 +231,7 @@ describe('LeveragedToken', () => {
       const orderToClose: ZeroExOrder = seeds.orders.find(
        o => o.makerTokenAddress === position.owedToken,
       );
-      const orderDataClose: string = ZeroExToBytes(orderToClose);
+      const orderDataClose: string = zeroExToBytes(orderToClose);
       const beforeBalClose = await getBalanceParams(trader, position.id);
       await dydx.leveragedToken.closeWithETHPayout(
         position.id,

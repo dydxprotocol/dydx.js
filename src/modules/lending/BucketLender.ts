@@ -57,7 +57,7 @@ export default class BucketLender {
     options: ContractCallOptions = {},
   ): Promise<object> {
     if (owedToken.toLowerCase() === this.contracts.WETH9.address.toLowerCase()) {
-      trustedWithdrawers.push(this.contracts.ethWrapperForBucketLender.address);
+      trustedWithdrawers.push(this.contracts.bucketLenderProxy.address);
     }
 
     const positionId = getPositionId(positionOpener, positionNonce);
@@ -113,7 +113,7 @@ export default class BucketLender {
     const trustedWithdrawers: string[] = [];
 
     if (owedToken.toLowerCase() === this.contracts.WETH9.address.toLowerCase()) {
-      trustedWithdrawers.push(this.contracts.ethWrapperForBucketLender.address);
+      trustedWithdrawers.push(this.contracts.bucketLenderProxy.address);
     }
 
     const positionId = getPositionId(positionOpener, positionNonce);
@@ -149,16 +149,13 @@ export default class BucketLender {
   public async deposit(
     bucketLenderAddress: string,
     depositor: string,
-    beneficiary: string,
     amount: BigNumber,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    const bucketLender = await this.getBucketLender(bucketLenderAddress);
-
     return this.contracts.callContractFunction(
-      bucketLender.deposit,
+      this.contracts.bucketLenderProxy.deposit,
       { ...options, from: depositor },
-      beneficiary,
+      bucketLenderAddress,
       amount,
     );
   }
@@ -166,15 +163,13 @@ export default class BucketLender {
   public async depositETH(
     bucketLenderAddress: string,
     depositor: string,
-    beneficiary: string,
     amount: BigNumber,
     options: ContractCallOptions = {},
   ): Promise<object> {
     return this.contracts.callContractFunction(
-      this.contracts.ethWrapperForBucketLender.depositEth,
+      this.contracts.bucketLenderProxy.depositEth,
       { ...options, from: depositor, value: amount },
       bucketLenderAddress,
-      beneficiary,
     );
   }
 
@@ -185,14 +180,12 @@ export default class BucketLender {
     maxWeights: BigNumber[],
     options: ContractCallOptions = {},
   ): Promise<object> {
-    const bucketLender = await this.getBucketLender(bucketLenderAddress);
-
     return this.contracts.callContractFunction(
-      bucketLender.withdraw,
+      this.contracts.bucketLenderProxy.withdraw,
       { ...options, from: withdrawer },
+      bucketLenderAddress,
       buckets,
       maxWeights,
-      withdrawer,
     );
   }
 
@@ -222,7 +215,7 @@ export default class BucketLender {
     options: ContractCallOptions = {},
   ): Promise<object> {
     return this.contracts.callContractFunction(
-      this.contracts.ethWrapperForBucketLender.withdrawEth,
+      this.contracts.bucketLenderProxy.withdrawEth,
       { ...options, from: withdrawer },
       bucketLenderAddress,
       buckets,

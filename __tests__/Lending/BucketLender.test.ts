@@ -7,7 +7,9 @@ import { deployERC20 } from '../helpers/TokenHelper';
 import {
   LenderArgs,
   getBucketLenderCreatedEvent,
+  deployBucketLenderWithDelay,
   isEthereumAddress,
+  doDeposit,
 } from '../helpers/BucketLenderHelper';
 import {
   callOpenWithoutCounterparty,
@@ -177,11 +179,54 @@ describe('#testBucketLender', () => {
     expect(allLent.withdrawable).toEqual(lendAmount.times(2));
     expect(allLent.locked.isZero()).toBeFalsy();
   });
+
+  it('deposits ETH in a bucket lender', async () => {
+    const heldToken = await deployERC20(dydx, accounts);
+    const args = {
+      ...LenderArgs,
+      heldToken,
+      owedToken: dydx.contracts.WETH9.address,
+      trustedWithdrawers: [accounts[5], accounts[6]],
+      recoveryDelay: BIG_NUMBERS.ONE_DAY_IN_SECONDS,
+    };
+    const { address }: any = await deployBucketLenderWithDelay(args);
+    const depositer = accounts[4];
+    const bucketTotalBeforeDeposit = await dydx.bucketLender.getTotalAvailable(address);
+    const amountToDeposit = new BigNumber('1e18');
+    await dydx.bucketLender.depositETH(
+      address,
+      depositer,
+      amountToDeposit,
+    );
+    const bucketTotalAfterDeposit = await dydx.bucketLender.getTotalAvailable(address);
+    expect(bucketTotalBeforeDeposit.add(amountToDeposit).eq(bucketTotalAfterDeposit));
+  });
+
+  it('deposits tokens into bucket lender', async () => {
+    const owedToken = await deployERC20(dydx, accounts);
+    const args = {
+      ...LenderArgs,
+      owedToken,
+      heldToken: dydx.contracts.WETH9.address,
+      trustedWithdrawers: [accounts[5], accounts[6]],
+      recoveryDelay: BIG_NUMBERS.ONE_DAY_IN_SECONDS,
+    };
+    const { address }: any = await deployBucketLenderWithDelay(args);
+    const depositer = accounts[4];
+    issueAndSetAllowance(
+      owedToken,
+      depositer,
+      new BigNumber('40e18'),
+      dydx.contracts.BucketLenderProxy.address,
+    );
+    const bucketTotalBeforeDeposit = await dydx.bucketLender.getTotalAvailable(address);
+    const amountToDeposit = new BigNumber('1e18');
+    await dydx.bucketLender.deposit(
+      address,
+      depositer,
+      amountToDeposit,
+    );
+    const bucketTotalAfterDeposit = await dydx.bucketLender.getTotalAvailable(address);
+    expect(bucketTotalBeforeDeposit.add(amountToDeposit).eq(bucketTotalAfterDeposit));
+  });
 });
-
-// ============ HELPER FUNCTIONS ============
-
-async function doDeposit(blAddress, lender, amount, token) {
-  await issueAndSetAllowance(token, lender, amount, blAddress);
-  await dydx.bucketLender.deposit(blAddress, lender, lender, amount);
-}

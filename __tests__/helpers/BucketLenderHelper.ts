@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { dydx } from './DYDX';
 import bluebird from 'bluebird';
+import { issueAndSetAllowance } from './MarginHelper';
 
 export const LenderArgs = {
   principal: new BigNumber(100),
@@ -38,3 +39,29 @@ export async function getBucketLenderCreatedEvent(
 }
 
 export const isEthereumAddress = new RegExp(/^(0x){1}[0-9a-fA-F]{40}$/i);
+
+export async function doDeposit(blAddress, lender, amount, token) {
+  await issueAndSetAllowance(token, lender, amount, dydx.contracts.BucketLenderProxy.address);
+  await dydx.bucketLender.deposit(blAddress, lender, amount);
+}
+
+export async function deployBucketLenderWithDelay(args) {
+  return dydx.bucketLender.createWithRecoveryDelay(
+    args.bucketOwner,
+    args.positionOpener,
+    args.nonce,
+    args.heldToken,
+    args.owedToken,
+    args.bucketTime,
+    args.interestRate,
+    args.interestPeriodSeconds,
+    args.maxDurationSeconds,
+    args.callTimeSeconds,
+    args.minHeldTokenPerPrincipalNumerator,
+    args.minHeldTokenPerPrincipalDenominator,
+    args.marginCallers,
+    args.trustedWithdrawers,
+    args.recoveryDelay,
+    args.from,
+  );
+}
