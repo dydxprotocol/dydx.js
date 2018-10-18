@@ -6,8 +6,9 @@ import { resetEVM } from '../helpers/SnapshotHelper';
 import { deployERC20 } from '../helpers/TokenHelper';
 import {
   LenderArgs,
-  getBucketLenderCreatedEvent,
   deployBucketLenderWithDelay,
+  deployBucketLender,
+  withdrawAllETHV1,
   isEthereumAddress,
   doDeposit,
 } from '../helpers/BucketLenderHelper';
@@ -17,7 +18,7 @@ import {
   setup,
   setupDYDX,
 } from '../helpers/MarginHelper';
-import { BIG_NUMBERS, EVENTS } from '../../src/lib/Constants';
+import { BIG_NUMBERS } from '../../src/lib/Constants';
 
 let accounts: string[] = null;
 
@@ -39,9 +40,14 @@ describe('#testBucketLender', () => {
       deployERC20(dydx, accounts),
       deployERC20(dydx, accounts),
     ]);
-    const args = { ...LenderArgs, heldToken, owedToken };
+    const args = {
+      ...LenderArgs,
+      heldToken,
+      owedToken,
+      trustedWithdrawers: [accounts[5], accounts[6]],
+    };
 
-    const response: any = await dydx.bucketLender.create(
+    const { address }: any = await dydx.bucketLender.create(
       args.bucketOwner,
       args.positionOpener,
       args.nonce,
@@ -55,14 +61,11 @@ describe('#testBucketLender', () => {
       args.minHeldTokenPerPrincipalNumerator,
       args.minHeldTokenPerPrincipalDenominator,
       args.marginCallers,
+      args.trustedWithdrawers,
       args.from,
     );
-    const positionId = dydx.margin.getPositionId(args.positionOpener, args.nonce);
-
-    const createdEventFromResponse = response
-      .logs.find(l => l.event === EVENTS.BUCKETLENDER_CREATED && l.args.positionId === positionId);
-    const createdEvent = await getBucketLenderCreatedEvent(positionId);
-    expect(createdEventFromResponse.args.at).toEqual(createdEvent.args.at);
+    const bucketOwner = await dydx.bucketLender.getOwner(address);
+    expect(bucketOwner).toBe(args.bucketOwner);
   });
 
   it('Successfully deploys a bucket lender with Recovery Delay', async () => {
@@ -112,27 +115,14 @@ describe('#testBucketLender', () => {
       deployERC20(dydx, accounts),
       deployERC20(dydx, accounts),
     ]);
-    const args = { ...LenderArgs, heldToken, owedToken };
+    const args = {
+      ...LenderArgs,
+      heldToken,
+      owedToken,
+      trustedWithdrawers: [accounts[5], accounts[6]],
+    };
 
-    const response: any = await dydx.bucketLender.create(
-      args.bucketOwner,
-      args.positionOpener,
-      args.nonce,
-      args.heldToken,
-      args.owedToken,
-      args.bucketTime,
-      args.interestRate,
-      args.interestPeriodSeconds,
-      args.maxDurationSeconds,
-      args.callTimeSeconds,
-      args.minHeldTokenPerPrincipalNumerator,
-      args.minHeldTokenPerPrincipalDenominator,
-      args.marginCallers,
-      args.from,
-    );
-
-    // set constants
-    const bucketLenderAddress = response.address;
+    const { address: bucketLenderAddress }: any = await deployBucketLender(args);
     const lendAmount = new BigNumber('1e18');
     const lender = accounts[1];
 
@@ -228,5 +218,32 @@ describe('#testBucketLender', () => {
     );
     const bucketTotalAfterDeposit = await dydx.bucketLender.getTotalAvailable(address);
     expect(bucketTotalBeforeDeposit.add(amountToDeposit).eq(bucketTotalAfterDeposit));
+  });
+
+  it('can deposit and withdraw ETH using EthWrapperForBucketLender', async () => {
+    const heldToken = await deployERC20(dydx, accounts);
+    const args = {
+      ...LenderArgs,
+      heldToken,
+      owedToken: dydx.contracts.WETH9.address,
+      trustedWithdrawers: [dydx.contracts.ethWrapperForBucketLender.address],
+      recoveryDelay: BIG_NUMBERS.ONE_DAY_IN_SECONDS,
+    };
+    const { address }: any = await deployBucketLender(args);
+    const amountToDeposit = new BigNumber('1e18');
+    const depositer = accounts[4];
+    const bucketTotalBeforeDeposit = await dydx.bucketLender.getTotalAvailable(address);
+    await dydx.bucketLender.depositETHV1(
+      address,
+      depositer,
+      depositer,
+      amountToDeposit,
+    );
+    const bucketTotalAfterDeposit = await dydx.bucketLender.getTotalAvailable(address);
+    expect(bucketTotalBeforeDeposit.add(amountToDeposit).eq(bucketTotalAfterDeposit));
+    await withdrawAllETHV1(address, depositer);
+    const bucketTotalAfterWithdraw = await dydx.bucketLender.getTotalAvailable(address);
+    expect(bucketTotalAfterDeposit.sub(bucketTotalAfterWithdraw)
+      .eq(amountToDeposit)).toBeTruthy();
   });
 });

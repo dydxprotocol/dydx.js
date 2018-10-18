@@ -9,7 +9,7 @@ import {
   getCurrentEpochSeconds,
 } from '../../lib/Helpers';
 import { Deposit } from '../../types/BucketLender';
-import { BIG_NUMBERS, EVENTS } from '../../lib/Constants';
+import { BIG_NUMBERS } from '../../lib/Constants';
 import {
   ContractCallOptions,
   BucketLenderSummary,
@@ -107,22 +107,21 @@ export default class BucketLender {
     minHeldTokenPerPrincipalNumerator: BigNumber,
     minHeldTokenPerPrincipalDenominator: BigNumber,
     marginCallers: string[],
+    trustedWithdrawers: string[],
     from: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    const trustedWithdrawers: string[] = [];
-
     if (owedToken.toLowerCase() === this.contracts.WETH9.address.toLowerCase()) {
       trustedWithdrawers.push(this.contracts.bucketLenderProxy.address);
     }
 
     const positionId = getPositionId(positionOpener, positionNonce);
-
-    const response: any = await this.contracts.callContractFunction(
-      this.contracts.bucketLenderFactory.createBucketLender,
+    const BucketLender: any = this.contracts.BucketLender;
+    const { address: bucketLenderAddress } = await this.contracts.createNewContract(
+      BucketLender,
       { ...options, from },
+      this.contracts.margin.address,
       positionId,
-      owner,
       heldToken,
       owedToken,
       [
@@ -138,12 +137,14 @@ export default class BucketLender {
       trustedWithdrawers,
     );
 
-    const createdEvent = response
-      .logs.find(l => l.event === EVENTS.BUCKETLENDER_CREATED && l.args.positionId === positionId);
+    await this.transferOwnership(
+      bucketLenderAddress,
+      from,
+      owner,
+      options,
+    );
 
-    response.address = createdEvent.args.at;
-
-    return response;
+    return { address: bucketLenderAddress };
   }
 
   public async deposit(
@@ -173,6 +174,21 @@ export default class BucketLender {
     );
   }
 
+  public async depositETHV1(
+    bucketLenderAddress: string,
+    depositor: string,
+    beneficiary: string,
+    amount: BigNumber,
+    options: ContractCallOptions = {},
+  ): Promise<object> {
+    return this.contracts.callContractFunction(
+      this.contracts.ethWrapperForBucketLender.depositEth,
+      { ...options, from: depositor, value: amount },
+      bucketLenderAddress,
+      beneficiary,
+    );
+  }
+
   public async withdraw(
     bucketLenderAddress: string,
     withdrawer: string,
@@ -182,6 +198,22 @@ export default class BucketLender {
   ): Promise<object> {
     return this.contracts.callContractFunction(
       this.contracts.bucketLenderProxy.withdraw,
+      { ...options, from: withdrawer },
+      bucketLenderAddress,
+      buckets,
+      maxWeights,
+    );
+  }
+
+  public async withdrawETHV1(
+    bucketLenderAddress: string,
+    withdrawer: string,
+    buckets: BigNumber[],
+    maxWeights: BigNumber[],
+    options: ContractCallOptions = {},
+  ): Promise<object> {
+    return this.contracts.callContractFunction(
+      this.contracts.ethWrapperForBucketLender.withdrawEth,
       { ...options, from: withdrawer },
       bucketLenderAddress,
       buckets,
@@ -459,7 +491,7 @@ export default class BucketLender {
 
   public async getOwner(
     bucketLenderAddress: string,
-  ): Promise<BigNumber> {
+  ): Promise<string> {
     const bucketLender = await this.getBucketLender(bucketLenderAddress);
 
     return bucketLender.owner.call();

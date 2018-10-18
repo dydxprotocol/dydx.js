@@ -14,6 +14,7 @@ import {
   BucketLenderWithRecoveryDelay as BucketLenderWithRecoveryDelayContract,
   BucketLenderFactory as BucketLenderFactoryContract,
   BucketLenderProxy as BucketLenderProxyContract,
+  EthWrapperForBucketLender as EthWrapperForBucketLenderContract,
   ERC20 as ERC20Contract,
   WETH9 as WETH9Contract,
   DutchAuctionCloser as DutchAuctionCloserContract,
@@ -44,8 +45,8 @@ export default class Contracts {
   public ERC20LongFactory: Contract = truffleContract(ERC20LongFactoryContract);
   public Vault: Contract = truffleContract(VaultContract);
   public TestToken: Contract = truffleContract(TestTokenContract);
-  // tslint:disable-next-line max-line-length
-  public OpenDirectlyExchangeWrapper: Contract = truffleContract(OpenDirectlyExchangeWrapperContract);
+  public OpenDirectlyExchangeWrapper: Contract =
+    truffleContract(OpenDirectlyExchangeWrapperContract);
   public ZeroExV1ExchangeWrapper: Contract = truffleContract(ZeroExV1ExchangeWrapperContract);
   public ZeroExV2ExchangeWrapper: Contract = truffleContract(ZeroExV2ExchangeWrapperContract);
   public PayableMarginMinter: Contract = truffleContract(PayableMarginMinterContract);
@@ -55,6 +56,7 @@ export default class Contracts {
     truffleContract(BucketLenderWithRecoveryDelayContract);
   public BucketLenderFactory: Contract = truffleContract(BucketLenderFactoryContract);
   public BucketLenderProxy: Contract = truffleContract(BucketLenderProxyContract);
+  public EthWrapperForBucketLender: Contract = truffleContract(EthWrapperForBucketLenderContract);
   public ERC20: Contract = truffleContract(ERC20Contract);
   public WETH9: Contract = truffleContract(WETH9Contract);
   public DutchAuctionCloser: Contract = truffleContract(DutchAuctionCloserContract);
@@ -78,6 +80,7 @@ export default class Contracts {
   public wethPayoutRecipient;
   public bucketLenderFactory;
   public bucketLenderProxy;
+  public ethWrapperForBucketLender;
   public weth9;
   public erc20PositionWithdrawer;
   public auctionProxy;
@@ -111,6 +114,7 @@ export default class Contracts {
     setupContract(this.BucketLenderRecoveryDelay, provider, networkId, options);
     setupContract(this.BucketLenderFactory, provider, networkId, options);
     setupContract(this.BucketLenderProxy, provider, networkId, options);
+    setupContract(this.EthWrapperForBucketLender, provider, networkId, options);
     setupContract(this.ERC20, provider, networkId, options);
     setupContract(this.WETH9, provider, networkId, options);
     setupContract(this.DutchAuctionCloser, provider, networkId, options);
@@ -136,6 +140,7 @@ export default class Contracts {
       wethPayoutRecipient,
       bucketLenderFactory,
       bucketLenderProxy,
+      ethWrapperForBucketLender,
       weth9,
       erc20PositionWithdrawer,
       auctionProxy,
@@ -152,6 +157,7 @@ export default class Contracts {
       this.WethPayoutRecipient.deployed(),
       this.BucketLenderFactory.deployed(),
       this.BucketLenderProxy.deployed(),
+      this.EthWrapperForBucketLender.deployed(),
       this.WETH9.deployed(),
       this.ERC20PositionWithdrawer.deployed(),
       this.AuctionProxy.deployed(),
@@ -169,6 +175,7 @@ export default class Contracts {
     this.wethPayoutRecipient = wethPayoutRecipient;
     this.bucketLenderFactory = bucketLenderFactory;
     this.bucketLenderProxy = bucketLenderProxy;
+    this.ethWrapperForBucketLender = ethWrapperForBucketLender;
     this.weth9 = weth9;
     this.erc20PositionWithdrawer = erc20PositionWithdrawer;
     this.auctionProxy = auctionProxy;
