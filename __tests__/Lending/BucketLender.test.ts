@@ -8,7 +8,6 @@ import {
   LenderArgs,
   deployBucketLenderWithDelay,
   deployBucketLender,
-  withdrawAllETHV1,
   isEthereumAddress,
   doDeposit,
 } from '../helpers/BucketLenderHelper';
@@ -241,9 +240,28 @@ describe('#testBucketLender', () => {
     );
     const bucketTotalAfterDeposit = await dydx.bucketLender.getTotalAvailable(address);
     expect(bucketTotalBeforeDeposit.add(amountToDeposit).eq(bucketTotalAfterDeposit));
-    await withdrawAllETHV1(address, depositer);
+    await dydx.bucketLender.withdrawAllETHV1(address, depositer);
     const bucketTotalAfterWithdraw = await dydx.bucketLender.getTotalAvailable(address);
     expect(bucketTotalAfterDeposit.sub(bucketTotalAfterWithdraw)
       .eq(amountToDeposit)).toBeTruthy();
+  });
+
+  it('throws error if minHeldTokenPerPrincipalNumerator cant be stored as uint32', async () => {
+    const heldToken = await deployERC20(dydx, accounts);
+    const args = {
+      ...LenderArgs,
+      heldToken,
+      minHeldTokenPerPrincipalNumerator: BIG_NUMBERS.ONES_31.plus(100),
+      owedToken: dydx.contracts.WETH9.address,
+      trustedWithdrawers: [dydx.contracts.ethWrapperForBucketLender.address],
+      recoveryDelay: BIG_NUMBERS.ONE_DAY_IN_SECONDS,
+    };
+    let caughtError = null;
+    try {
+      await deployBucketLender(args);
+    } catch (error) {
+      caughtError = error;
+    }
+    expect(caughtError).not.toBe(null);
   });
 });

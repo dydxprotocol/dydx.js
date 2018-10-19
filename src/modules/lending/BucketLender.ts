@@ -10,6 +10,7 @@ import {
 } from '../../lib/Helpers';
 import { Deposit } from '../../types/BucketLender';
 import { BIG_NUMBERS } from '../../lib/Constants';
+import { validateUint32 } from '../../lib/Validations';
 import {
   ContractCallOptions,
   BucketLenderSummary,
@@ -59,6 +60,8 @@ export default class BucketLender {
     if (owedToken.toLowerCase() === this.contracts.WETH9.address.toLowerCase()) {
       trustedWithdrawers.push(this.contracts.bucketLenderProxy.address);
     }
+    validateUint32(minHeldTokenPerPrincipalNumerator);
+    validateUint32(minHeldTokenPerPrincipalDenominator);
 
     const positionId = getPositionId(positionOpener, positionNonce);
     const BucketLenderRecoveryDelay: any = this.contracts.BucketLenderRecoveryDelay;
@@ -114,6 +117,8 @@ export default class BucketLender {
     if (owedToken.toLowerCase() === this.contracts.WETH9.address.toLowerCase()) {
       trustedWithdrawers.push(this.contracts.bucketLenderProxy.address);
     }
+    validateUint32(minHeldTokenPerPrincipalNumerator);
+    validateUint32(minHeldTokenPerPrincipalDenominator);
 
     const positionId = getPositionId(positionOpener, positionNonce);
     const BucketLender: any = this.contracts.BucketLender;
@@ -265,6 +270,24 @@ export default class BucketLender {
     const maxWeights: BigNumber[] = buckets.map(() => BIG_NUMBERS.ONES_255);
 
     return this.withdrawETH(
+      bucketLenderAddress,
+      withdrawer,
+      buckets,
+      maxWeights,
+      options,
+    );
+  }
+
+  public async withdrawAllETHV1(
+    bucketLenderAddress: string,
+    withdrawer: string,
+    options: ContractCallOptions = {},
+  ): Promise<object> {
+    const buckets: BigNumber[] = await this.getDepositedBuckets(bucketLenderAddress, withdrawer);
+
+    const maxWeights: BigNumber[] = buckets.map(() => BIG_NUMBERS.ONES_255);
+
+    return this.withdrawETHV1(
       bucketLenderAddress,
       withdrawer,
       buckets,

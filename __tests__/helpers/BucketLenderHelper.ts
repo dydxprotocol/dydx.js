@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { dydx } from './DYDX';
 import { issueAndSetAllowance } from './MarginHelper';
-import { BIG_NUMBERS } from '../../src/lib/Constants';
 
 export const LenderArgs = {
   principal: new BigNumber(100),
@@ -32,24 +31,6 @@ export const isEthereumAddress = new RegExp(/^(0x){1}[0-9a-fA-F]{40}$/i);
 export async function doDeposit(blAddress, lender, amount, token) {
   await issueAndSetAllowance(token, lender, amount, dydx.contracts.BucketLenderProxy.address);
   await dydx.bucketLender.deposit(blAddress, lender, amount);
-}
-
-export async function withdrawAllETHV1(blAddress: string, withdrawer: string) {
-  const depositEvents = await dydx.bucketLender.getDepositEvents(
-    blAddress,
-    withdrawer,
-  );
-  const buckets: BigNumber[] = depositEvents
-    .map(e => e.args.bucket.toString())
-    .filter((elem, pos, arr) => arr.indexOf(elem) === pos)
-    .map(b => new BigNumber(b));
-  const maxWeights: BigNumber[] = buckets.map(() => BIG_NUMBERS.ONES_255);
-  return dydx.bucketLender.withdrawETHV1(
-    blAddress,
-    withdrawer,
-    buckets,
-    maxWeights,
-  );
 }
 
 export async function deployBucketLender(args) {

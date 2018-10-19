@@ -20,6 +20,7 @@ import {
   DutchAuctionCloser as DutchAuctionCloserContract,
   ERC20Position as ERC20PositionContract,
   ERC20PositionWithdrawer as ERC20PositionWithdrawerContract,
+  ERC20PositionWithdrawerV2 as ERC20PositionWithdrawerV2Contract,
   ERC20CappedShort as ERC20CappedShortContract,
   ERC20CappedLong as ERC20CappedLongContract,
   ERC20CappedPosition as ERC20CappedPositionContract,
@@ -62,6 +63,7 @@ export default class Contracts {
   public DutchAuctionCloser: Contract = truffleContract(DutchAuctionCloserContract);
   public ERC20Position: Contract = truffleContract(ERC20PositionContract);
   public ERC20PositionWithdrawer: Contract = truffleContract(ERC20PositionWithdrawerContract);
+  public ERC20PositionWithdrawerV2: Contract = truffleContract(ERC20PositionWithdrawerV2Contract);
   public ERC20CappedShort: Contract = truffleContract(ERC20CappedShortContract);
   public ERC20CappedLong: Contract = truffleContract(ERC20CappedLongContract);
   public ERC20CappedPosition: Contract = truffleContract(ERC20CappedPositionContract);
@@ -83,6 +85,7 @@ export default class Contracts {
   public ethWrapperForBucketLender;
   public weth9;
   public erc20PositionWithdrawer;
+  public erc20PositionWithdrawerV2;
   public auctionProxy;
 
   public auto_gas_multiplier: number = 1.5;
@@ -120,6 +123,7 @@ export default class Contracts {
     setupContract(this.DutchAuctionCloser, provider, networkId, options);
     setupContract(this.ERC20Position, provider, networkId, options);
     setupContract(this.ERC20PositionWithdrawer, provider, networkId, options);
+    setupContract(this.ERC20PositionWithdrawerV2, provider, networkId, options);
     setupContract(this.ERC20CappedShort, provider, networkId, options);
     setupContract(this.ERC20CappedLong, provider, networkId, options);
     setupContract(this.ERC20CappedPosition, provider, networkId, options);
@@ -143,6 +147,7 @@ export default class Contracts {
       ethWrapperForBucketLender,
       weth9,
       erc20PositionWithdrawer,
+      erc20PositionWithdrawerV2,
       auctionProxy,
     ] = await Promise.all([
       this.Margin.deployed(),
@@ -160,6 +165,7 @@ export default class Contracts {
       this.EthWrapperForBucketLender.deployed(),
       this.WETH9.deployed(),
       this.ERC20PositionWithdrawer.deployed(),
+      this.ERC20PositionWithdrawerV2.deployed(),
       this.AuctionProxy.deployed(),
     ]);
 
@@ -178,6 +184,7 @@ export default class Contracts {
     this.ethWrapperForBucketLender = ethWrapperForBucketLender;
     this.weth9 = weth9;
     this.erc20PositionWithdrawer = erc20PositionWithdrawer;
+    this.erc20PositionWithdrawerV2 = erc20PositionWithdrawerV2;
     this.auctionProxy = auctionProxy;
   }
 

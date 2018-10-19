@@ -46,7 +46,7 @@ export default class LeveragedToken extends MarginToken {
       trader,
       positionId,
       [this.contracts.DutchAuctionCloser.address],
-      [this.contracts.ERC20PositionWithdrawer.address],
+      [this.contracts.ERC20PositionWithdrawerV2.address],
       trustedLateClosers,
       cap,
       options,
