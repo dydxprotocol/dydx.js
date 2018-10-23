@@ -209,15 +209,20 @@ export default class Contracts {
 
   public async callContractFunction(
     func: ContractFunction,
-    options: ContractCallOptions,
+    callOptions: ContractCallOptions,
     ...args // tslint:disable-line: trailing-comma
   ): Promise<object> {
+    const { waitForConfirmation, ...options } = callOptions;
     if (!this.blockGasLimit) await this.setGasLimit();
-
     if (!options.gas) {
       const gasEstimate: number = await func.estimateGas(...args, options);
       const totalGas: number = Math.floor(gasEstimate * this.auto_gas_multiplier);
       options.gas = totalGas < this.blockGasLimit ? totalGas : this.blockGasLimit;
+    }
+    if (waitForConfirmation === false) { // tslint:disable-line: no-boolean-literal-compare
+      const { params: [txOptions] }: any = func.request(...args, options);
+      const txHash = this.web3.eth.sendTransaction({ ...txOptions, gas: options.gas });
+      return txHash;
     }
     return func(...args, options);
   }

@@ -86,6 +86,7 @@ export interface ZeroExV2Order {
 
 export interface ContractFunction extends Function {
   estimateGas: Function;
+  request: Function;
 }
 
 export interface Contract {
@@ -106,6 +107,7 @@ export interface ContractCallOptions {
   gas?: BigNumber | number;
   gasPrice?: BigNumber | number;
   nonce?: number;
+  waitForConfirmation?: boolean;
 }
 
 export interface LenderSummaryOptions {

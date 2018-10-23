@@ -3,7 +3,7 @@ import Web3 from 'web3';
 import { dydx, initialize } from './DYDX';
 import { deployERC20 } from './TokenHelper';
 import { BIG_NUMBERS } from '../../src/lib/Constants';
-import { ZeroExOrder } from '../../src/types';
+import { ZeroExOrder, ContractCallOptions } from '../../src/types';
 import web3Utils from 'web3-utils';
 import { DateTime } from 'luxon';
 
@@ -152,6 +152,7 @@ export async function mintLongWithETH(
   trader: string,
   tokensToMint: BigNumber,
   order: ZeroExOrder,
+  options: ContractCallOptions = {},
 ): Promise <any> {
   const {
     ethToSend,
@@ -165,6 +166,7 @@ export async function mintLongWithETH(
     true,
     dydx.zeroExV1ExchangeWrapper,
     orderData,
+    options,
   );
 }
 
