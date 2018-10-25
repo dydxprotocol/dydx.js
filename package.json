@@ -1,6 +1,6 @@
 {
   "name": "@dydxprotocol/dydx.js",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Javascript library for interacting with the dYdX Protocol",
   "main": "dist/js/index.js",
   "types": "dist/types/index.d.ts",
@@ -11,7 +11,7 @@
   "scripts": {
     "test": "jest --runInBand",
     "build": "rm -rf dist/ && tsc",
-    "lint": "tslint --project . -t verbose",
+    "lint": "tslint --project . -t verbose && tslint -c tslint.json '__tests__/**/*.test.ts'",
     "start": "node dist/js/index.js",
     "debug": "truffle debug",
     "coverage": "jest --coverage --runInBand"
@@ -56,6 +56,7 @@
     "ts-jest": "^23.1.4",
     "tslint": "^5.11.0",
     "tslint-config-airbnb": "^5.11.0",
+    "tslint-no-focused-test": "0.4.0",
     "typescript": "^2.9.2"
   }
 }

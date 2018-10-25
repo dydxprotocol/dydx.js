@@ -33,17 +33,20 @@ describe('ContractCallOptions', () => {
       const tokensToMint = new BigNumber('2e18');
       const trader = accounts[4];
       const balanceBefore = await getBalanceParams(trader, position.id);
+      const gasPrice = new BigNumber('2e10');
       const txHash = await mintLongWithETH(
         position.id,
         trader,
         tokensToMint,
         order,
-        { waitForConfirmation: false },
+        { gasPrice, waitForConfirmation: false },
       );
       let txReceipt = await dydx.contracts.web3.eth.getTransactionReceiptAsync(txHash);
       while (txReceipt.status !== '0x1') {
         txReceipt = await dydx.contracts.web3.eth.getTransactionReceiptAsync(txHash);
       }
+      const tx = await dydx.contracts.web3.eth.getTransactionAsync(txHash);
+      expect(tx.gasPrice.eq(tx.gasPrice)).toBeTruthy();
       const balanceAfter = await getBalanceParams(trader, position.id);
       expect(balanceBefore.positionTokenSupply.add(tokensToMint)
         .eq(balanceAfter.positionTokenSupply)).toBeTruthy();
