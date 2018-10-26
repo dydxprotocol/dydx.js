@@ -57,9 +57,7 @@ export default class BucketLender {
     from: string,
     options: ContractCallOptions = {},
   ): Promise<object> {
-    if (owedToken.toLowerCase() === this.contracts.WETH9.address.toLowerCase()) {
-      trustedWithdrawers.push(this.contracts.bucketLenderProxy.address);
-    }
+    trustedWithdrawers.push(this.contracts.bucketLenderProxy.address);
     validateUint32(minHeldTokenPerPrincipalNumerator);
     validateUint32(minHeldTokenPerPrincipalDenominator);
 
