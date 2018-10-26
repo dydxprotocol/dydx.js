@@ -244,40 +244,6 @@ export default class BucketLender {
     );
   }
 
-  public async withdrawETH(
-    bucketLenderAddress: string,
-    withdrawer: string,
-    buckets: BigNumber[],
-    maxWeights: BigNumber[],
-    options: ContractCallOptions = {},
-  ): Promise<object> {
-    return this.contracts.callContractFunction(
-      this.contracts.bucketLenderProxy.withdrawEth,
-      { ...options, from: withdrawer },
-      bucketLenderAddress,
-      buckets,
-      maxWeights,
-    );
-  }
-
-  public async withdrawAllETH(
-    bucketLenderAddress: string,
-    withdrawer: string,
-    options: ContractCallOptions = {},
-  ): Promise<object> {
-    const buckets: BigNumber[] = await this.getDepositedBuckets(bucketLenderAddress, withdrawer);
-
-    const maxWeights: BigNumber[] = buckets.map(() => BIG_NUMBERS.ONES_255);
-
-    return this.withdrawETH(
-      bucketLenderAddress,
-      withdrawer,
-      buckets,
-      maxWeights,
-      options,
-    );
-  }
-
   public async withdrawAllETHV1(
     bucketLenderAddress: string,
     withdrawer: string,
