@@ -45,7 +45,35 @@ describe('ShortToken', () => {
       expect(tokenBalance.equals(tokensToMint)).toBeTruthy();
     });
 
-    it('opens an ERC20Short', async () => {
+    it('Allows lender address to be passed in', async () => {
+      const position: Position = seeds.positions.find(
+        p => p.isTokenized && p.owedToken === dydx.contracts.WETH9.address,
+      );
+      const order: ZeroExOrder = seeds.orders.find(o => o.makerTokenAddress === position.heldToken);
+      const trader: string = accounts[4];
+      const tokensToMint = new BigNumber('2e18');
+      const orderData: string = dydx.zeroExV1ExchangeWrapper.zeroExOrderToBytes(order);
+
+      await dydx.shortToken.mintWithETH(
+        position.id,
+        trader,
+        tokensToMint,
+        new BigNumber('10e18'),
+        false,
+        dydx.zeroExV1ExchangeWrapper,
+        orderData,
+        {},
+        position.lender,
+      );
+
+      const tokenBalance = await dydx.token.getBalance(position.owner, trader);
+
+      expect(tokenBalance.equals(tokensToMint)).toBeTruthy();
+    });
+  });
+
+  describe('#create', () => {
+    it('creates an ERC20Short', async () => {
       const openTx = await setup(accounts);
       const createdShort: any = await dydx.shortToken.create(
         openTx.trader,
@@ -64,7 +92,9 @@ describe('ShortToken', () => {
       const { owner } = await dydx.margin.getPosition(positionId);
       expect(createdShort.tokenAddress).toBe(owner);
     });
+  });
 
+  describe('#createCappedShort', () => {
     it('opens an ERC20CappedShort', async () => {
       const openTx = await setup(accounts);
       const trustedLateClosers = [accounts[7]];

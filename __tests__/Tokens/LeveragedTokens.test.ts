@@ -27,7 +27,7 @@ describe('LeveragedToken', () => {
     await resetEVM();
   });
 
-  describe('#mintWithETH', () => {
+  describe('#create', () => {
     it('opens an ERC20Long', async () => {
       const openTx = await setup(accounts);
       const createdLong: any = await dydx.leveragedToken.create(
@@ -47,8 +47,10 @@ describe('LeveragedToken', () => {
       const { owner } = await dydx.margin.getPosition(positionId);
       expect(createdLong.tokenAddress).toBe(owner);
     });
+  });
 
-    it('opens an ERC20CappedLong', async () => {
+  describe('#createCappedLong', () => {
+    it('creates an ERC20CappedLong', async () => {
       const openTx = await setup(accounts);
       const trustedLateClosers = [accounts[7]];
       const cap = openTx.principal.mul(4);
@@ -81,31 +83,9 @@ describe('LeveragedToken', () => {
       const tokenCap = await dydx.leveragedToken.getTokenCap(position.owner);
       expect(tokenCap.eq(cap)).toBeTruthy();
     });
+  });
 
-    it('succesfully mints long tokens with ETH', async () => {
-      const position: Position = seeds.positions.find(
-        p => p.isTokenized && p.heldToken === dydx.contracts.WETH9.address,
-      );
-      const order: ZeroExOrder = seeds.orders.find(o => o.makerTokenAddress === position.heldToken);
-      const tokensToMint = new BigNumber('2e18');
-      const trader = accounts[4];
-      const balanceBefore = await getBalanceParams(trader, position.id);
-
-      await mintLongWithETH(
-        position.id,
-        trader,
-        tokensToMint,
-        order,
-      );
-      const balanceAfter = await getBalanceParams(trader, position.id);
-      expect(balanceBefore.positionTokenSupply.add(tokensToMint)
-        .eq(balanceAfter.positionTokenSupply)).toBeTruthy();
-      expect(balanceBefore.traderTokenBalance.add(tokensToMint)
-        .eq(balanceAfter.traderTokenBalance)).toBeTruthy();
-      const tokenBalance = await dydx.token.getBalance(position.owner, trader);
-      expect(tokenBalance.equals(tokensToMint)).toBeTruthy();
-    });
-
+  describe('#mint', () => {
     it('mints long tokens with WETH', async () => {
       const position: Position = seeds.positions.find(
         p => p.isTokenized && p.heldToken === dydx.contracts.WETH9.address,
@@ -134,7 +114,35 @@ describe('LeveragedToken', () => {
       const tokenBalance = await dydx.token.getBalance(position.owner, trader);
       expect(tokenBalance.equals(tokensToMint)).toBeTruthy();
     });
+  });
 
+  describe('#mintWithETH', () => {
+    it('succesfully mints long tokens with ETH', async () => {
+      const position: Position = seeds.positions.find(
+        p => p.isTokenized && p.heldToken === dydx.contracts.WETH9.address,
+      );
+      const order: ZeroExOrder = seeds.orders.find(o => o.makerTokenAddress === position.heldToken);
+      const tokensToMint = new BigNumber('2e18');
+      const trader = accounts[4];
+      const balanceBefore = await getBalanceParams(trader, position.id);
+
+      await mintLongWithETH(
+        position.id,
+        trader,
+        tokensToMint,
+        order,
+      );
+      const balanceAfter = await getBalanceParams(trader, position.id);
+      expect(balanceBefore.positionTokenSupply.add(tokensToMint)
+        .eq(balanceAfter.positionTokenSupply)).toBeTruthy();
+      expect(balanceBefore.traderTokenBalance.add(tokensToMint)
+        .eq(balanceAfter.traderTokenBalance)).toBeTruthy();
+      const tokenBalance = await dydx.token.getBalance(position.owner, trader);
+      expect(tokenBalance.equals(tokensToMint)).toBeTruthy();
+    });
+  });
+
+  describe('#close', () => {
     it('closes a long token with WETH', async () => {
       const position: Position = seeds.positions.find(
         p => p.isTokenized && p.heldToken === dydx.contracts.WETH9.address,
@@ -210,7 +218,9 @@ describe('LeveragedToken', () => {
       expect(beforeBalClose.traderTokenBalance.sub(tokens)
         .eq(afterBalClose.traderTokenBalance)).toBeTruthy();
     });
+  });
 
+  describe('#closeWithETHPayout', () => {
     it('successfully closes a long with an ETH payout', async () => {
       const position: Position = seeds.positions.find(
         p => p.isTokenized && p.heldToken === dydx.contracts.WETH9.address,

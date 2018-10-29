@@ -4,7 +4,7 @@ import Margin from '../Margin';
 import Contracts from '../../lib/Contracts';
 import { EVENTS } from '../../lib/Constants';
 import ExchangeWrapper from '../exchange_wrappers/ExchangeWrapper';
-import { Position, SignedLoanOffering, ContractCallOptions, Contract } from '../../types';
+import { SignedLoanOffering, ContractCallOptions, Contract } from '../../types';
 
 export default class ShortToken extends MarginToken {
   constructor(
@@ -106,9 +106,14 @@ export default class ShortToken extends MarginToken {
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
     options: ContractCallOptions = {},
+    positionLender?: string,
   ): Promise<object> {
-    const position: Position = await this.margin.getPosition(positionId);
-    const loanOffering: SignedLoanOffering = this.prepareMintLoanOffering(position);
+    let lender: string = positionLender;
+    if (!lender) {
+      const position = await this.margin.getPosition(positionId);
+      lender = position.lender;
+    }
+    const loanOffering: SignedLoanOffering = this.prepareMintLoanOffering(lender);
 
     return this.margin.increasePosition(
       positionId,
@@ -131,9 +136,14 @@ export default class ShortToken extends MarginToken {
     exchangeWrapper: ExchangeWrapper,
     orderData: string,
     options: ContractCallOptions = {},
+    positionLender?: string,
   ): Promise<object> {
-    const position: Position = await this.margin.getPosition(positionId);
-    const loanOffering: SignedLoanOffering = this.prepareMintLoanOffering(position);
+    let lender: string = positionLender;
+    if (!lender) {
+      const position = await this.margin.getPosition(positionId);
+      lender = position.lender;
+    }
+    const loanOffering: SignedLoanOffering = this.prepareMintLoanOffering(lender);
 
     const addresses = [
       loanOffering.payer,

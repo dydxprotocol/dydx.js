@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import Margin from '../Margin';
 import Contracts from '../../lib/Contracts';
 import ExchangeWrapper from '../exchange_wrappers/ExchangeWrapper';
-import { Position, SignedLoanOffering, ContractCallOptions } from '../../types';
+import { SignedLoanOffering, ContractCallOptions } from '../../types';
 import { ADDRESSES, BIG_NUMBERS } from '../../lib/Constants';
 
 export default abstract class MarginToken {
@@ -133,11 +133,11 @@ export default abstract class MarginToken {
     );
   }
 
-  protected prepareMintLoanOffering(position: Position): SignedLoanOffering {
+  protected prepareMintLoanOffering(positionLender: string): SignedLoanOffering {
     return {
       owedToken:              '', // Unused
       heldToken:              '', // Unused
-      payer:                  position.lender,
+      payer:                  positionLender,
       owner:                  '', // Unused
       taker:                  ADDRESSES.ZERO,
       positionOwner:          ADDRESSES.ZERO,
