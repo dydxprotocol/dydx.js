@@ -49,7 +49,7 @@ jobs:
   test:
     docker:
       - image: dydxprotocol/node:8.12-alpine-v1
-      - image: dydxprotocol/protocol:v1.0.12
+      - image: dydxprotocol/protocol:v1.0.14
     working_directory: ~/build
     steps:
       - restore_cache:
@@ -60,7 +60,7 @@ jobs:
   coverage:
     docker:
       - image: dydxprotocol/node:8.12-alpine-v1
-      - image: dydxprotocol/protocol:v1.0.12
+      - image: dydxprotocol/protocol:v1.0.14
     working_directory: ~/build
     steps:
       - restore_cache:
