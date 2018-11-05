@@ -4,11 +4,13 @@ import { BIG_NUMBERS } from '../lib/Constants';
 
 export default class TokenHelper {
   private contracts: Contracts;
+  private tokens: object;
 
   constructor(
     contracts: Contracts,
   ) {
     this.contracts = contracts;
+    this.tokens = {};
   }
 
   public async getAllowance(
@@ -158,9 +160,19 @@ export default class TokenHelper {
     );
   }
 
-  private getToken(
+  private async getToken(
     tokenAddress: string,
   ): Promise<any> {
-    return this.contracts.ERC20.at(tokenAddress);
+    if (this.tokens[tokenAddress]) {
+      return this.tokens[tokenAddress];
+    }
+
+    const contract = await this.contracts.ERC20.at(tokenAddress);
+
+    if (contract) {
+      this.tokens[tokenAddress] = contract;
+    }
+
+    return contract;
   }
 }
