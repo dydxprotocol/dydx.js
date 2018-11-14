@@ -53,19 +53,66 @@ export default class Interest {
   ): BigNumber {
     const diffEpoch = endEpoch.minus(startEpoch);
     const numPeriods = diffEpoch.minus(1).div(interestPeriod).floor().plus(1);
-    const secondsOfInterest = numPeriods.times(interestPeriod);
-    const protocolInterestRate = interestRate.times('1e8');
+    return this.calculateCompoundedInterest(
+      principal,
+      interestRate,
+      interestPeriod,
+      numPeriods,
+    );
+  }
 
-    const resultAsBN = this.getCompoundedInterest(
+  /**
+   * Calculates the owed interest for a given lender amount and interest rate. Reproduces the
+   * calculations done by the dYdX protocol on chain.
+   *
+   * @param  startEpoch     Position start timestamp in epoch seconds
+   * @param  endEpoch       Query timestamp in epoch seconds
+   * @param  principal      Principal to calculate interest on
+   * @param  interestRate   Interest rate (e.g. 10% per year is 0.1)
+   * @param  interestPeriod Interest period of the position
+   * @return                Principal + Interest
+   */
+  public getLenderAmount(
+    startEpoch: BigNumber,
+    endEpoch: BigNumber,
+    principal: BigNumber,
+    interestRate: BigNumber,
+    interestPeriod: BigNumber,
+  ): BigNumber {
+    const diffEpoch = endEpoch.minus(startEpoch);
+    const numPeriods = diffEpoch.div(interestPeriod).floor();
+    return this.calculateCompoundedInterest(
+      principal,
+      interestRate,
+      interestPeriod,
+      numPeriods,
+    );
+  }
+
+  // ============ PROTECTED FUNCTIONS ============
+  /**
+   * calculateCompoundedInterest description
+   * @param  principal      principal to calculate interest on
+   * @param  interestRate   interest rate ∃ [0, 1)
+   * @param  interestPeriod period of time for interest to compound
+   * @param  numPeriods     number of periods that ocurred in epoch
+   * @return                [description]
+   */
+  protected calculateCompoundedInterest(
+    principal: BigNumber,
+    interestRate: BigNumber,
+    interestPeriod: BigNumber,
+    numPeriods: BigNumber,
+  ): BN {
+    const secondsOfInterest = numPeriods.times(interestPeriod);
+    const protocolInterestRate = interestRate.mul('1e8');
+    const resultsAsBN = this.getCompoundedInterest(
       this.mathBN.bigNumberToBN(principal),
       this.mathBN.bigNumberToBN(protocolInterestRate),
       this.mathBN.bigNumberToBN(secondsOfInterest),
     );
-
-    return new BigNumber(resultAsBN.toString());
+    return new BigNumber(resultsAsBN.toString());
   }
-
-  // ============ PROTECTED FUNCTIONS ============
 
   /**
    * Copy of the getCompoundedInterest function in the dYdX Margin Protocol.
