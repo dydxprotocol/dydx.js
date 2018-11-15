@@ -38,6 +38,21 @@ export default class TokenHelper {
     return token.totalSupply.call();
   }
 
+  public async getName(tokenAddress: string): Promise<string> {
+    const token = await this.getToken(tokenAddress);
+    return token.name.call();
+  }
+
+  public async getSymbol(tokenAddress: string): Promise<string> {
+    const token = await this.getToken(tokenAddress);
+    return token.symbol.call();
+  }
+
+  public async getDecimals(tokenAddress: string): Promise<BigNumber> {
+    const token = await this.getToken(tokenAddress);
+    return token.decimals.call();
+  }
+
   public async getProxyAllowance(
     tokenAddress: string,
     ownerAddress: string,
@@ -167,7 +182,7 @@ export default class TokenHelper {
       return this.tokens[tokenAddress];
     }
 
-    const contract = await this.contracts.ERC20.at(tokenAddress);
+    const contract = await this.contracts.ERC20Position.at(tokenAddress);
 
     if (contract) {
       this.tokens[tokenAddress] = contract;

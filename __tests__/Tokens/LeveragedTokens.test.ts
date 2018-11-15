@@ -51,6 +51,9 @@ describe('LeveragedToken', () => {
 
   describe('#createCappedLong', () => {
     it('creates an ERC20CappedLong', async () => {
+      const name = 'CAPPEDLONG TOKEN_NAME';
+      const symbol = 'CL TOKEN_SYMBOL';
+      const decimals = new BigNumber(77);
       const openTx = await setup(accounts);
       const trustedLateClosers = [accounts[7]];
       const cap = openTx.principal.mul(4);
@@ -68,6 +71,9 @@ describe('LeveragedToken', () => {
         openTx.interestPeriod,
         trustedLateClosers,
         cap,
+        name,
+        symbol,
+        decimals,
       );
       const position = await dydx.margin.getPosition(positionId);
       const tokenBalance = await dydx.token.getTotalSupply(position.owner);
@@ -82,6 +88,18 @@ describe('LeveragedToken', () => {
       expect(position.owner).toBe(tokenAddress);
       const tokenCap = await dydx.leveragedToken.getTokenCap(position.owner);
       expect(tokenCap.eq(cap)).toBeTruthy();
+      const [
+        tokenName,
+        tokenSymbol,
+        tokenDecimals,
+      ] = await Promise.all([
+        dydx.token.getName(tokenAddress),
+        dydx.token.getSymbol(tokenAddress),
+        dydx.token.getDecimals(tokenAddress),
+      ]);
+      expect(tokenName).toBe(name);
+      expect(tokenSymbol).toBe(symbol);
+      expect(tokenDecimals.eq(decimals)).toBeTruthy();
     });
   });
 

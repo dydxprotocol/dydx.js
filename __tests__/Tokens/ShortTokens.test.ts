@@ -96,6 +96,9 @@ describe('ShortToken', () => {
 
   describe('#createCappedShort', () => {
     it('opens an ERC20CappedShort', async () => {
+      const name = 'CAPPEDSHORT TOKEN_NAME';
+      const symbol = 'CS TOKEN_SYMBOL';
+      const decimals = new BigNumber(66);
       const openTx = await setup(accounts);
       const trustedLateClosers = [accounts[7]];
       const cap = openTx.principal.mul(4);
@@ -113,6 +116,9 @@ describe('ShortToken', () => {
         openTx.interestPeriod,
         trustedLateClosers,
         cap,
+        name,
+        symbol,
+        decimals,
       );
       const position = await dydx.margin.getPosition(positionId);
       const tokenBalance = await dydx.token.getTotalSupply(position.owner);
@@ -127,6 +133,18 @@ describe('ShortToken', () => {
       expect(position.owner).toBe(tokenAddress);
       const tokenCap = await dydx.shortToken.getTokenCap(position.owner);
       expect(tokenCap.eq(cap)).toBeTruthy();
+      const [
+        tokenName,
+        tokenSymbol,
+        tokenDecimals,
+      ] = await Promise.all([
+        dydx.token.getName(tokenAddress),
+        dydx.token.getSymbol(tokenAddress),
+        dydx.token.getDecimals(tokenAddress),
+      ]);
+      expect(tokenName).toBe(name);
+      expect(tokenSymbol).toBe(symbol);
+      expect(tokenDecimals.eq(decimals)).toBeTruthy();
     });
   });
 });

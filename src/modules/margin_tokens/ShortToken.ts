@@ -67,6 +67,9 @@ export default class ShortToken extends MarginToken {
     interestPeriod: BigNumber,
     trustedLateClosers: string[],
     cap: BigNumber,
+    name: string,
+    symbol: string,
+    decimals: BigNumber,
     options: ContractCallOptions = {},
   ): Promise<object> {
     const positionId = this.margin.getPositionId(trader, nonce);
@@ -77,6 +80,9 @@ export default class ShortToken extends MarginToken {
       [this.contracts.ERC20PositionWithdrawerV2.address],
       trustedLateClosers,
       cap,
+      name,
+      symbol,
+      decimals,
       options,
     );
     const response: any = await this.margin.openWithoutCounterparty(
@@ -233,6 +239,9 @@ export default class ShortToken extends MarginToken {
     trustedWithdrawers: string[],
     trustedLateClosers: string[],
     cap: BigNumber,
+    name: string,
+    symbol: string,
+    decimals: BigNumber,
     options: ContractCallOptions = {},
   ): Promise<Contract> {
     const ERC20CappedShort: any = this.contracts.ERC20CappedShort;
@@ -247,6 +256,9 @@ export default class ShortToken extends MarginToken {
       trustedWithdrawers,
       trustedLateClosers,
       cap,
+      name,
+      symbol,
+      decimals,
     );
   }
 }
