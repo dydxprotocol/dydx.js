@@ -349,7 +349,11 @@ export default class BucketLender {
           locked = personalOwed;
 
         // being partially lent (locked)
-        } else if (criticalBucket.eq(currentBucket)) {
+        } else if (
+          currentBucket !== null
+          && currentBucket.eq(criticalBucket)
+          && !currentBucket.isZero()
+        ) {
           locked = personalOwed;
 
         // being partially lent (unlocked)
@@ -421,7 +425,15 @@ export default class BucketLender {
   ): Promise<BigNumber> {
     const bucketLender = await this.getBucketLender(bucketLenderAddress);
 
-    return bucketLender.getCurrentBucket.call();
+    let response;
+    try {
+      // getCurrentBucket call fails for closed positions
+      response = await bucketLender.getCurrentBucket.call();
+    } catch (e) {
+      // return null for closed positions
+      response = null;
+    }
+    return response;
   }
 
   public async getWeightForBucket(

@@ -150,10 +150,19 @@ describe('#testBucketLender', () => {
       BIG_NUMBERS.ONES_127,
       dydx.contracts.TokenProxy.address,
     );
+
+    // expect currentBucket to be 0
+    const currentBucket0 = await dydx.bucketLender.getCurrentBucket(bucketLenderAddress);
+    expect(currentBucket0.eq(0)).toBeTruthy();
+
     await callOpenWithoutCounterparty(openTx);
 
     // wait for another bucket
     await wait(1);
+
+    // expect currentBucket to be 1
+    const currentBucket1 = await dydx.bucketLender.getCurrentBucket(bucketLenderAddress);
+    expect(currentBucket1.eq(1)).toBeTruthy();
 
     // deposit in bucket 1
     await doDeposit(bucketLenderAddress, lender, lendAmount, owedToken);
@@ -188,7 +197,7 @@ describe('#testBucketLender', () => {
       amountToDeposit,
     );
     const bucketTotalAfterDeposit = await dydx.bucketLender.getTotalAvailable(address);
-    expect(bucketTotalBeforeDeposit.add(amountToDeposit).eq(bucketTotalAfterDeposit));
+    expect(bucketTotalBeforeDeposit.add(amountToDeposit).eq(bucketTotalAfterDeposit)).toBeTruthy();
   });
 
   it('deposits tokens into bucket lender', async () => {
@@ -216,7 +225,7 @@ describe('#testBucketLender', () => {
       amountToDeposit,
     );
     const bucketTotalAfterDeposit = await dydx.bucketLender.getTotalAvailable(address);
-    expect(bucketTotalBeforeDeposit.add(amountToDeposit).eq(bucketTotalAfterDeposit));
+    expect(bucketTotalBeforeDeposit.add(amountToDeposit).eq(bucketTotalAfterDeposit)).toBeTruthy();
   });
 
   it('can deposit and withdraw ETH using EthWrapperForBucketLender', async () => {
@@ -239,7 +248,7 @@ describe('#testBucketLender', () => {
       amountToDeposit,
     );
     const bucketTotalAfterDeposit = await dydx.bucketLender.getTotalAvailable(address);
-    expect(bucketTotalBeforeDeposit.add(amountToDeposit).eq(bucketTotalAfterDeposit));
+    expect(bucketTotalBeforeDeposit.add(amountToDeposit).eq(bucketTotalAfterDeposit)).toBeTruthy();
     await dydx.bucketLender.withdrawAllETHV1(address, depositer);
     const bucketTotalAfterWithdraw = await dydx.bucketLender.getTotalAvailable(address);
     expect(bucketTotalAfterDeposit.sub(bucketTotalAfterWithdraw)
