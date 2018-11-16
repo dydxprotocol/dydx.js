@@ -533,14 +533,17 @@ export default class BucketLender {
     bucketLenderAddress: string,
     withdrawer: string,
   ): Promise<BigNumber[]> {
-    const depositEvents = await this.getDepositEvents(
-      bucketLenderAddress,
-      withdrawer,
+    const bucketLender = await this.getBucketLender(bucketLenderAddress);
+    const buckets = Array.from(Array(30).keys()); // [0, ..., 29]
+    const weights = await Promise.all(
+      buckets.map(bucket => bucketLender.weightForBucketForAccount.call(bucket, withdrawer)),
     );
-
-    return depositEvents
-      .map(e => e.args.bucket.toString())
-      .filter((elem, pos, arr) => arr.indexOf(elem) === pos)
-      .map(b => new BigNumber(b)); // Gets the unique bucket numbers
+    const results = [];
+    for (let i = 0; i < buckets.length; i += 1) {
+      if (!weights[i].isZero()) {
+        results.push(new BigNumber(buckets[i]));
+      }
+    }
+    return results;
   }
 }
