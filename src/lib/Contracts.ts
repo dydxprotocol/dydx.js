@@ -230,7 +230,7 @@ export default class Contracts {
     if (waitForConfirmation === false) { // tslint:disable-line: no-boolean-literal-compare
       const { params: [txOptions] }: any = func.request(...args, options);
       const { from, value, ...txCallOptions } = options;
-      const txHash = this.web3.eth.sendTransaction({ ...txOptions, ...txCallOptions });
+      const txHash = await this.web3.eth.sendTransactionAsync({ ...txOptions, ...txCallOptions });
       return txHash;
     }
     return func(...args, options);
