@@ -8,6 +8,7 @@ import {
   OpenDirectlyExchangeWrapper as OpenDirectlyExchangeWrapperContract,
   ZeroExV1ExchangeWrapper as ZeroExV1ExchangeWrapperContract,
   ZeroExV2ExchangeWrapper as ZeroExV2ExchangeWrapperContract,
+  OasisV1SimpleExchangeWrapper as OasisV1SimpleExchangeWrapperContract,
   PayableMarginMinter as PayableMarginMinterContract,
   WethPayoutRecipient as WethPayoutRecipientContract,
   BucketLender as BucketLenderContract,
@@ -50,6 +51,8 @@ export default class Contracts {
     truffleContract(OpenDirectlyExchangeWrapperContract);
   public ZeroExV1ExchangeWrapper: Contract = truffleContract(ZeroExV1ExchangeWrapperContract);
   public ZeroExV2ExchangeWrapper: Contract = truffleContract(ZeroExV2ExchangeWrapperContract);
+  public OasisV1SimpleExchangeWrapper: Contract =
+    truffleContract(OasisV1SimpleExchangeWrapperContract);
   public PayableMarginMinter: Contract = truffleContract(PayableMarginMinterContract);
   public WethPayoutRecipient: Contract = truffleContract(WethPayoutRecipientContract);
   public BucketLender: Contract = truffleContract(BucketLenderContract);
@@ -77,6 +80,7 @@ export default class Contracts {
   public openDirectlyExchangeWrapper;
   public zeroExV1ExchangeWrapper;
   public zeroExV2ExchangeWrapper;
+  public oasisV1SimpleExchangeWrapper;
   public web3;
   public payableMarginMinter;
   public wethPayoutRecipient;
@@ -111,6 +115,7 @@ export default class Contracts {
     setupContract(this.OpenDirectlyExchangeWrapper, provider, networkId, options);
     setupContract(this.ZeroExV1ExchangeWrapper, provider, networkId, options);
     setupContract(this.ZeroExV2ExchangeWrapper, provider, networkId, options);
+    setupContract(this.OasisV1SimpleExchangeWrapper, provider, networkId, options);
     setupContract(this.PayableMarginMinter, provider, networkId, options);
     setupContract(this.WethPayoutRecipient, provider, networkId, options);
     setupContract(this.BucketLender, provider, networkId, options);
@@ -140,6 +145,7 @@ export default class Contracts {
       openDirectlyExchangeWrapper,
       zeroExV1ExchangeWrapper,
       zeroExV2ExchangeWrapper,
+      oasisV1SimpleExchangeWrapper,
       payableMarginMinter,
       wethPayoutRecipient,
       bucketLenderFactory,
@@ -158,6 +164,7 @@ export default class Contracts {
       this.OpenDirectlyExchangeWrapper.deployed(),
       this.ZeroExV1ExchangeWrapper.deployed(),
       this.ZeroExV2ExchangeWrapper.deployed(),
+      this.OasisV1SimpleExchangeWrapper.deployed(),
       this.PayableMarginMinter.deployed(),
       this.WethPayoutRecipient.deployed(),
       this.BucketLenderFactory.deployed(),
@@ -177,6 +184,7 @@ export default class Contracts {
     this.openDirectlyExchangeWrapper = openDirectlyExchangeWrapper;
     this.zeroExV1ExchangeWrapper = zeroExV1ExchangeWrapper;
     this.zeroExV2ExchangeWrapper = zeroExV2ExchangeWrapper;
+    this.oasisV1SimpleExchangeWrapper = oasisV1SimpleExchangeWrapper;
     this.payableMarginMinter = payableMarginMinter;
     this.wethPayoutRecipient = wethPayoutRecipient;
     this.bucketLenderFactory = bucketLenderFactory;
