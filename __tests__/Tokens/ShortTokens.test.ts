@@ -137,14 +137,24 @@ describe('ShortToken', () => {
         tokenName,
         tokenSymbol,
         tokenDecimals,
+        owner,
       ] = await Promise.all([
         dydx.token.getName(tokenAddress),
         dydx.token.getSymbol(tokenAddress),
         dydx.token.getDecimals(tokenAddress),
+        dydx.shortToken.getCappedOwner(tokenAddress),
       ]);
       expect(tokenName).toBe(name);
       expect(tokenSymbol).toBe(symbol);
       expect(tokenDecimals.eq(decimals)).toBeTruthy();
+      expect(owner).toBe(openTx.trader);
+      await dydx.shortToken.transferCappedOwnership(
+        tokenAddress,
+        openTx.trader,
+        accounts[8],
+      );
+      const newOwner = await dydx.shortToken.getCappedOwner(tokenAddress);
+      expect(newOwner).toBe(accounts[8]);
     });
   });
 });

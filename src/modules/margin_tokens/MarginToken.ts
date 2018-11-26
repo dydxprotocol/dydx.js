@@ -133,6 +133,25 @@ export default abstract class MarginToken {
     );
   }
 
+  public async getCappedOwner(tokenAddress: string): Promise<string> {
+    const token = await this.getCappedMarginToken(tokenAddress);
+    return token.owner.call();
+  }
+
+  public async transferCappedOwnership(
+    tokenAddress: string,
+    from: string,
+    to: string,
+    options: ContractCallOptions = {},
+  ): Promise<object> {
+    const marginToken = await this.getCappedMarginToken(tokenAddress);
+    return this.contracts.callContractFunction(
+      marginToken.transferOwnership,
+      { ...options, from },
+      to,
+    );
+  }
+
   protected prepareMintLoanOffering(positionLender: string): SignedLoanOffering {
     return {
       owedToken:              '', // Unused
