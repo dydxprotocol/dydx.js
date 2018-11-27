@@ -223,7 +223,15 @@ export default class Contracts {
     const { waitForConfirmation, ...options } = callOptions;
     if (!this.blockGasLimit) await this.setGasLimit();
     if (!options.gas) {
-      const gasEstimate: number = await func.estimateGas(...args, options);
+      let gasEstimate: number;
+      try {
+        gasEstimate = await func.estimateGas(...args, options);
+      } catch (error) {
+        const { params: [txOptions] }: any = func.request(...args, options);
+        const { from, value, ...txCallOptions } = options;
+        error.transactionData = { ...txOptions, ...txCallOptions };
+        throw error;
+      }
       const totalGas: number = Math.floor(gasEstimate * this.auto_gas_multiplier);
       options.gas = totalGas < this.blockGasLimit ? totalGas : this.blockGasLimit;
     }

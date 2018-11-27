@@ -2,6 +2,8 @@ import { dydx } from './helpers/DYDX';
 import { seeds } from '@dydxprotocol/protocol';
 import BigNumber from 'bignumber.js';
 import {
+  setup,
+  callOpenWithoutCounterparty,
   setupDYDX,
   mintLongWithETH,
   getBalanceParams,
@@ -22,6 +24,18 @@ describe('ContractCallOptions', () => {
 
   beforeEach(async () => {
     await resetEVM();
+  });
+
+  describe('#gasEstimate', () => {
+    it('throws an error with tx data when gas estimation fails', async () => {
+      const openTx = await setup(accounts);
+      openTx.maxDuration = new BigNumber(0);
+      try {
+        await callOpenWithoutCounterparty(openTx);
+      } catch (error) {
+        expect(error.transactionData).not.toBeNull();
+      }
+    });
   });
 
   describe('#Promises', () => {
