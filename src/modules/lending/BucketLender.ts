@@ -496,6 +496,14 @@ export default class BucketLender {
     return bucketLender.owner.call();
   }
 
+  public async getPositionId(
+    bucketLenderAddress: string,
+  ): Promise<string> {
+    const bucketLender = await this.getBucketLender(bucketLenderAddress);
+
+    return bucketLender.POSITION_ID.call();
+  }
+
   // ============ Events ============
 
   public async getDepositEvents(

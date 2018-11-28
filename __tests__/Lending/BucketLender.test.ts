@@ -65,6 +65,9 @@ describe('#testBucketLender', () => {
     );
     const bucketOwner = await dydx.bucketLender.getOwner(address);
     expect(bucketOwner).toBe(args.bucketOwner);
+    const positionId = await dydx.bucketLender.getPositionId(address);
+    const expPositionId = dydx.margin.getPositionId(args.positionOpener, args.nonce);
+    expect(expPositionId).toBe(positionId);
   });
 
   it('Successfully deploys a bucket lender with Recovery Delay', async () => {
