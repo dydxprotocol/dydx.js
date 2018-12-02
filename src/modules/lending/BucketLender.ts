@@ -231,7 +231,7 @@ export default class BucketLender {
   ): Promise<object> {
     const buckets: BigNumber[] = await this.getDepositedBuckets(bucketLenderAddress, withdrawer);
 
-    const maxWeights: BigNumber[] = buckets.map(() => BIG_NUMBERS.ONES_255);
+    const maxWeights: BigNumber[] = buckets.map(() => BIG_NUMBERS.TWO_TO_255);
 
     return this.withdraw(
       bucketLenderAddress,
@@ -249,7 +249,7 @@ export default class BucketLender {
   ): Promise<object> {
     const buckets: BigNumber[] = await this.getDepositedBuckets(bucketLenderAddress, withdrawer);
 
-    const maxWeights: BigNumber[] = buckets.map(() => BIG_NUMBERS.ONES_255);
+    const maxWeights: BigNumber[] = buckets.map(() => BIG_NUMBERS.TWO_TO_255);
 
     return this.withdrawETHV1(
       bucketLenderAddress,
@@ -281,21 +281,43 @@ export default class BucketLender {
     lender: string,
     options: LenderSummaryOptions = {},
   ): Promise<BucketLenderSummary> {
-    const positionId = await this.getBucketLenderPositionId(bucketLenderAddress);
-    const currentTimestamp = options.currentTimestamp || getCurrentEpochSeconds();
-
     const [
-      position,
+      bucketLender,
+      positionId,
       buckets,
       criticalBucket,
       currentBucket,
     ] = await Promise.all([
-      this.margin.getPosition(positionId),
+      this.getBucketLender(bucketLenderAddress),
+      this.getBucketLenderPositionId(bucketLenderAddress),
       this.getDepositedBuckets(bucketLenderAddress, lender),
       this.getCriticalBucket(bucketLenderAddress),
       this.getCurrentBucket(bucketLenderAddress),
     ]);
 
+    const [
+      positionExists,
+      position,
+    ] = await Promise.all([
+      this.margin.containsPosition(positionId),
+      this.margin.getPosition(positionId),
+    ]);
+
+    // if position doesn't exist, then all is withdrawable
+    if (!positionExists) {
+      const [owedTokenWithdrawable] = await bucketLender.withdraw.call(
+        buckets,
+        buckets.map(() => BIG_NUMBERS.TWO_TO_255), // maxWeights
+        lender,
+        { from: lender },
+      );
+      return {
+        withdrawable: owedTokenWithdrawable,
+        locked: new BigNumber(0),
+      };
+    }
+
+    const currentTimestamp = options.currentTimestamp || getCurrentEpochSeconds();
     const positionOwedAmount = this.interest.getOwedAmount(
       position.startTimestamp, // startEpoch
       currentTimestamp,
@@ -322,6 +344,10 @@ export default class BucketLender {
           this.getWeightForBucketForAccount(bucketLenderAddress, bucket, lender),
         ]);
 
+        if (bucketWeight.isZero() || accountWeight.isZero()) {
+          return { withdrawable, locked };
+        }
+
         // calculate the amount owed back to the bucket at this point in time
         const principalPlusInterest = this.math.partialAmount(
           positionOwedAmount,
@@ -332,13 +358,11 @@ export default class BucketLender {
         const totalBucketOwed = bucketAvailable.plus(principalPlusInterest);
 
         // calculate the amount owed back to the user at this point in time
-        const personalOwed = bucketWeight.isZero()
-          ? new BigNumber(0)
-          : this.math.partialAmount(
-              accountWeight,
-              bucketWeight,
-              totalBucketOwed,
-            );
+        const personalOwed = this.math.partialAmount(
+          accountWeight,
+          bucketWeight,
+          totalBucketOwed,
+        );
 
         // not being lent (or position is not open)
         if (bucket.gt(criticalBucket) || position.startTimestamp.isZero()) {
