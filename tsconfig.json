@@ -13,10 +13,10 @@
     "typeRoots": [
       "node_modules/@types"
     ],
-    "types": ["node", "jest", "bluebird", "bignumber.js", "decimal.js", "luxon"],
+    "types": ["node", "jest", "bluebird", "bignumber.js", "decimal.js", "luxon"]
   },
   "include": [
-    "src",
+    "src"
   ],
   "compileOnSave": true
 }
