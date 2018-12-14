@@ -87,6 +87,24 @@ export default abstract class MarginToken {
     );
   }
 
+  public async withdrawTokenPayout(
+    marginTokenAddress: string,
+    tokenAddress: string,
+    withdrawer: string,
+    exchangeWrapper: ExchangeWrapper,
+    orderData: string,
+    options: ContractCallOptions = {},
+  ): Promise<object> {
+    return this.contracts.callContractFunction(
+      this.contracts.erc20PositionWithdrawerV2.withdraw,
+      { ...options, from: withdrawer },
+      marginTokenAddress,
+      tokenAddress,
+      exchangeWrapper.getAddress(),
+      orderData,
+    );
+  }
+
   public async withdrawETHPayout(
     marginTokenAddress: string,
     withdrawer: string,
