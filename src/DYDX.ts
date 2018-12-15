@@ -3,6 +3,7 @@ import OpenDirectlyExchangeWrapper from './modules/exchange_wrappers/OpenDirectl
 import ZeroExV1ExchangeWrapper from './modules/exchange_wrappers/ZeroExV1ExchangeWrapper';
 import ZeroExV2ExchangeWrapper from './modules/exchange_wrappers/ZeroExV2ExchangeWrapper';
 import OasisV1SimpleExchangeWrapper from './modules/exchange_wrappers/OasisV1SimpleExchangeWrapper';
+import OasisV2SimpleExchangeWrapper from './modules/exchange_wrappers/OasisV2SimpleExchangeWrapper';
 import Margin from './modules/Margin';
 import TokenHelper from './modules/TokenHelper';
 import ShortToken from './modules/margin_tokens/ShortToken';
@@ -21,6 +22,7 @@ export class DYDX {
   public zeroExV1ExchangeWrapper: ZeroExV1ExchangeWrapper;
   public zeroExV2ExchangeWrapper: ZeroExV2ExchangeWrapper;
   public oasisV1SimpleExchangeWrapper: OasisV1SimpleExchangeWrapper;
+  public oasisV2SimpleExchangeWrapper: OasisV2SimpleExchangeWrapper;
   public token: TokenHelper;
   public contracts: Contracts;
   public shortToken: ShortToken;
@@ -47,6 +49,7 @@ export class DYDX {
     this.zeroExV1ExchangeWrapper = new ZeroExV1ExchangeWrapper(this.contracts);
     this.zeroExV2ExchangeWrapper = new ZeroExV2ExchangeWrapper(this.contracts);
     this.oasisV1SimpleExchangeWrapper = new OasisV1SimpleExchangeWrapper(this.contracts);
+    this.oasisV2SimpleExchangeWrapper = new OasisV2SimpleExchangeWrapper(this.contracts);
     this.token = new TokenHelper(this.contracts);
 
     this.bucketLender = new BucketLender(this.margin, this.contracts);
