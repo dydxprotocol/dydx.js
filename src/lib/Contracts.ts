@@ -228,6 +228,11 @@ export default class Contracts {
     callOptions: ContractCallOptions,
     ...args // tslint:disable-line: trailing-comma
   ): Promise<object> {
+    // We must lower case the "from" address to conform to the schema in web3-wrapper.
+    // See https://github.com/0xProject/0x-monorepo/blob/1d83d99d87385c396a57bfdf48a8a0211ace557b
+    // /packages/web3-wrapper/src/web3_wrapper.ts#L512
+    callOptions.from = callOptions.from.toLowerCase();
+
     const { waitForConfirmation, ...options } = callOptions;
     if (!this.blockGasLimit) await this.setGasLimit();
     if (!options.gas) {
