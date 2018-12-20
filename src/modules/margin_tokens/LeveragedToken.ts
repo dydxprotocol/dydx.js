@@ -5,7 +5,6 @@ import MathHelpers from '../helpers/MathHelpers';
 import ExchangeWrapper from '../exchange_wrappers/ExchangeWrapper';
 import Contracts from '../../lib/Contracts';
 import { EVENTS } from '../../lib/Constants';
-
 import {
   ContractCallOptions,
   Contract,

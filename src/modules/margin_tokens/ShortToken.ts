@@ -5,13 +5,18 @@ import Contracts from '../../lib/Contracts';
 import { EVENTS } from '../../lib/Constants';
 import ExchangeWrapper from '../exchange_wrappers/ExchangeWrapper';
 import { SignedLoanOffering, ContractCallOptions, Contract } from '../../types';
+import OpenDirectlyExchangeWrapper from '../exchange_wrappers/OpenDirectlyExchangeWrapper';
 
 export default class ShortToken extends MarginToken {
+  private openDirectlyExchangeWrapper: OpenDirectlyExchangeWrapper;
+
   constructor(
     margin: Margin,
     contracts: Contracts,
+    openDirectlyExchangeWrapper: OpenDirectlyExchangeWrapper,
   ) {
     super(margin, contracts);
+    this.openDirectlyExchangeWrapper = openDirectlyExchangeWrapper;
   }
 
   public async create(
@@ -190,6 +195,25 @@ export default class ShortToken extends MarginToken {
     );
   }
 
+  public async mintDirectly(
+    positionId: string,
+    trader: string,
+    tokensToMint: BigNumber,
+    options: ContractCallOptions = {},
+    positionLender?: string,
+  ): Promise<object> {
+    return this.mint(
+      positionId,
+      trader,
+      tokensToMint,
+      true,
+      this.openDirectlyExchangeWrapper,
+      '',
+      options,
+      positionLender,
+    );
+  }
+
   public async close(
     positionId: string,
     closer: string,
@@ -228,6 +252,21 @@ export default class ShortToken extends MarginToken {
       ethIsHeldToken,
       exchangeWrapper,
       orderData,
+      options,
+    );
+  }
+
+  public async closeDirectly(
+    positionId: string,
+    closer: string,
+    tokensToClose: BigNumber,
+    options: ContractCallOptions = {},
+  ): Promise<object> {
+    return this.margin.closePositionDirectly(
+      positionId,
+      closer,
+      closer,
+      tokensToClose,
       options,
     );
   }

@@ -68,6 +68,38 @@ await dydx.shortToken.mintWithETH(
 );
 ```
 
+Or mint directly (you will put up all held token [DAI for sETH] and will receive owed token [WETH for sETH]):
+```javascript
+// Set your allowance on our proxy contract - you only need to do this once
+await dydx.token.setMaximumProxyAllowance(
+  heldTokenAddress, // DAI address for sETH
+  traderAddress, // your address
+);
+
+await dydx.shortToken.mintDirectly(
+  positionId, // Can get from expo API
+  trader, // your address
+  tokensToMint, // BigNumber - Number of tokens to mint in base units (10^18 is 1 sETH)
+);
+```
+
+#### Close
+
+Close directly (you will pay all owed token owed to lenders [WETH for sETH] and will receive all held token collateral [DAI for sETH])
+```javascript
+// Set your allowance on our proxy contract - you only need to do this once
+await dydx.token.setMaximumProxyAllowance(
+  owedTokenAddress, // WETH address for sETH
+  traderAddress, // your address
+);
+
+await dydx.shortToken.closeDirectly(
+  positionId, // Can get from expo API
+  closer, // your address
+  tokensToClose, // BigNumber - Number of tokens to close in base units (10^18 is 1 sETH)
+);
+```
+
 ## Development
 
 ### Install
