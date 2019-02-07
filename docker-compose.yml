@@ -1,6 +1,6 @@
 version: '3'
 services:
   protocol:
-    image: dydxprotocol/protocol:v1.0.18
+    image: dydxprotocol/protocol:v1.0.19
     ports:
       - 8549:8545
