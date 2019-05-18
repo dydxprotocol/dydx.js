@@ -18,6 +18,8 @@
   </a>
 </p>
 
+**DEPRECATED see our new protocol [here](https://github.com/dydxprotocol/solo)**
+
 A TypeScript library for interacting with the dYdX protocol.
 
 ## Usage
